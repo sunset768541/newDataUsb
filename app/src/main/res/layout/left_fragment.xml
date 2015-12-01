@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="left"
+    android:background="@color/bla">
+    <Button
+        android:id="@+id/deviceInfo"
+        android:text="设备信息"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:singleLine="false"
+        android:textColor="@color/df"
+        android:layout_marginTop="20dp"
+        />
+    <Button
+        android:id="@+id/dataShow"
+        android:text="数据显示"
+        android:layout_width="25dp"
+        android:layout_height="150dp"
+        android:background="@drawable/di"
+        android:layout_marginTop="20dp"/>
+    <Button
+        android:id="@+id/dataSave"
+        android:text="数据储存"
+        android:layout_width="25dp"
+        android:layout_height="150dp"
+        android:background="@drawable/ds"
+        android:layout_marginTop="20dp"/>
+    <Button
+        android:id="@+id/help"
+        android:text="帮助文档"
+        android:layout_width="25dp"
+        android:layout_height="150dp"
+        android:background="@drawable/hp"
+        android:layout_marginTop="20dp"/>
+</LinearLayout>

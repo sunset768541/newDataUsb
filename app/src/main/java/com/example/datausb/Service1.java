@@ -41,7 +41,7 @@ public class Service1 extends Service {
         while (deviceIterator.hasNext()) {
             UsbDevice device = deviceIterator.next();
             if (device.getVendorId() == 1204 && device.getProductId() == 4099) {
-                ss = ss + "，这个是王宝辉的U盘，它成功接入系统";
+                ss = ss + "FPGA开发板接入系统成功";
                 Intent intent1 = new Intent(this, MainActivity.class);
                 pendingIntent = PendingIntent.getActivity(this, 0, intent1, 0);
 
