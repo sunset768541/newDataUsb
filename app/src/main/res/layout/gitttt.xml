@@ -3,10 +3,17 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
     xmlns:app="http://schemas.android.com/apk/res-auto"
+<<<<<<< HEAD
 fdsfsdfsdfsd
 
 
     ahdkjahdkgit
+=======
+
+
+
+    ahdkjahdk
+>>>>>>> 32c9a4ee513b3c5b7980854fdca67908f4347ddb
 </LinearLayout>
 
 
