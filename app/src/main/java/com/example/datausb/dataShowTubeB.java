@@ -29,20 +29,20 @@ import android.widget.TextView;
 /**
  * Created by sunset on 15/11/19.
  */
-public class dataShowFragment extends android.app.Fragment {
+public class dataShowTubeB extends android.app.Fragment {
     private SurfaceHolder holder;
 
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.data_show_fragment, container, false);
+        View view = inflater.inflate(R.layout.datashowtubeb, container, false);
 
         return view;
     }
 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);//
-        Button con = (Button) getActivity().findViewById(R.id.con);
-        SurfaceView sur = (SurfaceView) getActivity().findViewById(R.id.sur);
+        Button con = (Button) getActivity().findViewById(R.id.conb);
+        SurfaceView sur = (SurfaceView) getActivity().findViewById(R.id.surb);
         holder = sur.getHolder();
         Paint p = new Paint();
         p.setColor(Color.RED);
@@ -54,7 +54,7 @@ public class dataShowFragment extends android.app.Fragment {
         con.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               // drawC(holder);
+                // drawC(holder);
                 VV v1 = new VV(getActivity(), holder);
                 v1.surfaceChanged(holder,0,300,200  );
             }
@@ -128,11 +128,11 @@ public class dataShowFragment extends android.app.Fragment {
 }
 
 
-class MyThread extends Thread {
+class MyThreadB extends Thread {
     private SurfaceHolder holder;
     public boolean isRun;
-Canvas c12=new Canvas();
-    public MyThread(SurfaceHolder holder) {
+    Canvas c12=new Canvas();
+    public MyThreadB(SurfaceHolder holder) {
         this.holder = holder;
         isRun = true;
     }
@@ -141,24 +141,24 @@ Canvas c12=new Canvas();
     public void run() {
 
 
-            synchronized (holder) {
+        synchronized (holder) {
 //                holder.unlockCanvasAndPost(c12);
-                Path pp1 = new Path();
-                Paint pp = new Paint();
-                pp.setColor(Color.RED);
-                pp.setStyle(Paint.Style.STROKE);
-                pp.setAntiAlias(true);
-                pp.setStrokeWidth(1);
-                PathEffect pe = new CornerPathEffect(10);
-                pp.setPathEffect(pe);
-                c12 = holder.lockCanvas();
-                pp1.moveTo(40, 40);
-                for (int i = 1; i < 1024; i++) {
-                    pp1.lineTo(i*20, (float) Math.random() * 100);
-                }
-                //c12 = holder.lockCanvas(new Rect(5, 160, 500, 100));
-                c12.drawPath(pp1, pp);
-                holder.unlockCanvasAndPost(c12);//结束锁定画图，并提交改变。
+            Path pp1 = new Path();
+            Paint pp = new Paint();
+            pp.setColor(Color.RED);
+            pp.setStyle(Paint.Style.STROKE);
+            pp.setAntiAlias(true);
+            pp.setStrokeWidth(1);
+            PathEffect pe = new CornerPathEffect(10);
+            pp.setPathEffect(pe);
+            c12 = holder.lockCanvas();
+            pp1.moveTo(40, 40);
+            for (int i = 1; i < 1024; i++) {
+                pp1.lineTo(i*20, (float) Math.random() * 100);
+            }
+            //c12 = holder.lockCanvas(new Rect(5, 160, 500, 100));
+            c12.drawPath(pp1, pp);
+            holder.unlockCanvasAndPost(c12);//结束锁定画图，并提交改变。
                /* Log.d("Run", "yunxing");
                 try {
                     Thread.sleep(1000);//睡眠时间为1秒
@@ -166,8 +166,8 @@ Canvas c12=new Canvas();
                     e.printStackTrace();
                 }
 */
-            }
         }
+    }
 
 
 

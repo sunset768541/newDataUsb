@@ -52,41 +52,6 @@
             android:layout_height="wrap_content"
             android:text="@string/t1" />
     </TableLayout>
-    <!-- <LinearLayout
-         android:layout_width="match_parent"
-         android:layout_height="wrap_content"
-         android:orientation="horizontal">
-
-         <TextView
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:text="USB设备状态：" />
-
-         <TextView
-             android:id="@+id/deviceRecognise"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:text="未识别设备" />
-
-         <TextView
-             android:id="@+id/reserve"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:text="@string/t1" />
-
-         <TextView
-             android:id="@+id/deviceState"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:text="未打开设备" />
-
-         <TextView
-             android:id="@+id/transmissionSpeed"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:textColor="@color/colorAccent" />
-     </LinearLayout>
- -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -145,11 +110,54 @@
              android:hint="要传输的数据"/>
 
  -->
-    <ListView
+   <ListView
         android:id="@+id/list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="1dp"
         android:divider="#d50d0d"
         android:dividerHeight="1dp"
      />
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:rowCount="10"
+        android:columnCount="15">
+        <fragment
+            android:name="com.example.datausb.dataShowTubeA"
+            android:id="@+id/tubeA"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_columnSpan="1"
+            tools:layout="@layout/data_show_fragment"
+            android:layout_row="0"
+            android:layout_column="0" />
+
+        <fragment
+            android:name="com.example.datausb.dataShowTubeA1"
+            android:id="@+id/tubeB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:layout="@layout/data_show_fragment"
+            android:layout_row="0"
+            android:layout_column="14" />
+
+        <fragment
+            android:name="com.example.datausb.dataShowTubeB"
+            android:id="@+id/tubeB1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:layout="@layout/data_show_fragment"
+            android:layout_row="8"
+            android:layout_column="0"
+            android:layout_rowSpan="2" />
+
+        <fragment
+            android:name="com.example.datausb.dataShowTubeB1"
+            android:id="@+id/tubeA1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:layout="@layout/data_show_fragment"
+            android:layout_row="9"
+            android:layout_column="14" />
+    </GridLayout>
 </LinearLayout>

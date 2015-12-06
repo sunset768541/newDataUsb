@@ -40,6 +40,7 @@ import java.io.PipedWriter;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
 import java.lang.String;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -237,37 +238,9 @@ public class MainActivity extends Activity {
                     //long startTime = System.currentTimeMillis();    // 毫秒级
                     int xxx = myDeviceConnection.bulkTransfer(epIn, Receivebytes, 4096, 0); //do in another thread
                     //  测试的代码
-                    int i1 = 0;
-                    int p;
-                    int p1;
-                   /* int[] combination = new int[2048];//combination用于储存合并后的16bit数据
-                    String st = "0";//数据转化为字符串的中间变量
-                    String st1 = "0";//储存接收数据转化后的字符串
-                    for (int i = 0; i < 4095; i = i + 2) {
-                        if (Receivebytes[i] < 0) {
-                            p = 256 + Receivebytes[i];
-
-                        } else {
-                            p = Receivebytes[i];
-                        }
-
-                        if (Receivebytes[i + 1] < 0) {
-                            p1 = (256 + Receivebytes[i + 1]) << 8;
-
-                        } else {
-                            p1 = Receivebytes[i + 1] << 8;
-                        }
-                        combination[i1] = p + p1;
-                        // combination[i1] = r.data[i] + r.data[i+1]<<8;
-                       // st = Integer.toString(combination[i1]);
-                        //st1 = st1 + st + " ";
-                        i1 = i1 + 1;
-
-                    }*/
-                    write(Receivebytes);
+                    write(Receivebytes);//将接收到的数据直接存储为2进制文件
                     long estimatedTime = System.nanoTime() - startTime;
                     int t = (int) (4000000 / estimatedTime);
-                    // r.setresource(combination,t);
                     r.data = Receivebytes;//拼接好的数据传递出去
                     r.speed = t;
                 }
@@ -324,55 +297,51 @@ public class MainActivity extends Activity {
                     String st1 = "0";//储存接收数据转化后的字符串
                     int p;
                     int p1;
-                    int i1=0;
+                    int i1 = 0;
                     int[] combination = new int[2048];//combination用于储存合并后的16bit数据
-                   // for (int i = 0; i < r.data.length; i++) {//报出空指针异常的原因是接收数据还没有处理完，线程就跳转到了这里
-                        for (int i = 0; i < r.data.length; i = i + 2) {
-                           if (r.data[i] < 0) {
-                                p = 256 + r.data[i];
+                    // for (int i = 0; i < r.data.length; i++) {//报出空指针异常的原因是接收数据还没有处理完，线程就跳转到了这里
+                    for (int i = 0; i < r.data.length; i = i + 2) {
+                        if (r.data[i] < 0) {
+                            p = 256 + r.data[i];
 
-                            } else {
-                                p = r.data[i];
-                            }
-
-                            if (r.data[i + 1] < 0) {
-                                p1 = (256 + r.data[i + 1]) << 8;
-
-                            } else {
-                                p1 = r.data[i + 1] << 8;
-                            }
-                            combination[i1] = p + p1;
-                           /* st = Integer.toString(r.data[i]);
-                            st1 = st1 + st + " ";*/
-                            i1=i1+1;
+                        } else {
+                            p = r.data[i];
                         }
-                        long estimatedTime = System.nanoTime() - startTime;
-                        Message msg1 = new Message();
-                        msg1.what = COMPLETED;
-                        msg1.obj = combination[0]+"+"+combination[1]+"+"+combination[2];//要显示的数据
 
-                        msg1.arg1 = r.speed;//数据的传输速度
-                        msg1.arg2 = (int) estimatedTime;//arg2表示携带的处理速度信息
-                        handler.sendMessage(msg1);
-                       // write(st1);
+                        if (r.data[i + 1] < 0) {
+                            p1 = (256 + r.data[i + 1]) << 8;
+
+                        } else {
+                            p1 = r.data[i + 1] << 8;
+                        }
+                        combination[i1] = p + p1;
+                        i1 = i1 + 1;
                     }
+                    long estimatedTime = System.nanoTime() - startTime;
+                    Message msg1 = new Message();
+                    msg1.what = COMPLETED;
+                    msg1.obj =combination[0]+"+"+combination[1]+"+"+combination[2]+"+"+combination[3];//要显示的数据，测试使用
+                    msg1.arg1 = r.speed;//数据的传输速度
+                    msg1.arg2 = (int) estimatedTime;//arg2表示携带的处理速度信息
+                    handler.sendMessage(msg1);
                 }
             }
         }
+    }
 
     /**
-     *数据的存储，储存的路径为/mnt/external_sd，文件名为data.txt
+     * 数据的存储，储存的路径为/mnt/external_sd，文件名为data.txt
      */
-    private void write(byte[] content){//注意储存字符串传入的参数为String content，储存二进制传入的参数为byte[] content
+    private void write(byte[] content) {//注意储存字符串传入的参数为String content，储存二进制传入的参数为byte[] content
 
-        try{
-            if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
-               FileOutputStream raf=new FileOutputStream("/mnt/external_sd/data.txt",true);//储存二进制文件
-               // FileWriter raf=new FileWriter("/mnt/external_sd/data.txt",true);//储存为字符串
+        try {
+            if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                FileOutputStream raf = new FileOutputStream("/mnt/external_sd/data.txt", true);//储存二进制文件
+                // FileWriter raf=new FileWriter("/mnt/external_sd/data.txt",true);//储存为字符串
                 raf.write(content);
-            raf.close();}
-        }
-        catch (Exception e){
+                raf.close();
+            }
+        } catch (Exception e) {
             e.printStackTrace();
 
         }
@@ -383,7 +352,7 @@ public class MainActivity extends Activity {
      * 这个resource类的作用是提供一个共享的数据储存区域，封装数据用于储存
      */
     class resource {
-        byte [] data;
+        byte[] data;
         int speed;
        /* public synchronized void setresource(int [] d,int s){
             data=d;
@@ -527,7 +496,7 @@ public class MainActivity extends Activity {
         if (myUsbManager == null)
             return;
         HashMap<String, UsbDevice> deviceList = myUsbManager.getDeviceList();
-        Log.d("jdjksa","sjbdjab");
+        Log.d("jdjksa", "sjbdjab");
         Iterator<UsbDevice> deviceIterator = deviceList.values().iterator();//历遍器
         while (deviceIterator.hasNext()) {
             UsbDevice device = deviceIterator.next();

@@ -17,15 +17,15 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:id="@+id/con"
+        android:id="@+id/conb"
         android:text="开始"/>
     <SurfaceView
         android:layout_width="300dp"
         android:layout_height="150dp"
-        android:id="@+id/sur"/>
-   <!-- <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/cva"
-        android:background="@color/bla"/>-->
+        android:id="@+id/surb"/>
+    <!-- <ImageView
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:id="@+id/cva"
+         android:background="@color/bla"/>-->
 </LinearLayout>

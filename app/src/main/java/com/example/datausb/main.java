@@ -166,7 +166,7 @@ public class main extends FragmentActivity {
 
         fragmentList = new ArrayList<Fragment>();
         fragmentList.add(mfragment1);
-        fragmentList.add(mfragment2);
+        //fragmentList.add(mfragment2);
         fragmentList.add(mfragment3);
         fragmentList.add(mfragment4);
         titleList.add("设备状态");
