@@ -1,3 +1,6 @@
+/**
+ * 这个Fragment被嵌入到MainActivity中，用于显示数据的图像
+ */
 package com.example.datausb;
 
 import android.content.Context;
@@ -31,11 +34,10 @@ import android.widget.TextView;
  */
 public class dataShowTubeA1 extends android.app.Fragment {
     private SurfaceHolder holder;
-
+    Bundle TubeA1data;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.datashowtubea1, container, false);
-
         return view;
     }
 
@@ -44,64 +46,29 @@ public class dataShowTubeA1 extends android.app.Fragment {
         Button con = (Button) getActivity().findViewById(R.id.con1);
         SurfaceView sur = (SurfaceView) getActivity().findViewById(R.id.sur1);
         holder = sur.getHolder();
-        Paint p = new Paint();
-        p.setColor(Color.RED);
-        p.setStrokeWidth(1);
-        p.setAntiAlias(true);
-        p.setStyle(Paint.Style.STROKE);
-        PathEffect pe = new CornerPathEffect(10);
-        p.setPathEffect(pe);
         con.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // drawC(holder);
                 VV v1 = new VV(getActivity(), holder);
-                v1.surfaceChanged(holder,0,300,200  );
+                v1.surfaceChanged(holder, 0, 300, 200);
             }
         });
-        /*Bitmap b = Bitmap.createBitmap(1000, 100, Bitmap.Config.RGB_565);
-        ImageView im = (ImageView) getActivity().findViewById(R.id.cva);
-        Canvas cc = new Canvas(b);
-        VV v = new VV(getActivity());
-        v.draw(cc);
-        // Log.d("绘图", "执行完了");
-        im.setImageBitmap(b);*/
-
-
     }
 
-    private void drawC(SurfaceHolder holder) {
-        Canvas cc1 = holder.lockCanvas();
-        cc1.drawColor(Color.WHITE);
-        Paint pp = new Paint();
-        pp.setColor(Color.RED);
-        pp.setStrokeWidth(2);
-        cc1.drawLine(5, 160, 500, 160, pp);
-        cc1.drawLine(5, 40, 5, 200, pp);
-        holder.unlockCanvasAndPost(cc1);
-        holder.lockCanvas(new Rect(0, 0, 0, 0));
-        holder.unlockCanvasAndPost(cc1);
-    }
-
-    class VV extends SurfaceView implements SurfaceHolder.Callback {
-        private MyThread myThread;
+    private class VV extends SurfaceView implements SurfaceHolder.Callback {
+        private MyThreadA1 myThread;
 
         public VV(Context context, SurfaceHolder holder1) {
             super(context);
-            // TODO Auto-generated constructor stub
-            //holder1 = this.getHolder();
-           /* holder1.addCallback(this);
-            myThread = new MyThread(holder1);//创建一个绘图线程
-            myThread.start();
-            Log.d("Thread", "kaiqi");*/
         }
 
         public void surfaceChanged(SurfaceHolder holder1, int format, int width, int height) {
             holder1.addCallback(this);
-            myThread = new MyThread(holder1);//创建一个绘图线程
+            TubeA1data = ((MainActivity) getActivity()).get_TubeA1_data();//从Avtivity中获取数据
+            myThread = new MyThreadA1(holder1, TubeA1data);//创建一个绘图线程
             myThread.start();
 
-            Log.d("Thread", "kaiqi");
+            Log.d("ThreadA1", "RUN");
         }
 
         public void surfaceCreated(SurfaceHolder holder) {
@@ -109,66 +76,45 @@ public class dataShowTubeA1 extends android.app.Fragment {
 
         public void surfaceDestroyed(SurfaceHolder holder) {
         }
-
-       /* public void run() {
-            Path pp1 = new Path();
-            pp1.moveTo(20, 20);
-            for (int i = 1; i < 1000; i++) {
-                pp1.lineTo(i * 10, (float) Math.random() * 50);
-            }
-            Paint pp = new Paint();
-            pp.setColor(Color.RED);
-            pp.setStrokeWidth(2);
-            Canvas cc12 = holder1.lockCanvas(new Rect(5, 160, 500, 100));
-            cc12.drawPath(pp1, pp);
-            holder1.unlockCanvasAndPost(cc12);*/
     }
-
-
 }
-
 
 class MyThreadA1 extends Thread {
     private SurfaceHolder holder;
     public boolean isRun;
-    Canvas c12=new Canvas();
-    public MyThreadA1(SurfaceHolder holder) {
+    Canvas c12 = new Canvas();
+    int[] data;
+    Bundle tube_data;
+
+    public MyThreadA1(SurfaceHolder holder, Bundle tube_data) {//线程的构造函数传入Bundle携带的数据
         this.holder = holder;
+        this.tube_data = tube_data;
         isRun = true;
     }
 
     @Override
     public void run() {
-
-
         synchronized (holder) {
-//                holder.unlockCanvasAndPost(c12);
+            data = tube_data.getIntArray("data");//读取Bundle中携带的数据
             Path pp1 = new Path();
             Paint pp = new Paint();
-            pp.setColor(Color.RED);
+            pp.setColor(Color.GREEN);
             pp.setStyle(Paint.Style.STROKE);
             pp.setAntiAlias(true);
             pp.setStrokeWidth(1);
             PathEffect pe = new CornerPathEffect(10);
             pp.setPathEffect(pe);
             c12 = holder.lockCanvas();
-            pp1.moveTo(40, 40);
-            for (int i = 1; i < 1024; i++) {
-                pp1.lineTo(i*20, (float) Math.random() * 100);
+            pp1.moveTo(0, 0);
+            for (int i = 1; i < data.length; i++) {
+                Log.d(Integer.toString(i), Integer.toString(data[i]));
+                pp1.lineTo(data[i - 1], data[i]);
             }
-            //c12 = holder.lockCanvas(new Rect(5, 160, 500, 100));
             c12.drawPath(pp1, pp);
             holder.unlockCanvasAndPost(c12);//结束锁定画图，并提交改变。
-               /* Log.d("Run", "yunxing");
-                try {
-                    Thread.sleep(1000);//睡眠时间为1秒
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-*/
+
         }
     }
-
 
 
 }

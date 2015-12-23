@@ -12,7 +12,10 @@
 package com.example.datausb;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.DialogInterface;
+import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbEndpoint;
@@ -63,12 +66,13 @@ public class MainActivity extends Activity {
     private TextView transmissionSpeed;
     private TextView receivedData;
     public TextView path;
-    public ListView listv;
-    //记录当前的父文件夹
-    File currentParaent;
-    //记录当前路径下所有文件的文件数组
+    public ListView listv;//记录当前的父文件夹
+    File currentParaent;//记录当前路径下所有文件的文件数组
     File[] currentFiles;
-
+    Bundle data_a=new Bundle();//携带通道A的数据Bundle
+    Bundle data_a1=new Bundle();//携带通道A1的数据的Bundle
+    Bundle data_b=new Bundle();//携带通道B的数据Bundle
+    Bundle data_b1=new Bundle();//携带通道B1的数据Bundl
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -195,7 +199,7 @@ public class MainActivity extends Activity {
     };
 
     /**
-     * 该线程的作业是为了接收USB的数据，拼接好传递出去
+     * 该线程的作业是为了接收USB的数据,传递出去
      */
 
     public class dataReceiveThread extends Thread {//接收数据的线程
@@ -222,18 +226,34 @@ public class MainActivity extends Activity {
         }
 
         public void run() {
+
             while (true) {
+
                 synchronized (control) {
                     if (suspend) {
                         try {
                             control.wait();
+
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                     }
                 }
+
                 synchronized (r) {
+
+                    if (r.flag)
+
+
+                    try {
+                            r.wait();
+
+                        } catch (InterruptedException ex) {
+
+                        }
+
                     byte[] Receivebytes = new byte[4096];//接收1KB的数据
+
                     long startTime = System.nanoTime();             // 纳秒级
                     //long startTime = System.currentTimeMillis();    // 毫秒级
                     int xxx = myDeviceConnection.bulkTransfer(epIn, Receivebytes, 4096, 0); //do in another thread
@@ -243,6 +263,8 @@ public class MainActivity extends Activity {
                     int t = (int) (4000000 / estimatedTime);
                     r.data = Receivebytes;//拼接好的数据传递出去
                     r.speed = t;
+                    r.flag=true;
+                    r.notify();
                 }
             }
 
@@ -250,8 +272,9 @@ public class MainActivity extends Activity {
     }
 
 
+
     /**
-     * dataProcess线程是将从USB接收的8bit数据合成16bit信息并显示
+     * dataProcess线程是将从USB接收的8bit数据合成16bit信息并显示,//分类数据传输到各自的通道
      */
     public class dataProcess extends Thread {//接收数据的线程
         // private  final int COMPLETED = 0;
@@ -292,15 +315,21 @@ public class MainActivity extends Activity {
                     }
                 }
                 synchronized (r) {
+                    if (!r.flag)
+                        try {
+                            r.wait();
+                        } catch (InterruptedException ex) {
+                        }
+
                     long startTime = System.nanoTime();             // 纳秒级
-                    String st = "0";//数据转化为字符串的中间变量
-                    String st1 = "0";//储存接收数据转化后的字符串
+                   /* String st = "0";//数据转化为字符串的中间变量
+                    String st1 = "0";//储存接收数据转化后的字符串*/
                     int p;
                     int p1;
                     int i1 = 0;
                     int[] combination = new int[2048];//combination用于储存合并后的16bit数据
                     // for (int i = 0; i < r.data.length; i++) {//报出空指针异常的原因是接收数据还没有处理完，线程就跳转到了这里
-                    for (int i = 0; i < r.data.length; i = i + 2) {
+                    for (int i = 0; i < r.data.length; i = i + 2) {//数据组合
                         if (r.data[i] < 0) {
                             p = 256 + r.data[i];
 
@@ -318,17 +347,30 @@ public class MainActivity extends Activity {
                         i1 = i1 + 1;
                     }
                     long estimatedTime = System.nanoTime() - startTime;
+                    data_a.putIntArray("data", combination);//待传入通道A的数据
+                    data_a1.putIntArray("data",combination);//待传入通道A1的数据
+                    data_b.putIntArray("data", combination);//待传入通道B的数据
+                    data_b1.putIntArray("data", combination);//待传入通道B1的数据
+                    set_TubeA1_data(data_a);//调用传入通道A数据函数
                     Message msg1 = new Message();
                     msg1.what = COMPLETED;
                     msg1.obj =combination[0]+"+"+combination[1]+"+"+combination[2]+"+"+combination[3];//要显示的数据，测试使用
                     msg1.arg1 = r.speed;//数据的传输速度
                     msg1.arg2 = (int) estimatedTime;//arg2表示携带的处理速度信息
                     handler.sendMessage(msg1);
+                    r.flag=false;
+                    r.notify();
                 }
             }
         }
     }
-
+    Bundle TubeA1data;
+    public void  set_TubeA1_data(Bundle b){
+        TubeA1data=b;
+    }
+    public Bundle get_TubeA1_data(){
+        return TubeA1data;
+    }
     /**
      * 数据的存储，储存的路径为/mnt/external_sd，文件名为data.txt
      */
@@ -337,6 +379,7 @@ public class MainActivity extends Activity {
         try {
             if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
                 FileOutputStream raf = new FileOutputStream("/mnt/external_sd/data.txt", true);//储存二进制文件
+                Log.d("chu","sunce");
                 // FileWriter raf=new FileWriter("/mnt/external_sd/data.txt",true);//储存为字符串
                 raf.write(content);
                 raf.close();
@@ -354,6 +397,7 @@ public class MainActivity extends Activity {
     class resource {
         byte[] data;
         int speed;
+        boolean flag=true;
        /* public synchronized void setresource(int [] d,int s){
             data=d;
             speed=s;}*/
@@ -386,10 +430,10 @@ public class MainActivity extends Activity {
         public void onClick(View v) {
             if (re.isAlive()) {
                 re.setSuspend(false);
-                pro.setSuspend(false);
+                //pro.setSuspend(false);
             } else {
                 re.start();
-                pro.start();
+                //pro.start();//先不进行数据的处理
             }
         }
 
@@ -401,7 +445,7 @@ public class MainActivity extends Activity {
     class stopDataReceive implements View.OnClickListener {
         public void onClick(View v) {
             re.setSuspend(true);
-            pro.setSuspend(true);
+            //pro.setSuspend(true);
         }
 
     }
@@ -431,9 +475,9 @@ public class MainActivity extends Activity {
         if (myInterface != null) { //这一句不加的话 很容易报错  导致很多人在各大论坛问:为什么报错呀
             epIn = myInterface.getEndpoint(1);//设置输入的数据的端点
             epOut = myInterface.getEndpoint(0);//设置输出数据的端点
-            //int num=myInterface.getEndpointCount();//可以检测当前接口上的端点数目
-            //deviceState.setText("当前接口的端点的数目"+num);//用文本显示端点的个数
-            /**for (int i = 0; i < myInterface.getEndpointCount(); i++) {//该for循环用来找到指定的端点类型
+ /*           int num=myInterface.getEndpointCount();//可以检测当前接口上的端点数目
+            deviceState.setText("当前接口的端点的数目"+num);//用文本显示端点的个数
+            for (int i = 0; i < myInterface.getEndpointCount(); i++) {//该for循环用来找到指定的端点类型
              UsbEndpoint ep = myInterface.getEndpoint(i);//ep代表第i个端点
              if (ep.getType() == UsbConstants.USB_ENDPOINT_XFER_BULK) {
              //infdeviceState.setText("找到断点"+i);//查找usb设备某个类型的端点
@@ -496,11 +540,10 @@ public class MainActivity extends Activity {
         if (myUsbManager == null)
             return;
         HashMap<String, UsbDevice> deviceList = myUsbManager.getDeviceList();
-        Log.d("jdjksa", "sjbdjab");
         Iterator<UsbDevice> deviceIterator = deviceList.values().iterator();//历遍器
         while (deviceIterator.hasNext()) {
             UsbDevice device = deviceIterator.next();
-            if (device.getVendorId() == 1204 && device.getProductId() == 4099) {//根据VID,PID枚举设备
+            if (device.getVendorId() == 1204 && device.getProductId() == 241) {//根据VID,PID枚举设备
                 deviceRecognise.setText("数据采集卡已接入");
                 myUsbDevice = device;
             } else {

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:paddingTop="20dp"
+        android:paddingLeft="10dp"
+        android:background="#555555"
+        android:layout_marginBottom="0dp">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="数据模式"
+                android:id="@+id/button"
+                android:layout_weight="1"
+                android:focusable="true"
+                android:background="@drawable/buttoncolor"
+                android:gravity="center"
+                android:height="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="标定模式"
+                android:id="@+id/button2"
+                android:paddingTop="10dp"
+                android:layout_weight="1"
+                android:focusable="true"
+                android:background="@drawable/buttoncolor"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:height="5dp"
+                android:layout_marginBottom="10dp" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="温度模式"
+                android:id="@+id/button3"
+                android:layout_weight="1"
+                android:focusable="true"
+                android:background="@drawable/buttoncolor"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:height="5dp"
+                android:layout_marginBottom="10dp" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="三维模式"
+                android:id="@+id/button4"
+                android:layout_weight="1"
+                android:focusable="true"
+                android:background="@drawable/buttoncolor"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:height="5dp"
+                android:layout_marginBottom="10dp" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="历史记录"
+                android:id="@+id/button5"
+                android:layout_weight="1"
+                android:focusable="true"
+                android:background="@drawable/buttoncolor"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:height="5dp"
+                android:layout_marginBottom="10dp" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="系统设置"
+                android:id="@+id/button6"
+                android:layout_weight="1"
+                android:focusable="true"
+                android:background="@drawable/buttoncolor"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:height="5dp"
+                android:layout_marginBottom="10dp" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="退出系统"
+                android:id="@+id/button7"
+                android:layout_weight="1"
+                android:focusable="true"
+                android:background="@drawable/buttoncolor"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:height="5dp"
+                android:layout_marginBottom="10dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:paddingLeft="10dp"
+        android:background="#666666">
+
+        <ToggleButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="开启设备"
+            android:id="@+id/toggleButton"
+            android:textOff="关闭设备"
+            android:textOn="打开设备"
+            android:background="@drawable/buttoncolor"
+            android:paddingLeft="15dp" />
+    </LinearLayout>
+
+</LinearLayout>

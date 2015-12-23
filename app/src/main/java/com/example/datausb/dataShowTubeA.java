@@ -8,13 +8,14 @@ import android.graphics.CornerPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathEffect;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
-//import android.support.v4.app.Fragment;
+//import android.sutube1ort.v4.atube1.Fragment;
 import android.os.Bundle;
-import android.app.Fragment;
-import android.support.v4.app.FragmentActivity;
+//import android.atube1.Fragment;
+//import android.sutube1ort.v4.atube1.FragmentActivity;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,145 +31,219 @@ import android.widget.TextView;
  * Created by sunset on 15/11/19.
  */
 public class dataShowTubeA extends android.app.Fragment {
+    /**
+     * 定义一个SurfaceHolder用来管理surface
+     */
     private SurfaceHolder holder;
-
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.datashowtubea, container, false);
-
         return view;
     }
 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);//
-        Button con = (Button) getActivity().findViewById(R.id.con);
-        SurfaceView sur = (SurfaceView) getActivity().findViewById(R.id.sur);
+        /**
+         * 获得布局中的surfaceview
+         */
+        SurfaceView sur = (SurfaceView) getActivity().findViewById(R.id.sura);
+        /**
+         * 将holder和surfaceview绑定
+         */
         holder = sur.getHolder();
-        Paint p = new Paint();
-        p.setColor(Color.RED);
-        p.setStrokeWidth(1);
-        p.setAntiAlias(true);
-        p.setStyle(Paint.Style.STROKE);
-        PathEffect pe = new CornerPathEffect(10);
-        p.setPathEffect(pe);
-        con.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // drawC(holder);
-                VV v1 = new VV(getActivity(), holder);
-                v1.surfaceChanged(holder,0,300,200  );
-            }
-        });
-        /*Bitmap b = Bitmap.createBitmap(1000, 100, Bitmap.Config.RGB_565);
-        ImageView im = (ImageView) getActivity().findViewById(R.id.cva);
-        Canvas cc = new Canvas(b);
-        VV v = new VV(getActivity());
-        v.draw(cc);
-        // Log.d("绘图", "执行完了");
-        im.setImageBitmap(b);*/
-
-
+        /**
+         * 实例化一个surfaceview
+         */
+        VV v1 = new VV(getActivity(), holder,sur);
+        /**
+         * 调用这个surfaceview的surfaceCreated方法
+         */
+        v1.surfaceCreated(holder);
+    }
     }
 
-    private void drawC(SurfaceHolder holder) {
-        Canvas cc1 = holder.lockCanvas();
-        cc1.drawColor(Color.WHITE);
-        Paint pp = new Paint();
-        pp.setColor(Color.RED);
-        pp.setStrokeWidth(2);
-        cc1.drawLine(5, 160, 500, 160, pp);
-        cc1.drawLine(5, 40, 5, 200, pp);
-        holder.unlockCanvasAndPost(cc1);
-        holder.lockCanvas(new Rect(0, 0, 0, 0));
-        holder.unlockCanvasAndPost(cc1);
+/**
+ * 一个集成Surfaceview并实现了SurfaceHolder.Callback方法的的类
+ */
+    class VV extends SurfaceView implements SurfaceHolder.Callback {
+    private MyThreadA myThread;
+    SurfaceView ss;
+
+    /**
+     * 该类的构造函数
+     *
+     * @param context
+     * @param holder1，传入holder，给绘图线程使用
+     * @param sur，传入sur使绘图线程获得当前surfaceview的大小
+     */
+    public VV(Context context, SurfaceHolder holder1, SurfaceView sur) {
+        super(context);
+        ss = sur;
     }
 
-   private class VV extends SurfaceView implements SurfaceHolder.Callback {
-        private MyThread myThread;
-
-        public VV(Context context, SurfaceHolder holder1) {
-            super(context);
-            // TODO Auto-generated constructor stub
-            //holder1 = this.getHolder();
-           /* holder1.addCallback(this);
-            myThread = new MyThread(holder1);//创建一个绘图线程
-            myThread.start();
-            Log.d("Thread", "kaiqi");*/
-        }
-
-        public void surfaceChanged(SurfaceHolder holder1, int format, int width, int height) {
-            holder1.addCallback(this);
-            myThread = new MyThread(holder1);//创建一个绘图线程
-            myThread.start();
-
-            Log.d("Thread", "kaiqi");
-        }
-
-        public void surfaceCreated(SurfaceHolder holder) {
-        }
-
-        public void surfaceDestroyed(SurfaceHolder holder) {
-        }
-
-       /* public void run() {
-            Path pp1 = new Path();
-            pp1.moveTo(20, 20);
-            for (int i = 1; i < 1000; i++) {
-                pp1.lineTo(i * 10, (float) Math.random() * 50);
-            }
-            Paint pp = new Paint();
-            pp.setColor(Color.RED);
-            pp.setStrokeWidth(2);
-            Canvas cc12 = holder1.lockCanvas(new Rect(5, 160, 500, 100));
-            cc12.drawPath(pp1, pp);
-            holder1.unlockCanvasAndPost(cc12);*/
+    public void surfaceChanged(SurfaceHolder holder1, int format, int width, int height) {
+        holder1.addCallback(this);
+        myThread = new MyThreadA(holder1, ss);//创建一个绘图线程
+        myThread.start();
     }
 
+    public void surfaceCreated(SurfaceHolder holder) {
+        holder.addCallback(this);
+        Log.d("ThreadA", "RUN");
+        //drawC(holder);
+    }
+
+    public void surfaceDestroyed(SurfaceHolder holder) {
+    }
 
 }
 
 
+
+
+
+
+/**
+ * 一个绘图线程类
+ */
  class MyThreadA extends Thread {
     private SurfaceHolder holder;
     public boolean isRun;
-    Canvas c12=new Canvas();
-    public MyThreadA(SurfaceHolder holder) {
+
+     int h;
+     int w;
+     SurfaceView sss;
+
+    /**
+     * 该线程的构造函数
+     * @param holder，传入的holder用来指定绘图的surfaceview
+     * @param ss1，用来获得surfaceview的大小
+     */
+    public MyThreadA(SurfaceHolder holder,SurfaceView ss1) {
         this.holder = holder;
+        sss=ss1;
         isRun = true;
+        h=sss.getHeight();
+         w=sss.getWidth();
     }
 
-    @Override
-    public void run() {
+         public void run () {
+             while(true)
+
+             {
+         try {
+             Thread.sleep(1000);
+         } catch (InterruptedException e) {
+         }
+                 /**
+                  * 定义了两支画笔
+                  * paxis用来画横纵坐标轴
+                  * axe用来绘制坐标轴中的坐标
+                  */
+         Paint paxis = new Paint();
+         Paint axe = new Paint();
+         axe.setARGB(255, 83, 83, 83);
+         axe.setStyle(Paint.Style.STROKE);
+         axe.setStrokeWidth(1);
+         paxis.setARGB(255, 83, 83, 83);
+         paxis.setStyle(Paint.Style.STROKE);
+         paxis.setStrokeWidth(3);
+                 /**
+                  * c为锁定suface时获得的一个画布，我们可以在上面画图
+                  */
+         Canvas c = holder.lockCanvas();
+                 /**
+                  * 绘制整个画布的颜色
+                  */
+         c.drawRGB(38, 38, 38);
+                 /**
+                  * 绘制横纵坐标轴
+                  */
+         c.drawLine(20, 10, 20, h - 20, paxis);
+         c.drawLine(20, h - 20, w - 10, h - 20, paxis);//绘制坐标轴
+                 /**
+                  * 绘制横纵轴各画10条线
+                  */
+         int ci = 10;
+         for (int i = 1; i < ci; i++) {
+             int k = i * h / ci;
+             int m = i * w / ci;
+             c.drawLine(20, k, w - 20, k, axe);
+             c.drawLine(m, h / ci, m, h - 20, axe);
+         }
+         Log.d("hh", "huazuohiao");
+                 /**
+                  * 绘制各个通道的图像
+                  * 共新建4个画笔和4个路径
+                  */
+         synchronized (holder) {
+             Path p1 = new Path();
+             Path p2 = new Path();
+             Path p3 = new Path();
+             Path p4 = new Path();
+
+             Paint tube1 = new Paint();
+             Paint tube2 = new Paint();
+             Paint tube3 = new Paint();
+             Paint tube4 = new Paint();
+
+             tube1.setColor(Color.GREEN);
+             tube1.setStyle(Paint.Style.STROKE);
+             tube1.setAntiAlias(true);
+             tube1.setStrokeWidth(1);
+             PathEffect pe1 = new CornerPathEffect(10);
+             tube1.setPathEffect(pe1);
+
+             tube2.setColor(Color.RED);
+             tube2.setStyle(Paint.Style.STROKE);
+             tube2.setAntiAlias(true);
+             tube2.setStrokeWidth(1);
+             tube2.setPathEffect(pe1);
+
+             tube3.setColor(Color.BLUE);
+             tube3.setStyle(Paint.Style.STROKE);
+             tube3.setAntiAlias(true);
+             tube3.setStrokeWidth(1);
+             tube3.setPathEffect(pe1);
+
+             tube4.setARGB(255, 255, 255, 17);
+             tube4.setStyle(Paint.Style.STROKE);
+             tube4.setAntiAlias(true);
+             tube4.setStrokeWidth(1);
+             tube4.setPathEffect(pe1);
+             p1.moveTo(20, h / 2 + 30);
+             p2.moveTo(20, h / 2 + 30);
+             p3.moveTo(20, h / 2 + 30);
+             p4.moveTo(20, h / 2 + 30);
+
+             for (int i = 1; i < 1024; i++) {
+                 p1.lineTo(i * 20, (float) Math.random() * 100 + h / 5);
+             }
+             c.drawPath(p1, tube1);
+
+             for (int i = 1; i < 1024; i++) {
+                 p2.lineTo(i * 20, (float) Math.random() * 100 + h / 4 + 20);
+             }
+             c.drawPath(p2, tube2);
+
+             for (int i = 1; i < 1024; i++) {
+                 p3.lineTo(i * 20, (float) Math.random() * 100 + h / 3);
+             }
+             c.drawPath(p3, tube3);
+
+             for (int i = 1; i < 1024; i++) {
+                 p4.lineTo(i * 20, (float) Math.random() * 100 + h / 2);
+             }
+             c.drawPath(p4, tube4);
+             /**
+              * 结束锁定画布并显示
+              */
+             holder.unlockCanvasAndPost(c);//结束锁定画图，并提交改变。
+         }
 
 
-        synchronized (holder) {
-//                holder.unlockCanvasAndPost(c12);
-            Path pp1 = new Path();
-            Paint pp = new Paint();
-            pp.setColor(Color.RED);
-            pp.setStyle(Paint.Style.STROKE);
-            pp.setAntiAlias(true);
-            pp.setStrokeWidth(1);
-            PathEffect pe = new CornerPathEffect(10);
-            pp.setPathEffect(pe);
-            c12 = holder.lockCanvas();
-            pp1.moveTo(40, 40);
-            for (int i = 1; i < 1024; i++) {
-                pp1.lineTo(i*20, (float) Math.random() * 100);
-            }
-            //c12 = holder.lockCanvas(new Rect(5, 160, 500, 100));
-            c12.drawPath(pp1, pp);
-            holder.unlockCanvasAndPost(c12);//结束锁定画图，并提交改变。
-               /* Log.d("Run", "yunxing");
-                try {
-                    Thread.sleep(1000);//睡眠时间为1秒
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-*/
-        }
-    }
+     }
 
-
+     }
 
 }

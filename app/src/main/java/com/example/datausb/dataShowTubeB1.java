@@ -41,7 +41,7 @@ public class dataShowTubeB1 extends android.app.Fragment {
 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);//
-        Button con = (Button) getActivity().findViewById(R.id.conb1);
+        /*Button con = (Button) getActivity().findViewById(R.id.conb1);
         SurfaceView sur = (SurfaceView) getActivity().findViewById(R.id.surb1);
         holder = sur.getHolder();
         Paint p = new Paint();
@@ -58,7 +58,7 @@ public class dataShowTubeB1 extends android.app.Fragment {
                 VV v1 = new VV(getActivity(), holder);
                 v1.surfaceChanged(holder,0,300,200  );
             }
-        });
+        });*/
         /*Bitmap b = Bitmap.createBitmap(1000, 100, Bitmap.Config.RGB_565);
         ImageView im = (ImageView) getActivity().findViewById(R.id.cva);
         Canvas cc = new Canvas(b);
@@ -84,7 +84,7 @@ public class dataShowTubeB1 extends android.app.Fragment {
     }
 
     class VV extends SurfaceView implements SurfaceHolder.Callback {
-        private MyThread myThread;
+        private MyThreadB1 myThread;
 
         public VV(Context context, SurfaceHolder holder1) {
             super(context);
@@ -98,10 +98,10 @@ public class dataShowTubeB1 extends android.app.Fragment {
 
         public void surfaceChanged(SurfaceHolder holder1, int format, int width, int height) {
             holder1.addCallback(this);
-            myThread = new MyThread(holder1);//创建一个绘图线程
+            myThread = new MyThreadB1(holder1);//创建一个绘图线程
             myThread.start();
 
-            Log.d("Thread", "kaiqi");
+            Log.d("ThreadB1", "RUN");
         }
 
         public void surfaceCreated(SurfaceHolder holder) {

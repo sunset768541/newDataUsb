@@ -1,28 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
-    <TextView
-        android:text="这个界面显示数据的图像"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/colorAccent"/>
-    <TextView
-        android:id="@+id/llllll"
-        android:text="这个界面显示数"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/colorPrimary"/>
-    <Button
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <SurfaceView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/surb"
+        android:layout_weight="1"
+        android:layout_margin="5dp" />
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:id="@+id/conb"
-        android:text="开始"/>
-    <SurfaceView
-        android:layout_width="300dp"
-        android:layout_height="150dp"
-        android:id="@+id/surb"/>
+        android:background="@drawable/togglebuttoncolor"
+        android:layout_margin="7dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="传感通道1"
+            android:textSize="25sp"
+            android:textColor="#ff0022"
+            android:textStyle="normal"
+            android:layout_weight="1"
+            android:id="@+id/textView13"
+            android:layout_marginRight="2dp"
+            android:layout_marginLeft="2dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="当前温度：25°"
+            android:textSize="25sp"
+            android:textColor="#ff0022"
+            android:textStyle="normal"
+            android:layout_weight="1"
+            android:layout_marginRight="2dp"
+            android:layout_marginLeft="2dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="时间:12.10"
+            android:id="@+id/textView"
+            android:textSize="25sp"
+            android:textColor="#ff0022"
+            android:textStyle="normal"
+            android:layout_weight="1"
+            android:layout_marginRight="2dp"
+            android:layout_marginLeft="2dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="地点:500m处"
+            android:id="@+id/textView2"
+            android:textSize="25sp"
+            android:textColor="#ff0022"
+            android:textStyle="normal"
+            android:layout_weight="1"
+            android:layout_marginRight="2dp"
+            android:layout_marginLeft="2dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="传感通道2"
+            android:textSize="25sp"
+            android:textColor="#00ff11"
+            android:textStyle="normal"
+            android:layout_weight="1"
+            android:id="@+id/textView14"
+            android:layout_marginRight="2dp"
+            android:layout_marginLeft="2dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="当前温度：19°"
+            android:id="@+id/textView6"
+            android:textSize="25sp"
+            android:textColor="#00ff11"
+            android:layout_weight="1"
+            android:layout_marginRight="2dp"
+            android:layout_marginLeft="2dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="时间:06.18"
+            android:id="@+id/textView7"
+            android:textSize="25sp"
+            android:textColor="#00ff11"
+            android:layout_weight="1"
+            android:layout_marginRight="2dp"
+            android:layout_marginLeft="2dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="地点:900m处"
+            android:id="@+id/textView8"
+            android:textSize="25sp"
+            android:textColor="#00ff11"
+            android:layout_weight="1"
+            android:layout_marginRight="2dp"
+            android:layout_marginLeft="2dp" />
+
+    </LinearLayout>
+
     <!-- <ImageView
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"

@@ -131,6 +131,7 @@ public class dataShowFragment extends android.app.Fragment {
 class MyThread extends Thread {
     private SurfaceHolder holder;
     public boolean isRun;
+
 Canvas c12=new Canvas();
     public MyThread(SurfaceHolder holder) {
         this.holder = holder;

@@ -41,7 +41,7 @@ public class dataShowTubeB extends android.app.Fragment {
 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);//
-        Button con = (Button) getActivity().findViewById(R.id.conb);
+       // Button con = (Button) getActivity().findViewById(R.id.conb);
         SurfaceView sur = (SurfaceView) getActivity().findViewById(R.id.surb);
         holder = sur.getHolder();
         Paint p = new Paint();
@@ -51,14 +51,14 @@ public class dataShowTubeB extends android.app.Fragment {
         p.setStyle(Paint.Style.STROKE);
         PathEffect pe = new CornerPathEffect(10);
         p.setPathEffect(pe);
-        con.setOnClickListener(new View.OnClickListener() {
+       /* con.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // drawC(holder);
                 VV v1 = new VV(getActivity(), holder);
                 v1.surfaceChanged(holder,0,300,200  );
             }
-        });
+        });*/
         /*Bitmap b = Bitmap.createBitmap(1000, 100, Bitmap.Config.RGB_565);
         ImageView im = (ImageView) getActivity().findViewById(R.id.cva);
         Canvas cc = new Canvas(b);
@@ -84,7 +84,7 @@ public class dataShowTubeB extends android.app.Fragment {
     }
 
     class VV extends SurfaceView implements SurfaceHolder.Callback {
-        private MyThread myThread;
+        private MyThreadB myThread;
 
         public VV(Context context, SurfaceHolder holder1) {
             super(context);
@@ -98,10 +98,10 @@ public class dataShowTubeB extends android.app.Fragment {
 
         public void surfaceChanged(SurfaceHolder holder1, int format, int width, int height) {
             holder1.addCallback(this);
-            myThread = new MyThread(holder1);//创建一个绘图线程
+            myThread = new MyThreadB(holder1);//创建一个绘图线程
             myThread.start();
 
-            Log.d("Thread", "kaiqi");
+            Log.d("ThreadB", "RUN");
         }
 
         public void surfaceCreated(SurfaceHolder holder) {
