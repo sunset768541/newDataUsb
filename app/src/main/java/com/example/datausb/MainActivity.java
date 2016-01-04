@@ -226,6 +226,7 @@ public class MainActivity extends Activity {
         }
 
         public void run() {
+            Log.d("hee","hehheh");
 
             while (true) {
 
@@ -242,20 +243,25 @@ public class MainActivity extends Activity {
 
                 synchronized (r) {
 
-                    if (r.flag)
+                    if (r.flag) {
 
+                        Log.d("手腕", "flag书呵呵呵");
 
-                    try {
+                        try {
                             r.wait();
+                            Log.d("手腕", "wait书呵呵呵");
 
                         } catch (InterruptedException ex) {
 
                         }
+                    }
+                    Log.d("手腕","reee");
 
                     byte[] Receivebytes = new byte[4096];//接收1KB的数据
 
                     long startTime = System.nanoTime();             // 纳秒级
                     //long startTime = System.currentTimeMillis();    // 毫秒级
+
                     int xxx = myDeviceConnection.bulkTransfer(epIn, Receivebytes, 4096, 0); //do in another thread
                     //  测试的代码
                     write(Receivebytes);//将接收到的数据直接存储为2进制文件
@@ -263,7 +269,7 @@ public class MainActivity extends Activity {
                     int t = (int) (4000000 / estimatedTime);
                     r.data = Receivebytes;//拼接好的数据传递出去
                     r.speed = t;
-                    r.flag=true;
+                    //r.flag=true;
                     r.notify();
                 }
             }
@@ -397,7 +403,7 @@ public class MainActivity extends Activity {
     class resource {
         byte[] data;
         int speed;
-        boolean flag=true;
+        boolean flag=false;
        /* public synchronized void setresource(int [] d,int s){
             data=d;
             speed=s;}*/
@@ -432,7 +438,10 @@ public class MainActivity extends Activity {
                 re.setSuspend(false);
                 //pro.setSuspend(false);
             } else {
+
                 re.start();
+                Log.d("手腕444", "书呵呵呵");
+
                 //pro.start();//先不进行数据的处理
             }
         }

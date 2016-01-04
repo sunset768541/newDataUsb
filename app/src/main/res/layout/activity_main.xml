@@ -117,47 +117,4 @@
         android:divider="#d50d0d"
         android:dividerHeight="1dp"
      />
-    <GridLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:rowCount="10"
-        android:columnCount="15">
-        <!--<fragment-->
-            <!--android:name="com.example.datausb.dataShowTubeA"-->
-            <!--android:id="@+id/tubeA"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_columnSpan="1"-->
-            <!--tools:layout="@layout/datashowtubea"-->
-            <!--android:layout_row="0"-->
-            <!--android:layout_column="0" />-->
-
-        <fragment
-            android:name="com.example.datausb.dataShowTubeA1"
-            android:id="@+id/tubeA1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:layout="@layout/datashowtubea1"
-            android:layout_row="0"
-            android:layout_column="14" />
-
-        <fragment
-            android:name="com.example.datausb.dataShowTubeB"
-            android:id="@+id/tubeB"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:layout="@layout/datashowtubeb"
-            android:layout_row="8"
-            android:layout_column="0"
-            android:layout_rowSpan="2" />
-
-        <fragment
-            android:name="com.example.datausb.dataShowTubeB1"
-            android:id="@+id/tubeB1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:layout="@layout/datatubeshowb1"
-            android:layout_row="9"
-            android:layout_column="14" />
-    </GridLayout>
 </LinearLayout>

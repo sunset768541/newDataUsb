@@ -1,7 +1,6 @@
 package com.example.datausb;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.CornerPathEffect;
@@ -9,40 +8,32 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathEffect;
 import android.graphics.Rect;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.OvalShape;
 //import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 /**
  * Created by sunset on 15/11/19.
  */
-public class dataShowTubeB extends android.app.Fragment {
+public class tempreatureModel extends android.app.Fragment {
     private SurfaceHolder holder;
 
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.datashowtubeb, container, false);
+        View view = inflater.inflate(R.layout.tempreaturemodel, container, false);
 
         return view;
     }
 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);//
-       // Button con = (Button) getActivity().findViewById(R.id.conb);
-        SurfaceView sur = (SurfaceView) getActivity().findViewById(R.id.surb);
+        /*Button con = (Button) getActivity().findViewById(R.id.conb1);
+        SurfaceView sur = (SurfaceView) getActivity().findViewById(R.id.surb1);
         holder = sur.getHolder();
         Paint p = new Paint();
         p.setColor(Color.RED);
@@ -51,7 +42,7 @@ public class dataShowTubeB extends android.app.Fragment {
         p.setStyle(Paint.Style.STROKE);
         PathEffect pe = new CornerPathEffect(10);
         p.setPathEffect(pe);
-       /* con.setOnClickListener(new View.OnClickListener() {
+        con.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // drawC(holder);
@@ -84,7 +75,7 @@ public class dataShowTubeB extends android.app.Fragment {
     }
 
     class VV extends SurfaceView implements SurfaceHolder.Callback {
-        private MyThreadB myThread;
+        private MyThreadB1 myThread;
 
         public VV(Context context, SurfaceHolder holder1) {
             super(context);
@@ -98,10 +89,10 @@ public class dataShowTubeB extends android.app.Fragment {
 
         public void surfaceChanged(SurfaceHolder holder1, int format, int width, int height) {
             holder1.addCallback(this);
-            myThread = new MyThreadB(holder1);//创建一个绘图线程
+            myThread = new MyThreadB1(holder1);//创建一个绘图线程
             myThread.start();
 
-            Log.d("ThreadB", "RUN");
+            Log.d("ThreadB1", "RUN");
         }
 
         public void surfaceCreated(SurfaceHolder holder) {
@@ -128,11 +119,11 @@ public class dataShowTubeB extends android.app.Fragment {
 }
 
 
-class MyThreadB extends Thread {
+class MyThreadB1 extends Thread {
     private SurfaceHolder holder;
     public boolean isRun;
     Canvas c12=new Canvas();
-    public MyThreadB(SurfaceHolder holder) {
+    public MyThreadB1(SurfaceHolder holder) {
         this.holder = holder;
         isRun = true;
     }
