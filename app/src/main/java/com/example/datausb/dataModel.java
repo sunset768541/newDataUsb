@@ -26,7 +26,10 @@ public class dataModel extends android.app.Fragment {
      * 定义一个SurfaceHolder用来管理surface
      */
     private SurfaceHolder holder;
-    Bundle[] alltubedata;
+
+    /**
+     * 这个函数的作用是使Activity可以唤醒fragment中的显示线程
+     */
     public void wakeup(){
         ((main1) getActivity()).dta.notifyAll();
     }
@@ -78,24 +81,13 @@ public class dataModel extends android.app.Fragment {
 
         public void surfaceChanged(SurfaceHolder holder1,int a,int b,int c) {
             holder1.addCallback(this);
-            // Bundle[] alltubedata= ((main1) getActivity()).get_TubeA1_data();//从Avtivity中获取数据
             boolean datareceive= ((main1) getActivity()).getchange();
             myThread = new MyThreadA(holder1, ss,datareceive);//创建一个绘图线程
-            ;//从Avtivity中获取数据
-
             myThread.start();
         }
 
         public void surfaceCreated(SurfaceHolder holder) {
             holder.addCallback(this);
-            // alltubedata= ((main1) getActivity()).get_TubeA1_data();//从Avtivity中获取数据
-         //  Log.d("ThreadA", Integer.toString(alltubedata[0].getIntArray("tubea")[3]));
-            boolean datareceive= ((main1) getActivity()).getchange();
-
-           // myThread = new MyThreadA(holder, ss,alltubedata,datareceive);//创建一个绘图线程
-            //;//从Avtivity中获取数据
-            //myThread.start();
-            //drawC(holder);
         }
 
         public void surfaceDestroyed(SurfaceHolder holder) {
@@ -137,14 +129,11 @@ public class dataModel extends android.app.Fragment {
 
            try {//捕获线程运行中切换界面而产生的的空指针异常，防止程序崩溃。
 
-                  // while (((main1) getActivity()).dta.flag1)
 
-
-               //((main1) getActivity()).dta.DD[0];
-
-
-                       synchronized (((main1) getActivity()).dta){
-//
+                       synchronized (((main1) getActivity()).dta){//所有的等待和唤醒的锁都是同一个，这里选用了Activity中的一个对对象
+                           /**
+                            * 如果当标志位为false这个线程开始等待
+                            */
                         if (!((main1) getActivity()).dta.flag1)
                              try {
                                    ((main1) getActivity()).dta.wait();
@@ -155,10 +144,7 @@ public class dataModel extends android.app.Fragment {
                            else{
                             ((main1) getActivity()).dta.notifyAll();
                         }
-                          // int[] tuba = alltubedata[0].getIntArray("tubea");
-//                           int[] tuba1 = alltubedata[1].getIntArray("tubea1");
-//                           int[] tubeb = alltubedata[2].getIntArray("tubeb");
-//                           int[] tubeb1 = alltubedata[3].getIntArray("tubeb1");
+                      //下面的语句是从Activity中获取数据
                            int[] tuba = ((main1) getActivity()).get_TubeA1_data().getIntArray("tubea");
                            int[] tuba1 = ((main1) getActivity()).get_TubeA1_data1().getIntArray("tubea1");
                            int[] tubeb = ((main1) getActivity()).get_TubeA1_data2().getIntArray("tubeb");
@@ -268,6 +254,11 @@ public class dataModel extends android.app.Fragment {
                                 * 结束锁定画布并显示
                                 */
                                holder.unlockCanvasAndPost(c);//结束锁定画图，并提交改变。// ;
+                               /**
+                                * 把标识位置为false
+                                * 同时唤醒数据处理线程
+                                */
+
                                ((main1) getActivity()).dta.flag1=false;
                                ((main1) getActivity()).wakeuppro();
                                Log.d("绘图线程run", "绘制数据图像的方法完成方法");

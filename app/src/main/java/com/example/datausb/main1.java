@@ -26,6 +26,7 @@ import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Arrays;
+
 /**
  * Created by sunset on 15/12/11.
  */
@@ -59,10 +60,10 @@ public class main1 extends Activity {
     /**
      * 定义用于携带数据的Bundle
      */
-    Bundle data_a=new Bundle();//携带通道A的数据Bundle
-    Bundle data_a1=new Bundle();//携带通道A1的数据的Bundle
-    Bundle data_b=new Bundle();//携带通道B的数据Bundle
-    Bundle data_b1=new Bundle();//携带通道B1的数据Bundl
+    Bundle data_a = new Bundle();//携带通道A的数据Bundle
+    Bundle data_a1 = new Bundle();//携带通道A1的数据的Bundle
+    Bundle data_b = new Bundle();//携带通道B的数据Bundle
+    Bundle data_b1 = new Bundle();//携带通道B1的数据Bundl
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,9 +87,9 @@ public class main1 extends Activity {
         ToggleButton togglebutton = (ToggleButton) findViewById(R.id.toggleButton);
         togglebutton.setOnClickListener(new tg(togglebutton));
         myUsbManager = (UsbManager) getSystemService(USB_SERVICE);
-        usbstate=(TextView) findViewById(R.id.usbstate);
-        datasave=(TextView)findViewById(R.id.savestate);
-        transmmitespeed1=(TextView)findViewById(R.id.transmitespeed1);
+        usbstate = (TextView) findViewById(R.id.usbstate);
+        datasave = (TextView) findViewById(R.id.savestate);
+        transmmitespeed1 = (TextView) findViewById(R.id.transmitespeed1);
 
     }
 
@@ -102,20 +103,21 @@ public class main1 extends Activity {
             if (msg1.what == COMPLETED) {
                 try {
                     transmmitespeed1.setText("shuj" + msg1.obj);
+                } catch (NullPointerException e) {
                 }
-                catch (NullPointerException e){}
             }
         }
     };
+
     /**
      * 按钮datamodle的监听函数
      * 每个FragmentTransanction的commit只能提交一次，所以我们在按下每个按钮时从新实例化一个FragmentTransanction进行提交操作
      */
     class rd implements View.OnClickListener {
         public void onClick(View v) {
-           // setchange(false);
+            // setchange(false);
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
-            transaction.replace(R.id.contineer, da,"datamodel");
+            transaction.replace(R.id.contineer, da, "datamodel");
             transaction.addToBackStack(null);
             //setchange(true);
             transaction.commit();
@@ -124,17 +126,22 @@ public class main1 extends Activity {
 
 
     }
-    boolean bb=false;
-   public boolean getchange(){
-       return bb;
-   }
-    public void setchange(boolean cc){
-        bb=cc;
-       // return bb;
+
+    boolean bb = false;
+
+    public boolean getchange() {
+        return bb;
     }
-    public void wakeuppro(){
+
+    public void setchange(boolean cc) {
+        bb = cc;
+        // return bb;
+    }
+
+    public void wakeuppro() {
         dta.notifyAll();
     }
+
     /**
      * 按钮calibration的监听函数
      */
@@ -142,7 +149,7 @@ public class main1 extends Activity {
         public void onClick(View v) {
             //setchange(false);
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
-            transaction.replace(R.id.contineer, db,"calibratemodel");
+            transaction.replace(R.id.contineer, db, "calibratemodel");
             transaction.addToBackStack(null);
             //setchange(true);
             transaction.commit();
@@ -152,6 +159,7 @@ public class main1 extends Activity {
 
 
     }
+
     /**
      * 按钮temperature的监听函数
      */
@@ -159,7 +167,7 @@ public class main1 extends Activity {
         public void onClick(View v) {
             //setchange(false);
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
-            transaction.replace(R.id.contineer, dc,"tempreturemodel");
+            transaction.replace(R.id.contineer, dc, "tempreturemodel");
             transaction.addToBackStack(null);
             //setchange(true);
             transaction.commit();
@@ -176,13 +184,15 @@ public class main1 extends Activity {
      */
     class tg implements View.OnClickListener {
         ToggleButton tgg;
-        public  tg(ToggleButton tgg){
-            this.tgg=tgg;
+
+        public tg(ToggleButton tgg) {
+            this.tgg = tgg;
 
         }
+
         public void onClick(View v) {
             if (tgg.isChecked()) {
-              //  Toast.makeText(main1.this, "你喜欢球类运动", Toast.LENGTH_SHORT).show();
+                //  Toast.makeText(main1.this, "你喜欢球类运动", Toast.LENGTH_SHORT).show();
                 tgg.setBackgroundColor(Color.GREEN);
                 enumerateDevice();//打开应用时枚举设备
                 findInterface();//找到设备接口
@@ -194,7 +204,7 @@ public class main1 extends Activity {
                 } else {
 
                     re.start();
-                   // Log.d("手腕444", "书呵呵呵");
+                    // Log.d("手腕444", "书呵呵呵");
 
                     pro.start();//先不进行数据的处理
                 }
@@ -202,14 +212,15 @@ public class main1 extends Activity {
             // 当按钮再次被点击时候响应的事件
             else {
                 tgg.setBackgroundColor(Color.RED);
-              //  Toast.makeText(main1.this, "你不喜欢球类运动", Toast.LENGTH_SHORT).show();
-                    re.setSuspend(true);
-                    pro.setSuspend(true);
+                //  Toast.makeText(main1.this, "你不喜欢球类运动", Toast.LENGTH_SHORT).show();
+                re.setSuspend(true);
+                pro.setSuspend(true);
             }
 
 
         }
     }
+
     public class dataReceiveThread extends Thread {//接收数据的线程
         private boolean suspend = false;
         resource r;
@@ -234,7 +245,7 @@ public class main1 extends Activity {
         }
 
         public void run() {
-            Log.d("hee","hehheh");
+            Log.d("hee", "hehheh");
 
             while (true) {
 
@@ -270,16 +281,15 @@ public class main1 extends Activity {
                     long estimatedTime = System.nanoTime() - startTime;
                     int t = (int) (4000000 / estimatedTime);
                     r.data = Receivebytes;//拼接好的数据传递出去
-                   Log.d("手腕", "wait书呵呵呵");
+                    Log.d("手腕", "wait书呵呵呵");
                     r.speed = t;
-                    r.flag=true;
+                    r.flag = true;
                     r.notify();
                 }
             }
 
         }
     }
-
 
 
     /**
@@ -289,8 +299,9 @@ public class main1 extends Activity {
         // private  final int COMPLETED = 0;
         resource r;
         data dd;
-        dataProcess(resource r,data dd) {
-            this.dd=dd;
+
+        dataProcess(resource r, data dd) {
+            this.dd = dd;
             this.r = r;
         }
 
@@ -360,132 +371,143 @@ public class main1 extends Activity {
                     }
 
                     long estimatedTime = System.nanoTime() - startTime;
-                    int[] dadd=new int[512];
-                    int[] dadd1=new int[512];
-                    int[] dadd2=new int[512];
-                    int[] dadd3=new int[512];
+
+                    int[] dadd = new int[512];
+                    int[] dadd1 = new int[512];
+                    int[] dadd2 = new int[512];
+                    int[] dadd3 = new int[512];
 
 //                    for (int i=0;i<combination.length;i++)//可以用foreach
 //                    {
 //
 //                        if(combination[i]==0){
-                            dadd=Arrays.copyOfRange(combination,0,511);
+                    dadd = Arrays.copyOfRange(combination, 0, 511);
 
 //                        }
 //                        else{
 //
 //                        }
 //                        if (combination[i]==512){
-                            dadd1=Arrays.copyOfRange(combination,512,1023);
+                    dadd1 = Arrays.copyOfRange(combination, 512, 1023);
 //
 //                        }
 //                        if (combination[i]==1024){
-                            dadd2=Arrays.copyOfRange(combination,1024,1536);
+                    dadd2 = Arrays.copyOfRange(combination, 1024, 1536);
 
 //
 //                        }
 //                        if(combination[i]==1536){
-                            dadd3=Arrays.copyOfRange(combination,1537,2048);
+                    dadd3 = Arrays.copyOfRange(combination, 1537, 2048);
 
-                       // }
+                    // }
 
                     //}
                     data_a.putIntArray("tubea", dadd);//待传入通道A的数据
                     data_a1.putIntArray("tubea1", dadd1);//待传入通道A1的数据
                     data_b.putIntArray("tubeb", dadd2);//待传入通道B的数据
                     data_b1.putIntArray("tubeb1", dadd3);//待传入通道B1的数据
-                   synchronized (dd) {
-                       try {
+                    /***
+                     * 这个线程同步的作用是发送处理好的数据交给fragment线程进行处理，在fragment显示线程进行数据显示的过程中，要求当前数据处理线程进行等待
+                     */
+                    synchronized (dd) {
+                        try {
 
-                           set_TubeA1_data(data_a);
-                           set_TubeA1_data1(data_a1);
-                           set_TubeA1_data2(data_b);
-                           set_TubeA1_data3(data_b1);
-                           dd.flag1 = true;
-                           dataModel frgment1=(dataModel)getFragmentManager().findFragmentByTag("datamodel");
-                           frgment1.wakeup();
-                           if (dd.flag1) {
-                               try {
-                                   dd.wait();
-                               } catch (InterruptedException ex) {
-                               }
-                           } else {
-                               dd.notifyAll();
-                           }
+                            set_TubeA1_data(data_a);//将分好类的数据放入Bundle中以供fragment访问
+                            set_TubeA1_data1(data_a1);
+                            set_TubeA1_data2(data_b);
+                            set_TubeA1_data3(data_b1);
+                            dd.flag1 = true;//与fragment中的绘图线程进行生产者与消费者
+                            dataModel frgment1 = (dataModel) getFragmentManager().findFragmentByTag("datamodel");//获取当前的fragment
+                            frgment1.wakeup();//调用fragment中的唤醒方法
+                            /**
+                             * 先实现数据处理线程的等待，直到该fragment中显示线程显示数据完成后由显示线程对当前的数据处理线程进行唤醒继续运行
+                             */
+                            if (dd.flag1) {
+                                try {
+                                    dd.wait();
+                                } catch (InterruptedException ex) {
+                                }
+                            } else {
+                                dd.notifyAll();
+                            }
 
-                       } catch (NullPointerException ee) {
-                       }
-                   }
+                        } catch (NullPointerException ee) {
+                        }
+                    }
 
                     //set_TubeA1_data(data_a, data_a1, data_b, data_b1);//调用传入通道A数据函数
                     Message msg1 = new Message();
                     msg1.what = COMPLETED;
-                    msg1.obj=dadd[4]+"+"+dadd1[4]+"+"+dadd2[4]+"+"+dadd3[4];
+                    msg1.obj = dadd[4] + "+" + dadd1[4] + "+" + dadd2[4] + "+" + dadd3[4];
                     //msg1.obj =combination[0]+"+"+combination[1]+"+"+combination[2]+"+"+combination[3];//要显示的数据，测试使用
                     msg1.arg1 = r.speed;//数据的传输速度
                     msg1.arg2 = (int) estimatedTime;//arg2表示携带的处理速度信息
                     handler.sendMessage(msg1);
-                    r.flag=false;
+                    r.flag = false;
                     r.notify();
                     setchange(true);
                     Log.d("数据处理中", "数据处理娲女");
 
                 }
             }
-//                catch(NullPointerException e){
-//                    r.flag=false;
-//
-//                }
-//                finally {
-//                    r.flag=false;
-//                }
-//}
+
 
         }
     }
 
     /**
-     * 创建一个Bundle数组用来携带每个通道的数据信息以便传递到各个Fragment
+     * 创建四个Bundle数组用来携带每个通道的数据信息以便传递到各个Fragment
      */
-    Bundle  TubeA1data1;
-    Bundle  TubeA1data2;
-    Bundle  TubeA1data3;
-    Bundle  TubeA1data4;
+    Bundle TubeA1data1;
+    Bundle TubeA1data2;
+    Bundle TubeA1data3;
+    Bundle TubeA1data4;
 
-    boolean datamod;
-    public void  set_TubeA1_data(Bundle a){
+    /**
+     * set_TubeA1_data(Bundle a)函数是数据处理线程调用的函数，存放数据
+     * @param a
+     */
+    public void set_TubeA1_data(Bundle a) {
 
-        TubeA1data1=a;
+        TubeA1data1 = a;
     }
-    public void  set_TubeA1_data1(Bundle a){
 
-        TubeA1data2=a;
+    public void set_TubeA1_data1(Bundle a) {
+
+        TubeA1data2 = a;
     }
-    public void  set_TubeA1_data2(Bundle a){
 
-        TubeA1data3=a;
+    public void set_TubeA1_data2(Bundle a) {
+
+        TubeA1data3 = a;
     }
-    public void  set_TubeA1_data3(Bundle a){
 
-        TubeA1data4=a;
+    public void set_TubeA1_data3(Bundle a) {
+
+        TubeA1data4 = a;
     }
 
     /**
-     * 在Frafment中利用 Bundle[]bb= ((main1) getActivity()).get_TubeA1_data()来从该Avtivity中获取数据
+     * 在Frafment中利用 Bundle bb= ((main1) getActivity()).get_TubeA1_data()来从该Avtivity中获取数据
+     *
      * @return返回通道的数据Bundle
      */
-    public Bundle  get_TubeA1_data(){
+    public Bundle get_TubeA1_data() {
         return TubeA1data1;
     }
-    public Bundle  get_TubeA1_data1(){
+
+    public Bundle get_TubeA1_data1() {
         return TubeA1data2;
     }
-    public Bundle  get_TubeA1_data2(){
+
+    public Bundle get_TubeA1_data2() {
         return TubeA1data3;
     }
-    public Bundle  get_TubeA1_data3(){
+
+    public Bundle get_TubeA1_data3() {
         return TubeA1data4;
     }
+
     /**
      * 数据的存储，储存的路径为/mnt/external_sd，文件名为data.txt
      */
@@ -494,7 +516,7 @@ public class main1 extends Activity {
         try {
             if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
                 FileOutputStream raf = new FileOutputStream("/mnt/external_sd/data.txt", true);//储存二进制文件
-                Log.d("chu","sunce");
+                Log.d("chu", "sunce");
                 // FileWriter raf=new FileWriter("/mnt/external_sd/data.txt",true);//储存为字符串
                 raf.write(content);
                 raf.close();
@@ -512,23 +534,25 @@ public class main1 extends Activity {
     class resource {
         byte[] data;
         int speed;
-        boolean flag=false;
+        boolean flag = false;
        /* public synchronized void setresource(int [] d,int s){
             data=d;
             speed=s;}*/
     }
 
-    class data{
-        Bundle [] DD;
-        boolean flag1=false;
+    class data {
+        Bundle[] DD;
+        boolean flag1 = false;
     }
+
     /**
      * 该语句为实例化一个数据接收的类，re为数据接收线程
      */
     resource r = new resource();
-    data dta=new  data();
+    data dta = new data();
     public dataReceiveThread re = new dataReceiveThread(r);
-    public dataProcess pro = new dataProcess(r,dta);
+    public dataProcess pro = new dataProcess(r, dta);
+
     /**
      * sentdata为一个用来发送数据的函数，当前没有启用
      */
