@@ -55,6 +55,7 @@ public class main1 extends Activity {
     dataModel da = new dataModel();
     calibrateModel db = new calibrateModel();
     tempreatureModel dc = new tempreatureModel();
+
     /**
      * 定义用于携带数据的Bundle
      */
@@ -114,7 +115,7 @@ public class main1 extends Activity {
         public void onClick(View v) {
            // setchange(false);
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
-            transaction.replace(R.id.contineer, da);
+            transaction.replace(R.id.contineer, da,"datamodel");
             transaction.addToBackStack(null);
             //setchange(true);
             transaction.commit();
@@ -131,6 +132,9 @@ public class main1 extends Activity {
         bb=cc;
        // return bb;
     }
+    public void wakeuppro(){
+        dta.notifyAll();
+    }
     /**
      * 按钮calibration的监听函数
      */
@@ -138,7 +142,7 @@ public class main1 extends Activity {
         public void onClick(View v) {
             //setchange(false);
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
-            transaction.replace(R.id.contineer, db);
+            transaction.replace(R.id.contineer, db,"calibratemodel");
             transaction.addToBackStack(null);
             //setchange(true);
             transaction.commit();
@@ -155,7 +159,7 @@ public class main1 extends Activity {
         public void onClick(View v) {
             //setchange(false);
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
-            transaction.replace(R.id.contineer, dc);
+            transaction.replace(R.id.contineer, dc,"tempreturemodel");
             transaction.addToBackStack(null);
             //setchange(true);
             transaction.commit();
@@ -390,27 +394,30 @@ public class main1 extends Activity {
                     data_a1.putIntArray("tubea1", dadd1);//待传入通道A1的数据
                     data_b.putIntArray("tubeb", dadd2);//待传入通道B的数据
                     data_b1.putIntArray("tubeb1", dadd3);//待传入通道B1的数据
-//                    synchronized (dd){
+                   synchronized (dd) {
                        try {
-//                            if (dd.flag1)
-//                                try {
-//                                    dd.wait();
-//                                } catch (InterruptedException ex) {
-//                                }
-                            set_TubeA1_data(data_a);
+
+                           set_TubeA1_data(data_a);
                            set_TubeA1_data1(data_a1);
                            set_TubeA1_data2(data_b);
                            set_TubeA1_data3(data_b1);
-                            dd.flag1 = true;
-//                            try {
-//                                dd.wait();
-                          }
-//                            catch (InterruptedException EE){}
-//                        }
-                       catch (NullPointerException ee){}
+                           dd.flag1 = true;
+                           dataModel frgment1=(dataModel)getFragmentManager().findFragmentByTag("datamodel");
+                           frgment1.wakeup();
+                           if (dd.flag1) {
+                               try {
+                                   dd.wait();
+                               } catch (InterruptedException ex) {
+                               }
+                           } else {
+                               dd.notifyAll();
+                           }
+
+                       } catch (NullPointerException ee) {
+                       }
+                   }
 
                     //set_TubeA1_data(data_a, data_a1, data_b, data_b1);//调用传入通道A数据函数
-                    dd.flag1=true;
                     Message msg1 = new Message();
                     msg1.what = COMPLETED;
                     msg1.obj=dadd[4]+"+"+dadd1[4]+"+"+dadd2[4]+"+"+dadd3[4];

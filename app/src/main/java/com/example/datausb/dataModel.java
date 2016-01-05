@@ -27,6 +27,9 @@ public class dataModel extends android.app.Fragment {
      */
     private SurfaceHolder holder;
     Bundle[] alltubedata;
+    public void wakeup(){
+        ((main1) getActivity()).dta.notifyAll();
+    }
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.datamodel, container, false);
         return view;
@@ -131,38 +134,35 @@ public class dataModel extends android.app.Fragment {
 
         public void run () {
             while (true){
-Log.d("绘图线程run","执行到run方法");
 
            try {//捕获线程运行中切换界面而产生的的空指针异常，防止程序崩溃。
 
-                   while (((main1) getActivity()).dta.flag1)
+                  // while (((main1) getActivity()).dta.flag1)
 
 
                //((main1) getActivity()).dta.DD[0];
 
-                   {
-                       Log.d("绘图线程run","执行到while方法");
-                       synchronized (((main1) getActivity()).dta){
 
-//                           if (!((main1) getActivity()).dta.flag1)
-//                               try {
-//                                   Log.d("绘图线程run", "执行到try等待前");
-//                                   ((main1) getActivity()).dta.wait();
-//                                   Log.d("绘图线程run", "执行到try等待后的方法");
+                       synchronized (((main1) getActivity()).dta){
 //
-//                               } catch (InterruptedException ex) {
-//                                   Log.d("绘图线程run","执行到if判断dta的flag方法");
-//                               }
-//                           int[] tuba = alltubedata[0].getIntArray("tubea");
+                        if (!((main1) getActivity()).dta.flag1)
+                             try {
+                                   ((main1) getActivity()).dta.wait();
+
+                               } catch (InterruptedException ex) {
+
+                               }
+                           else{
+                            ((main1) getActivity()).dta.notifyAll();
+                        }
+                          // int[] tuba = alltubedata[0].getIntArray("tubea");
 //                           int[] tuba1 = alltubedata[1].getIntArray("tubea1");
 //                           int[] tubeb = alltubedata[2].getIntArray("tubeb");
 //                           int[] tubeb1 = alltubedata[3].getIntArray("tubeb1");
-                           Log.d("画笔", "画布提交");
                            int[] tuba = ((main1) getActivity()).get_TubeA1_data().getIntArray("tubea");
                            int[] tuba1 = ((main1) getActivity()).get_TubeA1_data1().getIntArray("tubea1");
                            int[] tubeb = ((main1) getActivity()).get_TubeA1_data2().getIntArray("tubeb");
                            int[] tubeb1 =((main1) getActivity()).get_TubeA1_data3().getIntArray("tubeb1");
-                           Log.d("画笔", "画布77777777提交");
 
                            /**
                             * 定义了两支画笔
@@ -269,13 +269,13 @@ Log.d("绘图线程run","执行到run方法");
                                 */
                                holder.unlockCanvasAndPost(c);//结束锁定画图，并提交改变。// ;
                                ((main1) getActivity()).dta.flag1=false;
-                              // ((main1) getActivity()).r.notify();
+                               ((main1) getActivity()).wakeuppro();
                                Log.d("绘图线程run", "绘制数据图像的方法完成方法");
                            }
 
 
                        }
-                   }
+
 
 
            }
