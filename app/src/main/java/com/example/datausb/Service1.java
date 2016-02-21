@@ -42,7 +42,7 @@ public class Service1 extends Service {
             UsbDevice device = deviceIterator.next();
             if (device.getVendorId() == 1204 && device.getProductId() == 4099) {
                 ss = ss + "FPGA开发板接入系统成功";
-                Intent intent1 = new Intent(this, MainActivity.class);
+                Intent intent1 = new Intent(this, main1.class);
                 pendingIntent = PendingIntent.getActivity(this, 0, intent1, 0);
 
             } else {

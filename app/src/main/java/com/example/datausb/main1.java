@@ -15,6 +15,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -67,6 +69,10 @@ public class main1 extends Activity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        final boolean b = this.requestWindowFeature(Window.FEATURE_NO_TITLE);//去掉标题栏
+
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);//去掉信息栏
         setContentView(R.layout.mainactivity);
         /**
          * 实例化3个按钮用来切换不同的Fragment
@@ -193,21 +199,28 @@ public class main1 extends Activity {
         public void onClick(View v) {
             if (tgg.isChecked()) {
                 //  Toast.makeText(main1.this, "你喜欢球类运动", Toast.LENGTH_SHORT).show();
-                tgg.setBackgroundColor(Color.GREEN);
                 enumerateDevice();//打开应用时枚举设备
-                findInterface();//找到设备接口
-                openDevice();//打开设备
-                assignEndpoint();//指派端点
-                if (re.isAlive()) {
-                    re.setSuspend(false);
-                    pro.setSuspend(false);
-                } else {
+                if(myUsbDevice!=null) {
+                    tgg.setBackgroundColor(Color.GREEN);
+                    findInterface();//找到设备接口
+                    openDevice();//打开设备
+                    assignEndpoint();//指派端点
+                    if (re.isAlive()) {
+                        re.setSuspend(false);
+                        pro.setSuspend(false);
+                    } else {
 
-                    re.start();
-                    // Log.d("手腕444", "书呵呵呵");
+                        re.start();
+                        // Log.d("手腕444", "书呵呵呵");
 
-                    pro.start();//先不进行数据的处理
+                        pro.start();//先不进行数据的处理
+                    }
                 }
+                else{
+                    Toast.makeText(getApplicationContext(),"无法打开设备，USB设备非数据采集卡，请确认后重试",
+                            Toast.LENGTH_SHORT).show();
+                }
+
             }
             // 当按钮再次被点击时候响应的事件
             else {
@@ -528,6 +541,7 @@ public class main1 extends Activity {
 
     }
 
+
     /**
      * 这个resource类的作用是提供一个共享的数据储存区域，封装数据用于储存
      */
@@ -650,6 +664,7 @@ public class main1 extends Activity {
             if (device.getVendorId() == 1204 && device.getProductId() == 4099) {//根据VID,PID枚举设备
                 myUsbDevice = device;
             } else {
+                return;
             }
         }
 
