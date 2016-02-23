@@ -58,6 +58,7 @@ public class main1 extends Activity {
     dataModel da = new dataModel();
     calibrateModel db = new calibrateModel();
     tempreatureModel dc = new tempreatureModel();
+    systemSeting ss=new systemSeting();
 
     /**
      * 定义用于携带数据的Bundle
@@ -87,6 +88,8 @@ public class main1 extends Activity {
         calibration.setOnClickListener(new ca());
         Button temperature = (Button) findViewById(R.id.button3);
         temperature.setOnClickListener(new te());
+        Button systemSetingselect=(Button)findViewById(R.id.button6);
+        systemSetingselect.setOnClickListener(new ss());
         /**
          *
          */
@@ -183,7 +186,21 @@ public class main1 extends Activity {
 
 
     }
+    class ss implements View.OnClickListener {
+        public void onClick(View v) {
+            //setchange(false);
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.replace(R.id.contineer, ss, "systemseting");
+            //transaction.addToBackStack(null);
+            //setchange(true);
+            transaction.commit();
+            Log.d("dh", "hha");
 
+
+        }
+
+
+    }
     /**
      * 打开设备的togglebutton监听函数
      */
@@ -232,7 +249,11 @@ public class main1 extends Activity {
 
         }
     }
+     public boolean usbsendout( byte[] data){
 
+         myDeviceConnection.bulkTransfer(epOut,data,data.length,0);
+         return true;
+     }
     public class dataReceiveThread extends Thread {//接收数据的线程
         private boolean suspend = false;
         resource r;
@@ -659,7 +680,7 @@ public class main1 extends Activity {
         Iterator<UsbDevice> deviceIterator = deviceList.values().iterator();//历遍器
         while (deviceIterator.hasNext()) {
             UsbDevice device = deviceIterator.next();
-            if (device.getVendorId() == 1204 && device.getProductId() == 4099) {//根据VID,PID枚举设备
+            if (device.getVendorId() == 1204 && device.getProductId() == 241) {//根据VID,PID枚举设备
                 myUsbDevice = device;
             } else {
                 return;
