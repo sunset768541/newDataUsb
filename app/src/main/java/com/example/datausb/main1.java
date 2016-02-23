@@ -124,10 +124,9 @@ public class main1 extends Activity {
             // setchange(false);
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.replace(R.id.contineer, da, "datamodel");
-            transaction.addToBackStack(null);
+            //transaction.addToBackStack(null);
             //setchange(true);
             transaction.commit();
-            Log.d("hh", "hha");
         }
 
 
@@ -156,7 +155,7 @@ public class main1 extends Activity {
             //setchange(false);
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.replace(R.id.contineer, db, "calibratemodel");
-            transaction.addToBackStack(null);
+            //transaction.addToBackStack(null);//fragment压入堆栈
             //setchange(true);
             transaction.commit();
             Log.d("l", "hha");
@@ -174,7 +173,7 @@ public class main1 extends Activity {
             //setchange(false);
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.replace(R.id.contineer, dc, "tempreturemodel");
-            transaction.addToBackStack(null);
+            //transaction.addToBackStack(null);
             //setchange(true);
             transaction.commit();
             Log.d("dh", "hha");
@@ -259,7 +258,6 @@ public class main1 extends Activity {
 
         public void run() {
             Log.d("hee", "hehheh");
-
             while (true) {
 
                 synchronized (control) {

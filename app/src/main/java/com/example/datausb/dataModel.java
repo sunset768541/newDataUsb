@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathEffect;
 //import android.sutube1ort.v4.atube1.Fragment;
+import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 //import android.atube1.Fragment;
 //import android.sutube1ort.v4.atube1.FragmentActivity;
@@ -45,6 +46,7 @@ public class dataModel extends android.app.Fragment {
          * 获得布局中的surfaceview
          */
         SurfaceView sur = (SurfaceView) getActivity().findViewById(R.id.sura);
+
         /**
          * 将holder和surfaceview绑定
          */
