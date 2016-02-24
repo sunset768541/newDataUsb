@@ -3,6 +3,7 @@ package com.example.datausb;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
@@ -68,6 +69,13 @@ public class main1 extends Activity {
     Bundle data_b = new Bundle();//携带通道B的数据Bundle
     Bundle data_b1 = new Bundle();//携带通道B1的数据Bundl
 
+    /**
+     *preferences为读取参数的SharePreference的实例
+     * editor为修改参数的Shareferecxes.Editor的实例
+     * @param savedInstanceState
+     */
+     SharedPreferences preferences;
+     SharedPreferences.Editor editor;
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -99,7 +107,12 @@ public class main1 extends Activity {
         usbstate = (TextView) findViewById(R.id.usbstate);
         datasave = (TextView) findViewById(R.id.savestate);
         transmmitespeed1 = (TextView) findViewById(R.id.transmitespeed1);
-
+        preferences=getSharedPreferences("opl",MODE_PRIVATE);
+        editor=preferences.edit();
+        int oplong=preferences.getInt("long",0);
+        if (oplong==0){
+            Toast.makeText(getApplicationContext(),"还没有设置光纤的长度，请先到系统设置中设置",Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**
@@ -125,11 +138,17 @@ public class main1 extends Activity {
     class rd implements View.OnClickListener {
         public void onClick(View v) {
             // setchange(false);
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
-            transaction.replace(R.id.contineer, da, "datamodel");
-            //transaction.addToBackStack(null);
-            //setchange(true);
-            transaction.commit();
+            int oplong=preferences.getInt("long",0);
+            if (oplong==0){
+                Toast.makeText(getApplicationContext(),"还没有设置光纤的长度，请先到系统设置中设置",Toast.LENGTH_SHORT).show();
+            }
+            else {
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.contineer, da, "datamodel");
+                //transaction.addToBackStack(null);
+                //setchange(true);
+                transaction.commit();
+            }
         }
 
 
@@ -156,13 +175,18 @@ public class main1 extends Activity {
     class ca implements View.OnClickListener {
         public void onClick(View v) {
             //setchange(false);
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
-            transaction.replace(R.id.contineer, db, "calibratemodel");
-            //transaction.addToBackStack(null);//fragment压入堆栈
-            //setchange(true);
-            transaction.commit();
-            Log.d("l", "hha");
-
+            int oplong=preferences.getInt("long",0);
+            if (oplong==0){
+                Toast.makeText(getApplicationContext(),"还没有设置光纤的长度，请先到系统设置中设置",Toast.LENGTH_SHORT).show();
+            }
+            else {
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.contineer, db, "calibratemodel");
+                //transaction.addToBackStack(null);//fragment压入堆栈
+                //setchange(true);
+                transaction.commit();
+                Log.d("l", "hha");
+            }
         }
 
 
@@ -174,18 +198,27 @@ public class main1 extends Activity {
     class te implements View.OnClickListener {
         public void onClick(View v) {
             //setchange(false);
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
-            transaction.replace(R.id.contineer, dc, "tempreturemodel");
-            //transaction.addToBackStack(null);
-            //setchange(true);
-            transaction.commit();
-            Log.d("dh", "hha");
+            int oplong=preferences.getInt("long",0);
+            if (oplong==0){
+                Toast.makeText(getApplicationContext(),"还没有设置光纤的长度，请先到系统设置中设置",Toast.LENGTH_SHORT).show();
+            }
+            else {
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.contineer, dc, "tempreturemodel");
+                //transaction.addToBackStack(null);
+                //setchange(true);
+                transaction.commit();
+                Log.d("dh", "hha");
 
-
+            }
         }
 
 
     }
+
+    /**
+     * 系统设置按键的监听函数
+     */
     class ss implements View.OnClickListener {
         public void onClick(View v) {
             //setchange(false);
@@ -249,9 +282,14 @@ public class main1 extends Activity {
 
         }
     }
-     public boolean usbsendout( byte[] data){
 
-         myDeviceConnection.bulkTransfer(epOut,data,data.length,0);
+    /**
+     * 设置参数的方法
+     *
+     */
+     public boolean setpref(int opl){
+         editor.putInt("long",opl);
+         editor.commit();
          return true;
      }
     public class dataReceiveThread extends Thread {//接收数据的线程
