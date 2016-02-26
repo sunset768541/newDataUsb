@@ -19,6 +19,8 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.Arrays;
+
 /**
  * Created by sunset on 15/11/19.
  */
@@ -232,28 +234,42 @@ public class dataModel extends android.app.Fragment {
                             tube4.setAntiAlias(true);
                             tube4.setStrokeWidth(1);
                             tube4.setPathEffect(pe1);
-                            p1.moveTo(20, h / 8 + 30);
-                            p2.moveTo(20, h / 6 + 40);
-                            p3.moveTo(20, h / 4 + 50);
-                            p4.moveTo(20, h / 2 + 60);
-
-                            for (int i = 0; i < tuba.length; i++) {
-                                p1.lineTo(i, tuba[i] + h / 5);
+//                            p1.moveTo(20, h / 8 + 30);
+//                            p2.moveTo(20, h / 6 + 40);
+//                            p3.moveTo(20, h / 4 + 50);
+//                            p4.moveTo(20, h / 2 + 60);
+//注意数据可能数值太大而不能再屏幕上显示，所以我能要把数据转换成光功率的数值进行显示，也方便后续的计算
+//由于 屏幕上的点数有限，所以我们只有在屏幕上显示部分点，我们可以用总的点数除以屏幕上的点数，得出的数就是我们要每几个点显示为一个点，显示的这个点为这几个点中的最大值
+//还有一个实际中存在的问题，每个通道第几个数据并不对应相应的第几个距离。可能还需要排序
+                            int [] adp1=screenadapter(tuba,w);
+                            int [] adp2=screenadapter(tuba1,w);
+                            int [] adp3=screenadapter(tubeb,w);
+                            int [] adp4=screenadapter(tubeb1,w);
+                            Log.d("输出adp4最后一个数",Integer.toString(adp4[adp4.length-100]));
+                            Log.d("输出adp4第一个数",Integer.toString(adp4[0]));
+//                            int []adp1=tuba;
+//                            int []adp2=tuba1;
+//                            int []adp3=tubeb;
+//                            int []adp4=tubeb1;
+                            for (int i = 0; i < adp1.length; i++) {//lineTo显示一条直线是因为纵坐标的数值太大；
+                                p1.lineTo(i, adp1[i]/500+ h / 5);//在实际的的系统2的14次方，也就是16384，还要在乘以参考电压
                             }
                             c.drawPath(p1, tube1);
-
-                            for (int i = 0; i < tuba1.length; i++) {
-                                p2.lineTo(i, tuba1[i] + h / 5 + h / 4 + 20);
+/**
+ * 在FPGA上传递增的数据的时候，adp1[i]/500,其中500这个数取值影响了图像在y轴上的分布，这个值取小了，图像的纵坐标就显示不全，取太大在屏幕上看的图线的变化就不是很明显
+ */
+                            for (int i = 0; i < adp2.length; i++) {
+                                p2.lineTo(i, adp2[i]/500+ h / 5 + h / 4 + 20);
                             }
                             c.drawPath(p2, tube2);
 
-                            for (int i = 0; i < tubeb.length; i++) {
-                                p3.lineTo(i, tubeb[i] + h / 3);
+                            for (int i = 0; i < adp3.length; i++) {
+                                p3.lineTo(i, adp3[i]/500+ h / 3);
                             }
                             c.drawPath(p3, tube3);
 
-                            for (int i = 0; i < tubeb1.length; i++) {
-                                p4.lineTo(i, tubeb1[i]);
+                            for (int i = 0; i < adp4.length; i++) {
+                                p4.lineTo(i, adp4[i]/500+0.5f*h);
                             }
                             c.drawPath(p4, tube4);
                             /**
@@ -285,6 +301,33 @@ public class dataModel extends android.app.Fragment {
         }
     }
 
+//进行屏幕大小适配的方法
+    public int [] screenadapter(int [] data,int w){
+        int [] adptertube=new int[w-10];//设置屏可以显示在屏幕上的数据长度
+        int []databuf;
+        int interval=data.length/w+1;
+        int kkk=0;
+        if(interval<=1){
+            adptertube=data;
+        }
+        else {
+
+                for(int i=0;i<data.length;i=i+interval){
+                    databuf= Arrays.copyOfRange(data, i, i + interval);
+                    adptertube[kkk]=max(databuf);//这里出现了空指针异常
+                    kkk=kkk+1;
+                }
+        }
+
+        return adptertube;
+    }
+    //对一个数组输出最大值方法
+    public int  max(int [] a){
+        int b;
+       Arrays.sort(a);
+       b= a[a.length-1];
+        return b;
+    }
 }
 
 

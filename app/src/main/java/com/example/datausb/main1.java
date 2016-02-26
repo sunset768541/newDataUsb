@@ -405,14 +405,14 @@ public class main1 extends Activity {
                     long estimatedTime = System.nanoTime() - startTime;
 
                     //set_TubeA1_data(data_a, data_a1, data_b, data_b1);//调用传入通道A数据函数
-                    Message msg1 = new Message();
-                    msg1.what = COMPLETED;
-                    //msg1.obj = dadd[1024] + "+" + dadd1[1024] + "+" + dadd2[1024] + "+" + dadd3[1024];
-                    //msg1.obj =combination[0]+"+"+combination[20480]+"+"+combination[30720]+"+"+combination[40959];//要显示的数据，测试使用
-                    msg1.obj =Receivebytes[5]+"+"+Receivebytes[9120]+"+"+Receivebytes[4448]+"+"+xxx;//要显示的数据，测试使用
-                    msg1.arg1 = (int)estimatedTime;//数据的传输速度
-                    msg1.arg2 = (int) estimatedTime;//arg2表示携带的处理速度信息
-                    handler.sendMessage(msg1);
+//                    Message msg1 = new Message();
+//                    msg1.what = COMPLETED;
+//                    //msg1.obj = dadd[1024] + "+" + dadd1[1024] + "+" + dadd2[1024] + "+" + dadd3[1024];
+//                    //msg1.obj =combination[0]+"+"+combination[20480]+"+"+combination[30720]+"+"+combination[40959];//要显示的数据，测试使用
+//                    msg1.obj =Receivebytes[5]+"+"+Receivebytes[9120]+"+"+Receivebytes[4448]+"+"+xxx;//要显示的数据，测试使用
+//                    msg1.arg1 = (int)estimatedTime;//数据的传输速度
+//                    msg1.arg2 = (int) estimatedTime;//arg2表示携带的处理速度信息
+//                    handler.sendMessage(msg1);
                     r.data = Receivebytes;//拼接好的数据传递出去
                     //r.speed = t;
                     r.flag = true;
@@ -505,11 +505,11 @@ public class main1 extends Activity {
 
                     long estimatedTime = System.nanoTime() - startTime;
 
-                    int[] dadd = new int[4*1024];
-                    int[] dadd1 = new int[4*1024];
-                    int[] dadd2 = new int[4*1024];
-                    int[] dadd3 = new int[4*1024];
-
+                    int[] dadd = new int[2*1024];
+                    int[] dadd1 = new int[2*1024];
+                    int[] dadd2 = new int[2*1024];
+                    int[] dadd3 = new int[2*1024];
+//我们在实际区分4个通道的数据的时候可以用for遍历combination数组寻找表头然后放入指定的容器
 //                    for (int i=0;i<combination.length;i++)//可以用foreach
 //                    {
 //
@@ -579,14 +579,14 @@ public class main1 extends Activity {
                     }
 
                     //set_TubeA1_data(data_a, data_a1, data_b, data_b1);//调用传入通道A数据函数
-//                    Message msg1 = new Message();
-//                    msg1.what = COMPLETED;
-//                    msg1.obj = dadd[1024] + "+" + dadd1[1024] + "+" + dadd2[1024] + "+" + dadd3[1024];
-//                    //msg1.obj =combination[0]+"+"+combination[20480]+"+"+combination[30720]+"+"+combination[40959];//要显示的数据，测试使用
-//                    //msg1.obj =r.data[0]+"+"+r.data[40960]+"+"+r.data[61440]+"+"+r.data[81919];//要显示的数据，测试使用
-//                    msg1.arg1 = r.speed;//数据的传输速度
-//                    msg1.arg2 = (int) estimatedTime;//arg2表示携带的处理速度信息
-//                    handler.sendMessage(msg1);
+                    Message msg1 = new Message();
+                    msg1.what = COMPLETED;
+                    msg1.obj = dadd[2] + "+" + dadd1[2] + "+" + dadd2[2] + "+" + dadd3[2];
+                    //msg1.obj =combination[0]+"+"+combination[20480]+"+"+combination[30720]+"+"+combination[40959];//要显示的数据，测试使用
+                    //msg1.obj =r.data[0]+"+"+r.data[40960]+"+"+r.data[61440]+"+"+r.data[81919];//要显示的数据，测试使用
+                    msg1.arg1 = r.speed;//数据的传输速度
+                    msg1.arg2 = (int) estimatedTime;//arg2表示携带的处理速度信息
+                    handler.sendMessage(msg1);
                     r.flag = false;
                     r.notify();
                     setchange(true);
