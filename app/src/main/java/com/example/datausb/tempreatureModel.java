@@ -128,9 +128,10 @@ public class tempreatureModel extends android.app.Fragment {
         }
 
         public void run() {
-            while (true) {
+            try {//捕获线程运行中切换界面而产生的的空指针异常，防止程序崩溃。
+            while (!((main1) getActivity()).stoptempreturemodelthread) {
 
-                try {//捕获线程运行中切换界面而产生的的空指针异常，防止程序崩溃。
+
 
 
                     synchronized (((main1) getActivity()).dta) {//所有的等待和唤醒的锁都是同一个，这里选用了Activity中的一个对对象
@@ -271,11 +272,11 @@ public class tempreatureModel extends android.app.Fragment {
                     }
 
 
-                } catch (NullPointerException e) {
-                    Log.d("hh", "huazuohiao");
-
-
                 }
+                }
+            catch (NullPointerException e) {
+                Log.d("tempretureModel", "温度模式出现空指针异常");
+
 
             }
 

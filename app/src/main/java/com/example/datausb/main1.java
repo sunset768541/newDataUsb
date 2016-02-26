@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -76,6 +77,9 @@ public class main1 extends Activity {
      */
      SharedPreferences preferences;
      SharedPreferences.Editor editor;
+    int oplong;
+    int fragmentnumber;
+    private EditText oplong1;
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -106,6 +110,7 @@ public class main1 extends Activity {
         myUsbManager = (UsbManager) getSystemService(USB_SERVICE);
         usbstate = (TextView) findViewById(R.id.usbstate);
         datasave = (TextView) findViewById(R.id.savestate);
+        oplong1=(EditText)findViewById(R.id.editText5);
         transmmitespeed1 = (TextView) findViewById(R.id.transmitespeed1);
         preferences=getSharedPreferences("opl",MODE_PRIVATE);
         editor=preferences.edit();
@@ -113,6 +118,7 @@ public class main1 extends Activity {
         if (oplong==0){
             Toast.makeText(getApplicationContext(),"还没有设置光纤的长度，请先到系统设置中设置",Toast.LENGTH_SHORT).show();
         }
+
     }
 
     /**
@@ -137,17 +143,27 @@ public class main1 extends Activity {
      */
     class rd implements View.OnClickListener {
         public void onClick(View v) {
+            fragmentnumber=0;
             // setchange(false);
-            int oplong=preferences.getInt("long",0);
+            oplong=preferences.getInt("long",0);
             if (oplong==0){
                 Toast.makeText(getApplicationContext(),"还没有设置光纤的长度，请先到系统设置中设置",Toast.LENGTH_SHORT).show();
             }
             else {
+
+                    re.setSuspend(true);
+                    pro.setSuspend(true);
+
+                setstopcalibratemodelthred(true);
+                setstoptemprturemodelthred(true);
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.contineer, da, "datamodel");
+                transaction.replace(R.id.contineer, da, "datamodel");//datamodel为fragment的tag值，用来在数据处理线程中找到当前的fragment
                 //transaction.addToBackStack(null);
                 //setchange(true);
+                setstopdatamodelthred(false);
                 transaction.commit();
+                re.setSuspend(false);
+                pro.setSuspend(false);
             }
         }
 
@@ -170,22 +186,51 @@ public class main1 extends Activity {
     }
 
     /**
+     * 在fragment中通过判断stopdatamodelthread来确定是否终止线程
+     * setstopdatamodelthred（）方法用来在模式切换按钮按下时改变stopdatamodelthread状态使得该线程终止
+     */
+    boolean stopdatamodelthread=false;
+    public boolean setstopdatamodelthred(boolean kk){
+        stopdatamodelthread=kk;
+        return kk;
+    }
+    boolean stopcalibratemodelthread=false;
+    public boolean setstopcalibratemodelthred(boolean kk){
+        stopcalibratemodelthread=kk;
+        return kk;
+    }
+    boolean stoptempreturemodelthread=false;
+    public boolean setstoptemprturemodelthred(boolean kk){
+        stoptempreturemodelthread=kk;
+        return kk;
+    }
+    /**
      * 按钮calibration的监听函数
      */
     class ca implements View.OnClickListener {
         public void onClick(View v) {
+            fragmentnumber=1;
             //setchange(false);
-            int oplong=preferences.getInt("long",0);
+            oplong=preferences.getInt("long",0);
             if (oplong==0){
                 Toast.makeText(getApplicationContext(),"还没有设置光纤的长度，请先到系统设置中设置",Toast.LENGTH_SHORT).show();
             }
             else {
+                re.setSuspend(true);
+                pro.setSuspend(true);
+                setstopdatamodelthred(true);
+                setstoptemprturemodelthred(true);
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.replace(R.id.contineer, db, "calibratemodel");
                 //transaction.addToBackStack(null);//fragment压入堆栈
                 //setchange(true);
+                setstopcalibratemodelthred(false);
                 transaction.commit();
                 Log.d("l", "hha");
+                re.setSuspend(false);
+                pro.setSuspend(false);
+
+
             }
         }
 
@@ -197,18 +242,27 @@ public class main1 extends Activity {
      */
     class te implements View.OnClickListener {
         public void onClick(View v) {
+            fragmentnumber=2;
             //setchange(false);
-            int oplong=preferences.getInt("long",0);
+             oplong=preferences.getInt("long",0);
             if (oplong==0){
                 Toast.makeText(getApplicationContext(),"还没有设置光纤的长度，请先到系统设置中设置",Toast.LENGTH_SHORT).show();
             }
             else {
+                re.setSuspend(true);
+                pro.setSuspend(true);
+                setstopcalibratemodelthred(true);
+                setstopdatamodelthred(true);
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.contineer, dc, "tempreturemodel");
-                //transaction.addToBackStack(null);
-                //setchange(true);
-                transaction.commit();
-                Log.d("dh", "hha");
+                    transaction.replace(R.id.contineer, dc, "tempreturemodel");
+                    //transaction.addToBackStack(null);
+                    //setchange(true);
+                setstoptemprturemodelthred(false);
+                    transaction.commit();
+                    Log.d("dh", "hha");
+                re.setSuspend(false);
+                pro.setSuspend(false);
+
 
             }
         }
@@ -228,8 +282,6 @@ public class main1 extends Activity {
             //setchange(true);
             transaction.commit();
             Log.d("dh", "hha");
-
-
         }
 
 
@@ -260,8 +312,6 @@ public class main1 extends Activity {
                     } else {
 
                         re.start();
-                        // Log.d("手腕444", "书呵呵呵");
-
                         pro.start();//先不进行数据的处理
                     }
                 }
@@ -292,6 +342,10 @@ public class main1 extends Activity {
          editor.commit();
          return true;
      }
+
+    /**
+     * 数据接收线程，负责从usb的endpoint读取数据
+     */
     public class dataReceiveThread extends Thread {//接收数据的线程
         private boolean suspend = false;
         resource r;
@@ -316,7 +370,7 @@ public class main1 extends Activity {
         }
 
         public void run() {
-            Log.d("hee", "hehheh");
+
             while (true) {
 
                 synchronized (control) {
@@ -342,19 +396,28 @@ public class main1 extends Activity {
 
                         }
                     }
-                    byte[] Receivebytes = new byte[4096];//接收1KB的数据
+                    byte[] Receivebytes = new byte[16384];//注意接收数据务必要为2的n次方，并且bulk的最大为16384，否侧会出现Fatal signal 11 (SIGSEGV)错误
                     long startTime = System.nanoTime();             // 纳秒级
                     //long startTime = System.currentTimeMillis();    // 毫秒级
-                    int xxx = myDeviceConnection.bulkTransfer(epIn, Receivebytes, 4096, 0); //do in another thread
+                    int xxx = myDeviceConnection.bulkTransfer(epIn, Receivebytes, 16384, 0); //do in another thread
                     //  测试的代码
                     //write(Receivebytes);//将接收到的数据直接存储为2进制文件
                     long estimatedTime = System.nanoTime() - startTime;
-                    int t = (int) (4000000 / estimatedTime);
+
+                    //set_TubeA1_data(data_a, data_a1, data_b, data_b1);//调用传入通道A数据函数
+                    Message msg1 = new Message();
+                    msg1.what = COMPLETED;
+                    //msg1.obj = dadd[1024] + "+" + dadd1[1024] + "+" + dadd2[1024] + "+" + dadd3[1024];
+                    //msg1.obj =combination[0]+"+"+combination[20480]+"+"+combination[30720]+"+"+combination[40959];//要显示的数据，测试使用
+                    msg1.obj =Receivebytes[5]+"+"+Receivebytes[9120]+"+"+Receivebytes[4448]+"+"+xxx;//要显示的数据，测试使用
+                    msg1.arg1 = (int)estimatedTime;//数据的传输速度
+                    msg1.arg2 = (int) estimatedTime;//arg2表示携带的处理速度信息
+                    handler.sendMessage(msg1);
                     r.data = Receivebytes;//拼接好的数据传递出去
-                    Log.d("手腕", "wait书呵呵呵");
-                    r.speed = t;
+                    //r.speed = t;
                     r.flag = true;
                     r.notify();
+                    Log.d("接收", "数据接收线程完成");
                 }
             }
 
@@ -418,7 +481,7 @@ public class main1 extends Activity {
                     int p;
                     int p1;
                     int i1 = 0;
-                    int[] combination = new int[2048];//combination用于储存合并后的16bit数据
+                    int[] combination = new int[8192];//combination用于储存合并后的16bit数据
 
                     // for (int i = 0; i < r.data.length; i++) {//报出空指针异常的原因是接收数据还没有处理完，线程就跳转到了这里
                     for (int i = 0; i < r.data.length; i = i + 2) {//数据组合
@@ -442,32 +505,32 @@ public class main1 extends Activity {
 
                     long estimatedTime = System.nanoTime() - startTime;
 
-                    int[] dadd = new int[512];
-                    int[] dadd1 = new int[512];
-                    int[] dadd2 = new int[512];
-                    int[] dadd3 = new int[512];
+                    int[] dadd = new int[4*1024];
+                    int[] dadd1 = new int[4*1024];
+                    int[] dadd2 = new int[4*1024];
+                    int[] dadd3 = new int[4*1024];
 
 //                    for (int i=0;i<combination.length;i++)//可以用foreach
 //                    {
 //
 //                        if(combination[i]==0){
-                    dadd = Arrays.copyOfRange(combination, 0, 511);
+                    dadd = Arrays.copyOfRange(combination, 0, 2048-1);
 
 //                        }
 //                        else{
 //
 //                        }
 //                        if (combination[i]==512){
-                    dadd1 = Arrays.copyOfRange(combination, 512, 1023);
+                    dadd1 = Arrays.copyOfRange(combination, 2048, 4096-1);
 //
 //                        }
 //                        if (combination[i]==1024){
-                    dadd2 = Arrays.copyOfRange(combination, 1024, 1536);
+                    dadd2 = Arrays.copyOfRange(combination, 4096, 6144-1);
 
 //
 //                        }
 //                        if(combination[i]==1536){
-                    dadd3 = Arrays.copyOfRange(combination, 1537, 2048);
+                    dadd3 = Arrays.copyOfRange(combination, 6144, 8192-1);
 
                     // }
 
@@ -487,8 +550,18 @@ public class main1 extends Activity {
                             set_TubeA1_data2(data_b);
                             set_TubeA1_data3(data_b1);
                             dd.flag1 = true;//与fragment中的绘图线程进行生产者与消费者
-                            dataModel frgment1 = (dataModel) getFragmentManager().findFragmentByTag("datamodel");//获取当前的fragment
-                            frgment1.wakeup();//调用fragment中的唤醒方法
+
+                            switch (fragmentnumber) {
+                                case 0:dataModel frgment1 = (dataModel) getFragmentManager().findFragmentByTag("datamodel");//获取当前的fragment
+                                    frgment1.wakeup();//调用fragment中的唤醒方法
+                                case 1:calibrateModel frgment2 = (calibrateModel) getFragmentManager().findFragmentByTag("calibratemodel");//获取当前的fragment
+                                    frgment2.wakeup();//调用fragment中的唤醒方法
+                                case 2:tempreatureModel fragment3=(tempreatureModel)getFragmentManager().findFragmentByTag("tempreturemodel");
+                                    fragment3.wakeup();//调用fragment中的唤醒方法
+                            }
+
+                            //dataModel frgment1 = (dataModel) getFragmentManager().findFragmentByTag("datamodel");//获取当前的fragment
+                            //frgment1.wakeup();//调用fragment中的唤醒方法
                             /**
                              * 先实现数据处理线程的等待，直到该fragment中显示线程显示数据完成后由显示线程对当前的数据处理线程进行唤醒继续运行
                              */
@@ -506,18 +579,19 @@ public class main1 extends Activity {
                     }
 
                     //set_TubeA1_data(data_a, data_a1, data_b, data_b1);//调用传入通道A数据函数
-                    Message msg1 = new Message();
-                    msg1.what = COMPLETED;
-                    msg1.obj = dadd[4] + "+" + dadd1[4] + "+" + dadd2[4] + "+" + dadd3[4];
-                    //msg1.obj =combination[0]+"+"+combination[1]+"+"+combination[2]+"+"+combination[3];//要显示的数据，测试使用
-                    msg1.arg1 = r.speed;//数据的传输速度
-                    msg1.arg2 = (int) estimatedTime;//arg2表示携带的处理速度信息
-                    handler.sendMessage(msg1);
+//                    Message msg1 = new Message();
+//                    msg1.what = COMPLETED;
+//                    msg1.obj = dadd[1024] + "+" + dadd1[1024] + "+" + dadd2[1024] + "+" + dadd3[1024];
+//                    //msg1.obj =combination[0]+"+"+combination[20480]+"+"+combination[30720]+"+"+combination[40959];//要显示的数据，测试使用
+//                    //msg1.obj =r.data[0]+"+"+r.data[40960]+"+"+r.data[61440]+"+"+r.data[81919];//要显示的数据，测试使用
+//                    msg1.arg1 = r.speed;//数据的传输速度
+//                    msg1.arg2 = (int) estimatedTime;//arg2表示携带的处理速度信息
+//                    handler.sendMessage(msg1);
                     r.flag = false;
                     r.notify();
                     setchange(true);
-                    Log.d("数据处理中", "数据处理娲女");
 
+                    Log.d("数据处理", "数据处理线程完成");
                 }
             }
 

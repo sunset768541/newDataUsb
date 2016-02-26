@@ -130,9 +130,10 @@ public class dataModel extends android.app.Fragment {
         }
 
         public void run() {
-            while (true) {
+            try {//捕获线程运行中切换界面而产生的的空指针异常，防止程序崩溃。
 
-                try {//捕获线程运行中切换界面而产生的的空指针异常，防止程序崩溃。
+                while (!((main1) getActivity()).stopdatamodelthread) {
+
 
 
                     synchronized (((main1) getActivity()).dta) {//所有的等待和唤醒的锁都是同一个，这里选用了Activity中的一个对对象
@@ -236,23 +237,23 @@ public class dataModel extends android.app.Fragment {
                             p3.moveTo(20, h / 4 + 50);
                             p4.moveTo(20, h / 2 + 60);
 
-                            for (int i = 1; i < tuba.length; i++) {
-                                p1.lineTo(tuba[i - 1], tuba[i] + h / 5);
+                            for (int i = 0; i < tuba.length; i++) {
+                                p1.lineTo(i, tuba[i] + h / 5);
                             }
                             c.drawPath(p1, tube1);
 
-                            for (int i = 1; i < tuba1.length; i++) {
-                                p2.lineTo(tuba1[i - 1], tuba1[i] + h / 5 + h / 4 + 20);
+                            for (int i = 0; i < tuba1.length; i++) {
+                                p2.lineTo(i, tuba1[i] + h / 5 + h / 4 + 20);
                             }
                             c.drawPath(p2, tube2);
 
-                            for (int i = 1; i < tubeb.length; i++) {
-                                p3.lineTo(tubeb[i - 1], tubeb[i] + h / 3);
+                            for (int i = 0; i < tubeb.length; i++) {
+                                p3.lineTo(i, tubeb[i] + h / 3);
                             }
                             c.drawPath(p3, tube3);
 
-                            for (int i = 1; i < tubeb1.length; i++) {
-                                p4.lineTo(tubeb1[i - 1], tubeb1[i]);
+                            for (int i = 0; i < tubeb1.length; i++) {
+                                p4.lineTo(i, tubeb1[i]);
                             }
                             c.drawPath(p4, tube4);
                             /**
@@ -273,11 +274,11 @@ public class dataModel extends android.app.Fragment {
                     }
 
 
-                } catch (NullPointerException e) {
-                    Log.d("hh", "huazuohiao");
-
-
                 }
+            }
+            catch (NullPointerException e) {
+                Log.d("datamodel", "数据模式出现空指针异常");
+
 
             }
 
