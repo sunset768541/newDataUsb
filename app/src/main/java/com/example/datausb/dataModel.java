@@ -306,6 +306,7 @@ public class dataModel extends android.app.Fragment {
         int [] adptertube=new int[w-10];//设置屏可以显示在屏幕上的数据长度
         int []databuf;
         int interval=data.length/w+1;
+        Log.d("输出间隔",Integer.toString(interval));
         int kkk=0;
         if(interval<=1){
             adptertube=data;

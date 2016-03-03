@@ -3,7 +3,10 @@ package com.example.datausb;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.ContentValues;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
@@ -30,6 +33,7 @@ import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Arrays;
+import java.util.regex.Pattern;
 
 /**
  * Created by sunset on 15/12/11.
@@ -60,7 +64,8 @@ public class main1 extends Activity {
     dataModel da = new dataModel();
     calibrateModel db = new calibrateModel();
     tempreatureModel dc = new tempreatureModel();
-    systemSeting ss=new systemSeting();
+    systemSeting ss = new systemSeting();
+    threeDimModel trd=new threeDimModel();
 
     /**
      * 定义用于携带数据的Bundle
@@ -71,22 +76,28 @@ public class main1 extends Activity {
     Bundle data_b1 = new Bundle();//携带通道B1的数据Bundl
 
     /**
-     *preferences为读取参数的SharePreference的实例
+     * preferences为读取参数的SharePreference的实例
      * editor为修改参数的Shareferecxes.Editor的实例
+     *
      * @param savedInstanceState
      */
-     SharedPreferences preferences;
-     SharedPreferences.Editor editor;
+    SharedPreferences preferences;
+    SharedPreferences.Editor editor;
     int oplong;
     int fragmentnumber;
     private EditText oplong1;
+    SQLiteDatabase mDatabase;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         final boolean b = this.requestWindowFeature(Window.FEATURE_NO_TITLE);//去掉标题栏
 
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);//去掉信息栏
+
         setContentView(R.layout.mainactivity);
+        //执行创建名字为datatusb的数据库，然而实际在内存卡上建立的数据库的名字为filesdatausb.db3
+        mDatabase = SQLiteDatabase.openOrCreateDatabase(this.getFilesDir().toString()+"datausb.db3", null);
         /**
          * 实例化3个按钮用来切换不同的Fragment
          * datamodle用来切换到数据显示模式
@@ -100,8 +111,10 @@ public class main1 extends Activity {
         calibration.setOnClickListener(new ca());
         Button temperature = (Button) findViewById(R.id.button3);
         temperature.setOnClickListener(new te());
-        Button systemSetingselect=(Button)findViewById(R.id.button6);
+        Button systemSetingselect = (Button) findViewById(R.id.button6);
         systemSetingselect.setOnClickListener(new ss());
+        Button threeDim=(Button) findViewById(R.id.button4);
+        threeDim.setOnClickListener(new thr());
         /**
          *
          */
@@ -110,13 +123,13 @@ public class main1 extends Activity {
         myUsbManager = (UsbManager) getSystemService(USB_SERVICE);
         usbstate = (TextView) findViewById(R.id.usbstate);
         datasave = (TextView) findViewById(R.id.savestate);
-        oplong1=(EditText)findViewById(R.id.editText5);
+        oplong1 = (EditText) findViewById(R.id.editText5);
         transmmitespeed1 = (TextView) findViewById(R.id.transmitespeed1);
-        preferences=getSharedPreferences("opl",MODE_PRIVATE);
-        editor=preferences.edit();
-        int oplong=preferences.getInt("long",0);
-        if (oplong==0){
-            Toast.makeText(getApplicationContext(),"还没有设置光纤的长度，请先到系统设置中设置",Toast.LENGTH_SHORT).show();
+        preferences = getSharedPreferences("opl", MODE_PRIVATE);
+        editor = preferences.edit();
+        int oplong = preferences.getInt("long", 0);
+        if (oplong == 0) {
+            Toast.makeText(getApplicationContext(), "还没有设置光纤的长度，请先到系统设置中设置", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -137,22 +150,121 @@ public class main1 extends Activity {
         }
     };
 
+
+    boolean bb = false;
+
+    public boolean getchange() {
+        return bb;
+    }
+
+    public void setchange(boolean cc) {
+        bb = cc;
+        // return bb;
+    }
+
+    /***********************************************
+     * 数据库的操作方法
+     **********************************************/
+    //创建或者获得表格的方法
+    public void creatOrgettable(SQLiteDatabase ss,String creattable) {
+        ss.execSQL(creattable);
+        Log.d("数据库操作", "数据库建立完成");
+    }
+
+    //向数据库中插入数据,执行一次就向表格中插入一组数据
+    public void insert(SQLiteDatabase db, int currrenttemp, int[] tuebdata,String tablename) {
+        //实例化常量值
+        ContentValues cValue = new ContentValues();
+        cValue.put("calibtem", currrenttemp);
+        String ss = "";
+        for (int i = 0; i < tuebdata.length; i++) {
+            ss = ss + Integer.toString(tuebdata[i]) + "!!";
+        }
+        cValue.put("tubedata", ss);
+        //调用insert()方法插入数据
+        db.insert(tablename, null, cValue);
+    }
+
+    //从数据库中读取数据
+    public int[] getfromdatabase(SQLiteDatabase sq,String tablename) {
+        Cursor cursor = sq.query(tablename, null, null, null, null, null, null);
+        //moveToFirst为指针指向了表格的行数
+        cursor.moveToFirst();
+        int currenttem = cursor.getInt(1);//得到第一行的第二个数据
+        String tubedata = cursor.getString(2);//得到第一行的第三个数据
+        String[] result = Pattern.compile("!!").split(tubedata);
+        int[] temp = new int[result.length + 1];
+        temp[result.length] = currenttem;
+        for (int i = 0; i < result.length; i++) {
+            temp[i] = Integer.parseInt(result[i]);
+        }
+        return temp;
+    }
+    //更新数据库中的数据
+    public void updatadatabase(SQLiteDatabase sq,int currenttemp,int [] tubedata,String tablenaem){
+        String ss = "";
+        for (int i = 0; i < tubedata.length; i++) {
+            ss = ss + Integer.toString(tubedata[i]) + "!!";
+        }
+        ContentValues cValue = new ContentValues();
+        cValue.put("calibtem", currenttemp);//
+        cValue.put("tubedata", ss);
+        int affet=sq.update(tablenaem, cValue, "_id=?", new String[]{Integer.toString(1)});//修改主健值为1的一行中的数据
+        if(affet==0){//这样就用updata储存数据而不必用insert了，因为如果每次都标定都用insert那会使数据库一直在递增数据，这样就保证了数据库中的表格中只包含一行标定数据
+            insert(sq,currenttemp,tubedata,tablenaem);
+        }
+    }
+
+
+    /****************************************************************************************
+     * 在fragment中调用已换唤醒main中的线程
+     ***************************************************************************************/
+    public void wakeuppro() {
+        dta.notifyAll();
+    }
+
+    /*****************************************************************************************
+     * 在fragment中通过判断stopdatamodelthread来确定是否终止线程
+     * setstopdatamodelthred（）方法用来在模式切换按钮按下时改变stopdatamodelthread状态使得该线程终止
+     *****************************************************************************************/
+    boolean stopdatamodelthread = false;
+
+    public boolean setstopdatamodelthred(boolean kk) {
+        stopdatamodelthread = kk;
+        return kk;
+    }
+
+    boolean stopcalibratemodelthread = false;
+
+    public boolean setstopcalibratemodelthred(boolean kk) {
+        stopcalibratemodelthread = kk;
+        return kk;
+    }
+
+    boolean stoptempreturemodelthread = false;
+
+    public boolean setstoptemprturemodelthred(boolean kk) {
+        stoptempreturemodelthread = kk;
+        return kk;
+    }
+    /** *****************************************************************************************
+     * 此处下面是各个控制按键的监听函数
+     * *****************************************************************************************/
     /**
      * 按钮datamodle的监听函数
      * 每个FragmentTransanction的commit只能提交一次，所以我们在按下每个按钮时从新实例化一个FragmentTransanction进行提交操作
      */
     class rd implements View.OnClickListener {
         public void onClick(View v) {
-            fragmentnumber=0;
+            fragmentnumber = 0;
             // setchange(false);
-            oplong=preferences.getInt("long",0);
-            if (oplong==0){
-                Toast.makeText(getApplicationContext(),"还没有设置光纤的长度，请先到系统设置中设置",Toast.LENGTH_SHORT).show();
-            }
-            else {
+            oplong = preferences.getInt("long", 0);
+            if (oplong == 0) {
+                Toast.makeText(getApplicationContext(), "还没有设置光纤的长度，请先到系统设置中设置", Toast.LENGTH_SHORT).show();
+            } else {
 
-                    re.setSuspend(true);
-                    pro.setSuspend(true);
+                re.setSuspend(true);
+                pro.setSuspend(true);
 
                 setstopcalibratemodelthred(true);
                 setstoptemprturemodelthred(true);
@@ -166,56 +278,19 @@ public class main1 extends Activity {
                 pro.setSuspend(false);
             }
         }
-
-
     }
 
-    boolean bb = false;
-
-    public boolean getchange() {
-        return bb;
-    }
-
-    public void setchange(boolean cc) {
-        bb = cc;
-        // return bb;
-    }
-
-    public void wakeuppro() {
-        dta.notifyAll();
-    }
-
-    /**
-     * 在fragment中通过判断stopdatamodelthread来确定是否终止线程
-     * setstopdatamodelthred（）方法用来在模式切换按钮按下时改变stopdatamodelthread状态使得该线程终止
-     */
-    boolean stopdatamodelthread=false;
-    public boolean setstopdatamodelthred(boolean kk){
-        stopdatamodelthread=kk;
-        return kk;
-    }
-    boolean stopcalibratemodelthread=false;
-    public boolean setstopcalibratemodelthred(boolean kk){
-        stopcalibratemodelthread=kk;
-        return kk;
-    }
-    boolean stoptempreturemodelthread=false;
-    public boolean setstoptemprturemodelthred(boolean kk){
-        stoptempreturemodelthread=kk;
-        return kk;
-    }
     /**
      * 按钮calibration的监听函数
      */
     class ca implements View.OnClickListener {
         public void onClick(View v) {
-            fragmentnumber=1;
+            fragmentnumber = 1;
             //setchange(false);
-            oplong=preferences.getInt("long",0);
-            if (oplong==0){
-                Toast.makeText(getApplicationContext(),"还没有设置光纤的长度，请先到系统设置中设置",Toast.LENGTH_SHORT).show();
-            }
-            else {
+            oplong = preferences.getInt("long", 0);
+            if (oplong == 0) {
+                Toast.makeText(getApplicationContext(), "还没有设置光纤的长度，请先到系统设置中设置", Toast.LENGTH_SHORT).show();
+            } else {
                 re.setSuspend(true);
                 pro.setSuspend(true);
                 setstopdatamodelthred(true);
@@ -242,24 +317,23 @@ public class main1 extends Activity {
      */
     class te implements View.OnClickListener {
         public void onClick(View v) {
-            fragmentnumber=2;
+            fragmentnumber = 2;
             //setchange(false);
-             oplong=preferences.getInt("long",0);
-            if (oplong==0){
-                Toast.makeText(getApplicationContext(),"还没有设置光纤的长度，请先到系统设置中设置",Toast.LENGTH_SHORT).show();
-            }
-            else {
+            oplong = preferences.getInt("long", 0);
+            if (oplong == 0) {
+                Toast.makeText(getApplicationContext(), "还没有设置光纤的长度，请先到系统设置中设置", Toast.LENGTH_SHORT).show();
+            } else {
                 re.setSuspend(true);
                 pro.setSuspend(true);
                 setstopcalibratemodelthred(true);
                 setstopdatamodelthred(true);
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                    transaction.replace(R.id.contineer, dc, "tempreturemodel");
-                    //transaction.addToBackStack(null);
-                    //setchange(true);
+                transaction.replace(R.id.contineer, dc, "tempreturemodel");
+                //transaction.addToBackStack(null);
+                //setchange(true);
                 setstoptemprturemodelthred(false);
-                    transaction.commit();
-                    Log.d("dh", "hha");
+                transaction.commit();
+                Log.d("dh", "hha");
                 re.setSuspend(false);
                 pro.setSuspend(false);
 
@@ -285,7 +359,22 @@ public class main1 extends Activity {
         }
 
 
+    }/**
+     * 3D模式设置按键的监听函数
+     */
+    class thr implements View.OnClickListener {
+        public void onClick(View v) {
+            //setchange(false);
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.replace(R.id.contineer, trd, "threed");
+            //transaction.addToBackStack(null);
+            //setchange(true);
+            transaction.commit();
+        }
+
+
     }
+
     /**
      * 打开设备的togglebutton监听函数
      */
@@ -301,7 +390,7 @@ public class main1 extends Activity {
             if (tgg.isChecked()) {
                 //  Toast.makeText(main1.this, "你喜欢球类运动", Toast.LENGTH_SHORT).show();
                 enumerateDevice();//打开应用时枚举设备
-                if(myUsbDevice!=null) {
+                if (myUsbDevice != null) {
                     tgg.setBackgroundColor(Color.GREEN);
                     findInterface();//找到设备接口
                     openDevice();//打开设备
@@ -314,9 +403,8 @@ public class main1 extends Activity {
                         re.start();
                         pro.start();//先不进行数据的处理
                     }
-                }
-                else{
-                    Toast.makeText(getApplicationContext(),"无法打开设备，USB设备非数据采集卡，请确认后重试",
+                } else {
+                    Toast.makeText(getApplicationContext(), "无法打开设备，USB设备非数据采集卡，请确认后重试",
                             Toast.LENGTH_SHORT).show();
                 }
 
@@ -334,18 +422,17 @@ public class main1 extends Activity {
     }
 
     /**
-     * 设置参数的方法
-     *
+     * 设置光纤长度参数的方法
      */
-     public boolean setpref(int opl){
-         editor.putInt("long",opl);
-         editor.commit();
-         return true;
-     }
+    public boolean setpref(int opl) {
+        editor.putInt("long", opl);
+        editor.commit();
+        return true;
+    }
 
-    /**
+    /*******************************************************************************************
      * 数据接收线程，负责从usb的endpoint读取数据
-     */
+     ******************************************************************************************/
     public class dataReceiveThread extends Thread {//接收数据的线程
         private boolean suspend = false;
         resource r;
@@ -424,10 +511,10 @@ public class main1 extends Activity {
         }
     }
 
-
     /**
+     * ****************************************************************************************
      * dataProcess线程是将从USB接收的8bit数据合成16bit信息并显示,//分类数据传输到各自的通道
-     */
+     *****************************************************************************************/
     public class dataProcess extends Thread {//接收数据的线程
         // private  final int COMPLETED = 0;
         resource r;
@@ -505,32 +592,32 @@ public class main1 extends Activity {
 
                     long estimatedTime = System.nanoTime() - startTime;
 
-                    int[] dadd = new int[2*1024];
-                    int[] dadd1 = new int[2*1024];
-                    int[] dadd2 = new int[2*1024];
-                    int[] dadd3 = new int[2*1024];
+                    int[] dadd = new int[2 * 1024];
+                    int[] dadd1 = new int[2 * 1024];
+                    int[] dadd2 = new int[2 * 1024];
+                    int[] dadd3 = new int[2 * 1024];
 //我们在实际区分4个通道的数据的时候可以用for遍历combination数组寻找表头然后放入指定的容器
 //                    for (int i=0;i<combination.length;i++)//可以用foreach
 //                    {
 //
 //                        if(combination[i]==0){
-                    dadd = Arrays.copyOfRange(combination, 0, 2048-1);
+                    dadd = Arrays.copyOfRange(combination, 0, 2048 - 1);
 
 //                        }
 //                        else{
 //
 //                        }
 //                        if (combination[i]==512){
-                    dadd1 = Arrays.copyOfRange(combination, 2048, 4096-1);
+                    dadd1 = Arrays.copyOfRange(combination, 2048, 4096 - 1);
 //
 //                        }
 //                        if (combination[i]==1024){
-                    dadd2 = Arrays.copyOfRange(combination, 4096, 6144-1);
+                    dadd2 = Arrays.copyOfRange(combination, 4096, 6144 - 1);
 
 //
 //                        }
 //                        if(combination[i]==1536){
-                    dadd3 = Arrays.copyOfRange(combination, 6144, 8192-1);
+                    dadd3 = Arrays.copyOfRange(combination, 6144, 8192 - 1);
 
                     // }
 
@@ -552,11 +639,14 @@ public class main1 extends Activity {
                             dd.flag1 = true;//与fragment中的绘图线程进行生产者与消费者
 
                             switch (fragmentnumber) {
-                                case 0:dataModel frgment1 = (dataModel) getFragmentManager().findFragmentByTag("datamodel");//获取当前的fragment
+                                case 0:
+                                    dataModel frgment1 = (dataModel) getFragmentManager().findFragmentByTag("datamodel");//获取当前的fragment
                                     frgment1.wakeup();//调用fragment中的唤醒方法
-                                case 1:calibrateModel frgment2 = (calibrateModel) getFragmentManager().findFragmentByTag("calibratemodel");//获取当前的fragment
+                                case 1:
+                                    calibrateModel frgment2 = (calibrateModel) getFragmentManager().findFragmentByTag("calibratemodel");//获取当前的fragment
                                     frgment2.wakeup();//调用fragment中的唤醒方法
-                                case 2:tempreatureModel fragment3=(tempreatureModel)getFragmentManager().findFragmentByTag("tempreturemodel");
+                                case 2:
+                                    tempreatureModel fragment3 = (tempreatureModel) getFragmentManager().findFragmentByTag("tempreturemodel");
                                     fragment3.wakeup();//调用fragment中的唤醒方法
                             }
 
@@ -609,6 +699,7 @@ public class main1 extends Activity {
 
     /**
      * set_TubeA1_data(Bundle a)函数是数据处理线程调用的函数，存放数据
+     *
      * @param a
      */
     public void set_TubeA1_data(Bundle a) {

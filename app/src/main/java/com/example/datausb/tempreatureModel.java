@@ -20,7 +20,11 @@ import android.view.ViewGroup;
 
 /**
  * Created by sunset on 15/11/19.
+ * /**
+ * tempreturemodel要实现的功能就是先将标定的数据取出来，同时计算tuba和tua1的比值既P（SA），然后利用公式1/T=(K/HV)ln(P(SA(T)/P(SA)(0))+1/T0计算出y值，
+ * 然后在surfaceview上显示出比值的图形
  */
+
 public class tempreatureModel extends android.app.Fragment {
     /**
      * 定义一个SurfaceHolder用来管理surface
