@@ -22,6 +22,8 @@ import android.widget.Toast;
 import com.example.datausb.R;
 import com.example.datausb.main1;
 
+import java.util.Arrays;
+
 /**
  * calibratemodel要实现的功能就是将tuba，tuba1的比值既P（SA）和标定温度T0储存起来，然后在surfaceview上显示出比值的图形
  */
@@ -66,9 +68,23 @@ public class calibrateModel extends android.app.Fragment {
                     //建立表格的sql命令，存在就不建立，不存在就建立
                     String stu_table = "create table if not exists tube1data(_id integer primary key autoincrement,calibtem INTEGER,tubedata text)";
                     ((main1) getActivity()).creatOrgettable(((main1) getActivity()).mDatabase, stu_table);
+                    int[] tuba = ((main1) getActivity()).get_TubeA1_data().getIntArray("tubea");
+                    int[] tuba1 = ((main1) getActivity()).get_TubeA1_data1().getIntArray("tubea1");
+                    float [] PSA=new float[tuba.length];
+                    for (int i=0;i<tuba.length;i++){
+                        if(tuba[i]==0){
+                            PSA[i]=0;
+                        }
 
+                        else {
+
+                            PSA[i]=(float)tuba1[i]/tuba[i];
+                           // Log.e("PAS",Float.valueOf(PSA[i]).toString());
+                        }
+
+                    }
                     //标定直接计算出P（SA）储存。
-                    // ((main1) getActivity()).updatadatabase(((main1) getActivity()).mDatabase, Integer.valueOf(editT0.getText().toString()),P（SA）, tablename);
+                    ((main1) getActivity()).updatadatabase(((main1) getActivity()).mDatabase, Integer.valueOf(editT0.getText().toString()),PSA, tablename);
                   // db= SQLiteDatabase.openOrCreateDatabase("/mny/db/datausb.db3",null);
                     //db.execSQL("insert into news_inf values(null,?,?)",new String[]{});
                     //开始标定
@@ -86,6 +102,22 @@ public class calibrateModel extends android.app.Fragment {
                     String tablename = "tube2data";
                     String stu_table = "create table if not exists tube2data(_id integer primary key autoincrement,calibtem INTEGER,tubedata text)";
                     ((main1) getActivity()).creatOrgettable(((main1) getActivity()).mDatabase, stu_table);
+                    int[] tubeb = ((main1) getActivity()).get_TubeA1_data2().getIntArray("tubeb");
+                    int[] tubeb1 = ((main1) getActivity()).get_TubeA1_data3().getIntArray("tubeb1");
+                    float [] PSA=new float[tubeb.length];
+                    for (int i=0;i<tubeb.length;i++){
+                        if(tubeb[i]==0){
+                            PSA[i]=0;
+                        }
+                        else PSA[i]=(float)tubeb1[i]/tubeb[i];
+                       // Log.e("PAS",Float.valueOf(PSA[i]).toString());
+                    }
+
+                    //标定直接计算出P（SA）储存。
+                    ((main1) getActivity()).updatadatabase(((main1) getActivity()).mDatabase, Integer.valueOf(editT1.getText().toString()),PSA, tablename);
+                    // db= SQLiteDatabase.openOrCreateDatabase("/mny/db/datausb.db3",null);
+                    //db.execSQL("insert into news_inf values(null,?,?)",new String[]{});
+                    //开始标定
                 }
                 //标定按钮的监听函数
             }
@@ -200,6 +232,25 @@ public class calibrateModel extends android.app.Fragment {
                                 int[] tuba1 = ((main1) getActivity()).get_TubeA1_data1().getIntArray("tubea1");
                                 int[] tubeb = ((main1) getActivity()).get_TubeA1_data2().getIntArray("tubeb");
                                 int[] tubeb1 = ((main1) getActivity()).get_TubeA1_data3().getIntArray("tubeb1");
+                                /**
+                                 * 下面是根据通道1234的数据计算标定光功率的PSA
+                                 */
+                                float [] PSA1=new float[tuba.length];
+                                float [] PSA2=new float[tuba.length];
+                                for (int i=0;i<tuba.length;i++){
+                                    if(tuba[i]==0){
+                                        PSA1[i]=0;
+                                    }
+                                    else
+                                    {
+                                        PSA1[i]=(float)tuba1[i]/tuba[i];
+                                  //      Log.e("data",Float.valueOf(PSA1[i]).toString()+" tuba1 "+Integer.valueOf(tuba1[i]).toString()+" tuba "+Integer.valueOf(tuba[i]).toString());
+                                    }
+                                    if(tubeb[i]==0){
+                                        PSA2[i]=0;
+                                    }
+                                    else PSA2[i]=(float)tubeb1[i]/tubeb[i];
+                                }
 
                                 /**
                                  * 定义了两支画笔
@@ -245,62 +296,38 @@ public class calibrateModel extends android.app.Fragment {
                                 synchronized (holder) {
                                     Path p1 = new Path();
                                     Path p2 = new Path();
-                                    Path p3 = new Path();
-                                    Path p4 = new Path();
+
 
                                     Paint tube1 = new Paint();
                                     Paint tube2 = new Paint();
-                                    Paint tube3 = new Paint();
-                                    Paint tube4 = new Paint();
 
-                                    tube1.setColor(Color.GREEN);
+                                    tube1.setColor(Color.RED);
                                     tube1.setStyle(Paint.Style.STROKE);
                                     tube1.setAntiAlias(true);
                                     tube1.setStrokeWidth(1);
                                     PathEffect pe1 = new CornerPathEffect(10);
                                     tube1.setPathEffect(pe1);
 
-                                    tube2.setColor(Color.RED);
+                                    tube2.setColor(Color.GREEN);
                                     tube2.setStyle(Paint.Style.STROKE);
                                     tube2.setAntiAlias(true);
                                     tube2.setStrokeWidth(1);
                                     tube2.setPathEffect(pe1);
 
-                                    tube3.setColor(Color.BLUE);
-                                    tube3.setStyle(Paint.Style.STROKE);
-                                    tube3.setAntiAlias(true);
-                                    tube3.setStrokeWidth(1);
-                                    tube3.setPathEffect(pe1);
 
-                                    tube4.setARGB(255, 255, 255, 17);
-                                    tube4.setStyle(Paint.Style.STROKE);
-                                    tube4.setAntiAlias(true);
-                                    tube4.setStrokeWidth(1);
-                                    tube4.setPathEffect(pe1);
-                                    p1.moveTo(20, h / 8 + 30);
-                                    p2.moveTo(20, h / 6 + 40);
-                                    p3.moveTo(20, h / 4 + 50);
-                                    p4.moveTo(20, h / 2 + 60);
+                                    p1.moveTo(20, 3*h/4);
+                                    p2.moveTo(20, h/2);
 
-                                    for (int i = 1; i < tuba.length; i++) {
-                                        p1.lineTo(tuba[i - 1], tuba[i] + h / 5);
+                                    float [] adp1=screenadapter(PSA1,w);
+                                    float [] adp2=screenadapter(PSA2,w);
+                                    for (int i = 1; i < adp1.length; i++) {
+                                        p1.lineTo(i+25, -adp1[i]+3*h/4);
+                                        p2.lineTo(i+25, -adp2[i] +h/2);
                                     }
                                     c.drawPath(p1, tube1);
-
-                                    for (int i = 1; i < tuba1.length; i++) {
-                                        p2.lineTo(tuba1[i - 1], tuba1[i] + h / 5 + h / 4 + 20);
-                                    }
                                     c.drawPath(p2, tube2);
 
-                                    for (int i = 1; i < tubeb.length; i++) {
-                                        p3.lineTo(tubeb[i - 1], tubeb[i] + h / 3);
-                                    }
-                                    c.drawPath(p3, tube3);
 
-                                    for (int i = 1; i < tubeb1.length; i++) {
-                                        p4.lineTo(tubeb1[i - 1], tubeb1[i]);
-                                    }
-                                    c.drawPath(p4, tube4);
                                     /**
                                      * 结束锁定画布并显示
                                      */
@@ -312,7 +339,7 @@ public class calibrateModel extends android.app.Fragment {
 
                                     ((main1) getActivity()).dta.flag1 = false;
                                     ((main1) getActivity()).wakeuppro();
-                                    Log.d("绘图线程run", "绘制数据图像的方法完成方法");
+                                    //Log.d("绘图线程run", "绘制数据图像的方法完成方法");
                                 }
 
 
@@ -328,7 +355,34 @@ public class calibrateModel extends android.app.Fragment {
 
                 }
             }
+    //进行屏幕大小适配的方法
+    public float [] screenadapter(float [] data,int w){
+        float [] adptertube=new float[w-10];//设置屏可以显示在屏幕上的数据长度
+        float []databuf;
+        int interval=data.length/w+1;
+        // Log.d("输出间隔",Integer.toString(interval)+"    "+Integer.valueOf(data.length).toString()+"   "+Integer.valueOf(w).toString());
+        int kkk=0;
+        if(interval<=1){
+            adptertube=data;
+        }
+        else {
 
+            for(int i=0;i<data.length;i=i+interval){
+                databuf= Arrays.copyOfRange(data, i, i + interval);
+                adptertube[kkk]=max(databuf);//这里出现了空指针异常
+                kkk=kkk+1;
+            }
+        }
+
+        return adptertube;
+    }
+    //对一个数组输出最大值方法
+    public float  max(float [] a){
+        float b;
+        Arrays.sort(a);
+        b= a[a.length-1];
+        return b;
+    }
         }
 
 

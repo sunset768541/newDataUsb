@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.ContentValues;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -94,7 +95,7 @@ public class main1 extends Activity {
         final boolean b = this.requestWindowFeature(Window.FEATURE_NO_TITLE);//去掉标题栏
 
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);//去掉信息栏
-
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setContentView(R.layout.mainactivity);
         //执行创建名字为datatusb的数据库，然而实际在内存卡上建立的数据库的名字为filesdatausb.db3
         mDatabase = SQLiteDatabase.openOrCreateDatabase(this.getFilesDir().toString()+"datausb.db3", null);
@@ -172,13 +173,13 @@ public class main1 extends Activity {
     }
 
     //向数据库中插入数据,执行一次就向表格中插入一组数据
-    public void insert(SQLiteDatabase db, int currrenttemp, int[] tuebdata,String tablename) {
+    public void insert(SQLiteDatabase db, int currrenttemp, float[] tuebdata,String tablename) {
         //实例化常量值
         ContentValues cValue = new ContentValues();
         cValue.put("calibtem", currrenttemp);
         String ss = "";
         for (int i = 0; i < tuebdata.length; i++) {
-            ss = ss + Integer.toString(tuebdata[i]) + "!!";
+            ss = ss + Float.toString(tuebdata[i]) + "!!";
         }
         cValue.put("tubedata", ss);
         //调用insert()方法插入数据
@@ -186,25 +187,25 @@ public class main1 extends Activity {
     }
 
     //从数据库中读取数据
-    public int[] getfromdatabase(SQLiteDatabase sq,String tablename) {
+    public float[] getfromdatabase(SQLiteDatabase sq,String tablename) {
         Cursor cursor = sq.query(tablename, null, null, null, null, null, null);
         //moveToFirst为指针指向了表格的行数
         cursor.moveToFirst();
         int currenttem = cursor.getInt(1);//得到第一行的第二个数据
         String tubedata = cursor.getString(2);//得到第一行的第三个数据
         String[] result = Pattern.compile("!!").split(tubedata);
-        int[] temp = new int[result.length + 1];
-        temp[result.length] = currenttem;
+        float[] temp = new float[result.length + 1];
+        temp[result.length] = currenttem;//最后一个存放当前的额温度
         for (int i = 0; i < result.length; i++) {
-            temp[i] = Integer.parseInt(result[i]);
+            temp[i] = Float.parseFloat(result[i]);
         }
         return temp;
     }
     //更新数据库中的数据
-    public void updatadatabase(SQLiteDatabase sq,int currenttemp,int [] tubedata,String tablenaem){
+    public void updatadatabase(SQLiteDatabase sq,int currenttemp,float [] tubedata,String tablenaem){
         String ss = "";
         for (int i = 0; i < tubedata.length; i++) {
-            ss = ss + Integer.toString(tubedata[i]) + "!!";
+            ss = ss + Float.toString(tubedata[i]) + "!!";
         }
         ContentValues cValue = new ContentValues();
         cValue.put("calibtem", currenttemp);//
@@ -504,7 +505,7 @@ public class main1 extends Activity {
                     //r.speed = t;
                     r.flag = true;
                     r.notify();
-                    Log.d("接收", "数据接收线程完成");
+                   // Log.d("接收", "数据接收线程完成");
                 }
             }
 
@@ -681,7 +682,7 @@ public class main1 extends Activity {
                     r.notify();
                     setchange(true);
 
-                    Log.d("数据处理", "数据处理线程完成");
+                   // Log.d("数据处理", "数据处理线程完成");
                 }
             }
 

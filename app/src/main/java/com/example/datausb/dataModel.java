@@ -234,10 +234,10 @@ public class dataModel extends android.app.Fragment {
                             tube4.setAntiAlias(true);
                             tube4.setStrokeWidth(1);
                             tube4.setPathEffect(pe1);
-//                            p1.moveTo(20, h / 8 + 30);
-//                            p2.moveTo(20, h / 6 + 40);
-//                            p3.moveTo(20, h / 4 + 50);
-//                            p4.moveTo(20, h / 2 + 60);
+                            p1.moveTo(20, h-400);
+                            p2.moveTo(20, h-280);
+                            p3.moveTo(20, h-160);
+                            p4.moveTo(20, h-40);
 //注意数据可能数值太大而不能再屏幕上显示，所以我能要把数据转换成光功率的数值进行显示，也方便后续的计算
 //由于 屏幕上的点数有限，所以我们只有在屏幕上显示部分点，我们可以用总的点数除以屏幕上的点数，得出的数就是我们要每几个点显示为一个点，显示的这个点为这几个点中的最大值
 //还有一个实际中存在的问题，每个通道第几个数据并不对应相应的第几个距离。可能还需要排序
@@ -245,32 +245,18 @@ public class dataModel extends android.app.Fragment {
                             int [] adp2=screenadapter(tuba1,w);
                             int [] adp3=screenadapter(tubeb,w);
                             int [] adp4=screenadapter(tubeb1,w);
-                            Log.d("输出adp4最后一个数",Integer.toString(adp4[adp4.length-100]));
-                            Log.d("输出adp4第一个数",Integer.toString(adp4[0]));
-//                            int []adp1=tuba;
-//                            int []adp2=tuba1;
-//                            int []adp3=tubeb;
-//                            int []adp4=tubeb1;
+                            /**
+                             * 在FPGA上传递增的数据的时候，adp1[i]/500,其中500这个数取值影响了图像在y轴上的分布，这个值取小了，图像的纵坐标就显示不全，取太大在屏幕上看的图线的变化就不是很明显
+                             */
                             for (int i = 0; i < adp1.length; i++) {//lineTo显示一条直线是因为纵坐标的数值太大；
-                                p1.lineTo(i, adp1[i]/500+ h / 5);//在实际的的系统2的14次方，也就是16384，还要在乘以参考电压
+                                p1.lineTo(i+25, -adp1[i]/400+h-400);//在实际的的系统2的14次方，也就是16384，还要在乘以参考电压
+                                p2.lineTo(i+25, -adp2[i]/400+  h-280);
+                                p3.lineTo(i+25, -adp3[i]/400+h-160);
+                                p4.lineTo(i+25, -adp4[i]/400+h-40);
                             }
                             c.drawPath(p1, tube1);
-/**
- * 在FPGA上传递增的数据的时候，adp1[i]/500,其中500这个数取值影响了图像在y轴上的分布，这个值取小了，图像的纵坐标就显示不全，取太大在屏幕上看的图线的变化就不是很明显
- */
-                            for (int i = 0; i < adp2.length; i++) {
-                                p2.lineTo(i, adp2[i]/500+ h / 5 + h / 4 + 20);
-                            }
                             c.drawPath(p2, tube2);
-
-                            for (int i = 0; i < adp3.length; i++) {
-                                p3.lineTo(i, adp3[i]/500+ h / 3);
-                            }
                             c.drawPath(p3, tube3);
-
-                            for (int i = 0; i < adp4.length; i++) {
-                                p4.lineTo(i, adp4[i]/500+0.5f*h);
-                            }
                             c.drawPath(p4, tube4);
                             /**
                              * 结束锁定画布并显示
@@ -306,7 +292,7 @@ public class dataModel extends android.app.Fragment {
         int [] adptertube=new int[w-10];//设置屏可以显示在屏幕上的数据长度
         int []databuf;
         int interval=data.length/w+1;
-        Log.d("输出间隔",Integer.toString(interval));
+       // Log.d("输出间隔",Integer.toString(interval)+"    "+Integer.valueOf(data.length).toString()+"   "+Integer.valueOf(w).toString());
         int kkk=0;
         if(interval<=1){
             adptertube=data;

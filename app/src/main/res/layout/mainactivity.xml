@@ -40,9 +40,8 @@
                 android:focusable="true"
                 android:background="@drawable/buttoncolor"
                 android:gravity="center"
-                android:height="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="10dp" />
+                android:layout_marginTop="1dp"
+                android:layout_marginBottom="1dp" />
 
             <Button
                 android:layout_width="wrap_content"
@@ -53,10 +52,9 @@
                 android:layout_weight="1"
                 android:focusable="true"
                 android:background="@drawable/buttoncolor"
-                android:layout_marginTop="10dp"
                 android:gravity="center"
-                android:height="5dp"
-                android:layout_marginBottom="10dp" />
+                android:layout_marginBottom="1dp"
+                android:layout_marginTop="1dp" />
 
             <Button
                 android:layout_width="wrap_content"
@@ -66,10 +64,9 @@
                 android:layout_weight="1"
                 android:focusable="true"
                 android:background="@drawable/buttoncolor"
-                android:layout_marginTop="10dp"
                 android:gravity="center"
-                android:height="5dp"
-                android:layout_marginBottom="10dp" />
+                android:layout_marginTop="1dp"
+                android:layout_marginBottom="1dp" />
 
             <Button
                 android:layout_width="wrap_content"
@@ -79,10 +76,9 @@
                 android:layout_weight="1"
                 android:focusable="true"
                 android:background="@drawable/buttoncolor"
-                android:layout_marginTop="10dp"
                 android:gravity="center"
-                android:height="5dp"
-                android:layout_marginBottom="10dp" />
+                android:layout_marginBottom="1dp"
+                android:layout_marginTop="1dp" />
 
             <Button
                 android:layout_width="wrap_content"
@@ -92,10 +88,9 @@
                 android:layout_weight="1"
                 android:focusable="true"
                 android:background="@drawable/buttoncolor"
-                android:layout_marginTop="10dp"
                 android:gravity="center"
-                android:height="5dp"
-                android:layout_marginBottom="10dp" />
+                android:layout_marginTop="1dp"
+                android:layout_marginBottom="1dp" />
 
             <Button
                 android:layout_width="wrap_content"
@@ -105,10 +100,9 @@
                 android:layout_weight="1"
                 android:focusable="true"
                 android:background="@drawable/buttoncolor"
-                android:layout_marginTop="10dp"
                 android:gravity="center"
-                android:height="5dp"
-                android:layout_marginBottom="10dp" />
+                android:layout_marginBottom="1dp"
+                android:layout_marginTop="1dp" />
 
             <Button
                 android:layout_width="wrap_content"
@@ -118,10 +112,9 @@
                 android:layout_weight="1"
                 android:focusable="true"
                 android:background="@drawable/buttoncolor"
-                android:layout_marginTop="10dp"
                 android:gravity="center"
-                android:height="5dp"
-                android:layout_marginBottom="10dp" />
+                android:layout_marginTop="1dp"
+                android:layout_marginBottom="1dp" />
 
         </LinearLayout>
 
@@ -156,8 +149,7 @@
             android:id="@+id/toggleButton"
             android:textOff="打开设备"
             android:textOn="关闭设备"
-            android:background="@drawable/buttoncolor"
-            android:layout_marginBottom="5dp" />
+            android:background="@drawable/buttoncolor" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
