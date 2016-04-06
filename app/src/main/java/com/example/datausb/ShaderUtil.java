@@ -15,10 +15,8 @@ public class ShaderUtil
    (
 		 int shaderType, //shader的类型  GLES20.GL_VERTEX_SHADER   GLES20.GL_FRAGMENT_SHADER
 		 String source   //shader的脚本字符串
-   )
-
+   ) 
    {
-       Log.d("加载脚本", source);
 	    //创建一个新shader
         int shader = GLES20.glCreateShader(shaderType);
         //若创建成功则加载shader
@@ -40,8 +38,6 @@ public class ShaderUtil
                 shader = 0;      
             }  
         }
-
-
         return shader;
     }
     
@@ -64,17 +60,15 @@ public class ShaderUtil
 
         //创建程序
         int program = GLES20.glCreateProgram();
-
         //若程序创建成功则向程序中加入顶点着色器与片元着色器
         if (program != 0) 
         {
         	//向程序中加入顶点着色器
             GLES20.glAttachShader(program, vertexShader);
-            checkGlError("glAttachShader");
+       //     checkGlError("glAttachShader");
             //向程序中加入片元着色器
-            Log.d("加入顶点", "ok");
             GLES20.glAttachShader(program, pixelShader);
-            checkGlError("glAttachShader");
+//            checkGlError("glAttachShader");
             //链接程序
             GLES20.glLinkProgram(program);
             //存放链接成功program数量的数组

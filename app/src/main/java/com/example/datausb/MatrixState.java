@@ -5,19 +5,20 @@ import android.opengl.Matrix;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.util.Stack;
 
 //存储系统矩阵状态的类
 public class MatrixState 
-{
+{  
 	private static float[] mProjMatrix = new float[16];//4x4矩阵 投影用
     private static float[] mVMatrix = new float[16];//摄像机位置朝向9参数矩阵   
     private static float[] currMatrix;//当前变换矩阵
     public static float[] lightLocation=new float[]{0,0,0};//定位光光源位置
     public static FloatBuffer cameraFB;    
     public static FloatBuffer lightPositionFB;
-    
-    public static Stack<float[]> mStack=new Stack<float[]>();//保护变换矩阵的栈
+      
+    //保护变换矩阵的栈
+    static float[][] mStack=new float[10][16];
+    static int stackTop=-1;
     
     public static void setInitStack()//获取不变换初始矩阵
     {
@@ -27,12 +28,21 @@ public class MatrixState
     
     public static void pushMatrix()//保护变换矩阵
     {
-    	mStack.push(currMatrix.clone());
+    	stackTop++;
+    	for(int i=0;i<16;i++)
+    	{
+    		mStack[stackTop][i]=currMatrix[i];
+    	}
     }
     
     public static void popMatrix()//恢复变换矩阵
     {
-    	currMatrix=mStack.pop();
+    	for(int i=0;i<16;i++)
+    	{
+          //  Log.d("mm",Integer.valueOf(currMatrix.length).toString()+"  "+Integer.valueOf(mStack.length).toString()+"   "+Integer.valueOf(stackTop).toString());
+    		currMatrix[i]=mStack[stackTop][i];
+    	}
+    	stackTop--;
     }
     
     public static void translate(float x,float y,float z)//设置沿xyz轴移动
@@ -45,8 +55,23 @@ public class MatrixState
     	Matrix.rotateM(currMatrix,0,angle,x,y,z);
     }
     
+    public static void scale(float x,float y,float z)
+    {
+    	Matrix.scaleM(currMatrix,0, x, y, z);
+    }
+    
+    //插入自带矩阵
+    public static void matrix(float[] self)
+    {
+    	float[] result=new float[16];
+    	Matrix.multiplyMM(result,0,currMatrix,0,self,0);
+    	currMatrix=result;
+    }
+    
     
     //设置摄像机
+    static ByteBuffer llbb= ByteBuffer.allocateDirect(3*4);
+    static float[] cameraLocation=new float[3];//摄像机位置
     public static void setCamera
     (
     		float cx,	//摄像机位置x
@@ -60,36 +85,35 @@ public class MatrixState
     		float upz   //摄像机UP向量Z分量		
     )
     {
-    	Matrix.setLookAtM
-        (
-        		mVMatrix, 
-        		0, 
-        		cx,
-        		cy,
-        		cz,
-        		tx,
-        		ty,
-        		tz,
-        		upx,
-        		upy,
-        		upz
-        );
-    	
-    	float[] cameraLocation=new float[3];//摄像机位置
-    	cameraLocation[0]=cx;
-    	cameraLocation[1]=cy;
-    	cameraLocation[2]=cz;
-    	
-    	ByteBuffer llbb = ByteBuffer.allocateDirect(3*4);
-        llbb.order(ByteOrder.nativeOrder());//设置字节顺序
-        cameraFB=llbb.asFloatBuffer();
-        cameraFB.put(cameraLocation);
-        cameraFB.position(0);  
+        	Matrix.setLookAtM
+            (
+            		mVMatrix, 
+            		0, 
+            		cx,
+            		cy,
+            		cz,
+            		tx,
+            		ty,
+            		tz,
+            		upx,
+            		upy,
+            		upz
+            );
+        	
+        	cameraLocation[0]=cx;
+        	cameraLocation[1]=cy;
+        	cameraLocation[2]=cz;
+        	
+        	llbb.clear();
+            llbb.order(ByteOrder.nativeOrder());//设置字节顺序
+            cameraFB=llbb.asFloatBuffer();
+            cameraFB.put(cameraLocation);
+            cameraFB.position(0);  
     }
     
     //设置透视投影参数
     public static void setProjectFrustum
-    (
+    ( 
     	float left,		//near面的left
     	float right,    //near面的right
     	float bottom,   //near面的bottom
@@ -98,7 +122,7 @@ public class MatrixState
     	float far       //far面距离
     )
     {
-    	Matrix.frustumM(mProjMatrix, 0, left, right, bottom, top, near, far);    	
+    	Matrix.frustumM(mProjMatrix, 0, left, right, bottom, top, near, far);
     }
     
     //设置正交投影参数
@@ -114,11 +138,10 @@ public class MatrixState
     {    	
     	Matrix.orthoM(mProjMatrix, 0, left, right, bottom, top, near, far);
     }   
-   
     //获取具体物体的总变换矩阵
+    static float[] mMVPMatrix=new float[16];
     public static float[] getFinalMatrix()
-    {
-    	float[] mMVPMatrix=new float[16];
+    {	
     	Matrix.multiplyMM(mMVPMatrix, 0, mVMatrix, 0, currMatrix, 0);
         Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mMVPMatrix, 0);        
         return mMVPMatrix;
@@ -130,15 +153,32 @@ public class MatrixState
         return currMatrix;
     }
     
+    //获取投影矩阵
+    public static float[] getProjMatrix()
+    {
+		return mProjMatrix;
+    }
+    
+    //获取摄像机朝向的矩阵
+    public static float[] getCaMatrix()
+    {
+		return mVMatrix;
+    }
+    
+    
+    
     //设置灯光位置的方法
+    static ByteBuffer llbbL = ByteBuffer.allocateDirect(3*4);
     public static void setLightLocation(float x,float y,float z)
     {
+    	llbbL.clear();
+    	
     	lightLocation[0]=x;
     	lightLocation[1]=y;
     	lightLocation[2]=z;
-    	ByteBuffer llbb = ByteBuffer.allocateDirect(3*4);
-        llbb.order(ByteOrder.nativeOrder());//设置字节顺序
-        lightPositionFB=llbb.asFloatBuffer();
+    	
+        llbbL.order(ByteOrder.nativeOrder());//设置字节顺序
+        lightPositionFB=llbbL.asFloatBuffer();
         lightPositionFB.put(lightLocation);
         lightPositionFB.position(0);
     }

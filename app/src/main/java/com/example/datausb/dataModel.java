@@ -269,7 +269,7 @@ public class dataModel extends android.app.Fragment {
 
                             ((main1) getActivity()).dta.flag1 = false;
                             ((main1) getActivity()).wakeuppro();
-                            Log.d("绘图线程run", "绘制数据图像的方法完成方法");
+                           // Log.d("绘图线程run", "绘制数据图像的方法完成方法");
                         }
 
 

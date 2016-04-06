@@ -159,6 +159,7 @@ public class LoadedObjectVertexNormalTextureLINE
         // GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
          //GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texId);
          //绘制加载的物体
+        GLES20.glLineWidth(5);
          GLES20.glDrawArrays(GLES20.GL_LINE_STRIP,0, vCount);
     }
 }

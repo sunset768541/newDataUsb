@@ -17,6 +17,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.Arrays;
 
@@ -48,8 +49,15 @@ public class tempreatureModel extends android.app.Fragment {
 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);//
-        caliPSA=((main1) getActivity()).getfromdatabase(((main1) getActivity()).mDatabase, "tube1data");
-        caliPSB=((main1) getActivity()).getfromdatabase(((main1) getActivity()).mDatabase, "tube2data");
+        try{
+            caliPSA=((main1) getActivity()).getfromdatabase(((main1) getActivity()).mDatabase, "tube1data");
+            caliPSB=((main1) getActivity()).getfromdatabase(((main1) getActivity()).mDatabase, "tube2data");
+        }
+        catch (Exception e){
+            Toast.makeText(((main1) getActivity()).getApplicationContext(), "标定数据不存在，请先在标定模式下进行标定", Toast.LENGTH_SHORT).show();
+
+        }
+
         /**
          * 获得布局中的surfaceview
          */
@@ -262,7 +270,7 @@ public class tempreatureModel extends android.app.Fragment {
                             for (int i = 1; i < adp1.length; i++) {
                                 p1.lineTo(i+25, -adp1[i]+h /2);
                                 p2.lineTo(i+25, -adp2[i]+h /3);
-                               // Log.e("通道2的温度",Float.valueOf(adp2[i]).toString());
+                               // Log.e("通道1的温度",Float.valueOf(adp1[i]).toString());
                             }
                             c.drawPath(p1, tube1);
                             c.drawPath(p2, tube2);

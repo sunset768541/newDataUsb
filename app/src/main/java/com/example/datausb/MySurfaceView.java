@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLUtils;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import java.io.IOException;
@@ -15,135 +16,194 @@ import java.util.Random;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-class MySurfaceView extends GLSurfaceView 
+import static com.example.datausb.Constant.*;
+import static com.example.datausb.Constant.loadLandforms;
+import static  com.example.datausb.Constant.yArray;
+import static com.example.datausb.threeDimModel.*;
+//import static uuuuuuu.com.example.gamesky.Sample11_6Activity.HEIGHT;
+//import static uuuuuuu.com.example.gamesky.Sample11_6Activity.WIDTH;
+
+public class MySurfaceView extends GLSurfaceView
 {
-	private final float TOUCH_SCALE_FACTOR = 180.0f/320;//角度缩放比例
-    private SceneRenderer mRenderer;//场景渲染器    
-    RotateThread rthread;
-    private float mPreviousY;//上次的触控位置Y坐标
-    private float mPreviousX;//上次的触控位置X坐标
+	static float direction=0;//视线方向
+    static float cx=0;//摄像机x坐标 
+    static float cz=20;//摄像机z坐标
     
-    int textureId;//系统分配的纹理id
+    static float tx=0;//观察目标点x坐标
+    static float tz=0;//观察目标点z坐标   
+    static final float DEGREE_SPAN=(float)(3.0/180.0f*Math.PI);//摄像机每次转动的角度
+    //线程循环的标志位
+    boolean flag=true;
+    float x;
+    float y;
+    float Offset=20;
+	SceneRenderer mRender;
+	float preX;
+	float preY;
+	public MySurfaceView(Context context)
+	{
+		super(context);
+		this.setEGLContextClientVersion(2); //设置使用OPENGL ES2.0
+        mRender = new SceneRenderer();	//创建场景渲染器
+        setRenderer(mRender);				//设置渲染器		        
+        setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);//设置渲染模式为主动渲染 
+	}
 	
-	public MySurfaceView(Context context) {
-        super(context);
-        this.setEGLContextClientVersion(2); //设置使用OPENGL ES2.0
-        mRenderer = new SceneRenderer();	//创建场景渲染器
-        setRenderer(mRenderer);				//设置渲染器		        
-        setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);//设置渲染模式为主动渲染   
-    }
-	
-	//触摸事件回调方法
-    @Override 
-    public boolean onTouchEvent(MotionEvent e) 
-    {
-        float y = e.getY();
-        float x = e.getX();
-        switch (e.getAction()) {
-        case MotionEvent.ACTION_MOVE:
-            float dy = y - mPreviousY;//计算触控笔Y位移
-            float dx = x - mPreviousX;//计算触控笔X位移
-            mRenderer.yAngle += dx * TOUCH_SCALE_FACTOR;//设置沿x轴旋转角度
-            mRenderer.xAngle+= dy * TOUCH_SCALE_FACTOR;//设置沿z轴旋转角度
-            requestRender();//重绘画面
-        }
-        mPreviousY = y;//记录触控笔位置
-        mPreviousX = x;//记录触控笔位置
-        return true;
-    }
+	@Override
+	public boolean onTouchEvent(MotionEvent event)
+	{
+		x=event.getX();
+		y=event.getY();
+		switch(event.getAction())
+		{
+			case MotionEvent.ACTION_DOWN:
+				flag=true;
+				new Thread()
+				{
+					@Override
+					public void run()
+					{
+						while(flag)
+						{
 
+							if(x>0&&x<WIDTH/2&&y>0&&y<HEIGHT/2)
+							{//向前
+								cx=cx-(float)Math.sin(direction)*1.0f;
+								cz=cz-(float)Math.cos(direction)*1.0f;
+							}
+							else if(x>WIDTH/2&&x<WIDTH&&y>0&&y<HEIGHT/2)
+							{//向后
+								cx=cx+(float)Math.sin(direction)*1.0f;
+								cz=cz+(float)Math.cos(direction)*1.0f;
+							}
+							else if(x>0&&x<WIDTH/2&&y>HEIGHT/2&&y<HEIGHT)
+							{
+								direction=direction+DEGREE_SPAN;
+							}
+							else if(x>WIDTH/2&&x<WIDTH&&y>HEIGHT/2&&y<HEIGHT)
+							{
+								direction=direction-DEGREE_SPAN;
+							}
+							try
+							{
+								Thread.sleep(100);
+							}
+							catch(Exception e)
+							{
+								e.printStackTrace();
+							}
+						}
+					}
+				}.start();
+
+				break;
+			case MotionEvent.ACTION_UP:
+				flag=false;
+			break;
+		}
+		
+		//设置新的观察目标点XZ坐标
+		tx=(float)(cx-Math.sin(direction)*Offset);//观察目标点x坐标 
+        tz=(float)(cz-Math.cos(direction)*Offset);//观察目标点z坐标
+		return true;
+	}
+	
 	private class SceneRenderer implements Renderer
-    {  
-		float yAngle;//绕Y轴旋转的角度
-    	float xAngle; //绕Z轴旋转的角度
-    	//从指定的obj文件中加载对象
-		LoadedObjectVertexNormalTexture lovo;
+    {
+		Mountion mountion;
+		//山的纹理id
+		int mountionId;
+		int rockId;
+		Sky sky;
+		int skyId;
 		LoadedObjectVertexNormalTextureLINE lovo1;
-
-        public void onDrawFrame(GL10 gl) 
-        { 
-        	//清除深度缓冲与颜色缓冲
+		RotateThread rthread;
+		@Override
+		public void onDrawFrame(GL10 gl)
+		{
+			//清除深度缓冲与颜色缓冲
             GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
-
-            //坐标系推远
+            //设置新的摄像机位置
+            MatrixState.setCamera(cx, 5, cz, tx, 2, tz, 0, 1, 0);
             MatrixState.pushMatrix();
-            MatrixState.translate(0, -2f, -25f);   //ch.obj
-            //绕Y轴、Z轴旋转
-            MatrixState.rotate(yAngle, 0, 1, 0);
-            MatrixState.rotate(xAngle, 1, 0, 0);
-            //若加载的物体部位空则绘制物体
-            if(lovo1!=null)
-            {
-            	lovo.drawSelf(textureId);//画笔2
-            lovo1.drawSelf();//画笔一
-            }
-            MatrixState.popMatrix();                  
-        }  
-
-        public void onSurfaceChanged(GL10 gl, int width, int height) {
-            //设置视窗大小及位置 
+            mountion.drawSelf(mountionId, rockId);
+            MatrixState.popMatrix();
+            
+            MatrixState.pushMatrix();
+            MatrixState.translate(0, -2, 0);
+            sky.drawSelf(skyId);
+			if(lovo1!=null)
+			{
+				lovo1.drawSelf();//画笔一
+			}
+			MatrixState.popMatrix();
+		}
+		@Override
+		public void onSurfaceChanged(GL10 gl, int width, int height)
+		{
+			//设置视窗大小及位置 
         	GLES20.glViewport(0, 0, width, height); 
         	//计算GLSurfaceView的宽高比
             float ratio = (float) width / height;
             //调用此方法计算产生透视投影矩阵
-            MatrixState.setProjectFrustum(-ratio, ratio, -1, 1, 2, 100);
+            MatrixState.setProjectFrustum(-ratio, ratio, -1, 1, 1, 3000);
             //调用此方法产生摄像机9参数位置矩阵
-            MatrixState.setCamera(0,0,0,0f,0f,-1f,0f,1.0f,0.0f);
-        }
-
-        public void onSurfaceCreated(GL10 gl, EGLConfig config) 
-        {
-            //设置屏幕背景色RGBA
-            GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+            MatrixState.setCamera(cx, 5, cz, tx, 2, tz, 0, 1, 0);
+		}
+		@Override
+		public void onSurfaceCreated(GL10 gl, EGLConfig config)
+		{
+			//设置屏幕背景色RGBA
+            GLES20.glClearColor(1.0f,1.0f,1.0f,1.0f);
             //打开深度检测
             GLES20.glEnable(GLES20.GL_DEPTH_TEST);
-            //打开背面剪裁   
-            GLES20.glEnable(GLES20.GL_CULL_FACE);
-            //初始化变换矩阵
             MatrixState.setInitStack();
-            //初始化光源位置
-            MatrixState.setLightLocation(40, 10, 20);
-            //加载要绘制的物体
-          lovo=LoadUtil.loadFromFile("ch_t.obj", MySurfaceView.this.getResources(),MySurfaceView.this);
-            lovo1=LoadUtilLINE.loadFromFile("wy.obj", MySurfaceView.this.getResources(),MySurfaceView.this);
-            rthread=new RotateThread();
-            rthread.start();
-            //加载纹理
-            textureId=initTexture(R.drawable.ghxp);
-        }
+    		yArray=loadLandforms(MySurfaceView.this.getResources(), R.drawable.land);
+           
+            mountion=new Mountion(MySurfaceView.this,yArray,yArray.length-1,yArray[0].length-1);
+            sky=new Sky(MySurfaceView.this);
+            //初始化纹理
+            skyId=initTexture(R.drawable.sky,false); 
+            mountionId=initTexture(R.drawable.grass,true);
+            rockId=initTexture(R.drawable.rock,true);
+			lovo1=LoadUtilLINE.loadFromFile("line.obj", MySurfaceView.this.getResources(), MySurfaceView.this);
+			rthread=new RotateThread();
+			rthread.start();
+		}  
     }
-  	public int initTexture(int drawableId)//textureId
+	//生成纹理Id的方法
+	public int initTexture(int drawableId,boolean isMipmap)
 	{
 		//生成纹理ID
 		int[] textures = new int[1];
-		//创建纹理，用函数 glGenTextures() 完成，函数返回新创建的纹理的 ID。此函数可以创建 n 个纹理，并将纹理ID 放在 textures 中:
 		GLES20.glGenTextures
 		(
 				1,          //产生的纹理id的数量
 				textures,   //纹理id的数组
 				0           //偏移量
 		);    
-		int textureId=textures[0];    
-		//设置过滤器
-		/*
-		一般我们设置两个， 一个放大器的: GL_TEXTURE_MAG_FILTER, 一个缩小器的: GL_TEXTURE_MIN_FILTER.
-		当它比放大得原始的纹理大 ( GL_TEXTURE_MAG_FILTER )或缩小得比原始得纹理小( GL_TEXTURE_MIN_FILTER )时OpenGL采用的滤波方式。
-		通常这两种情况下我都采用 GL_LINEAR 。这使得纹理从很远处到离屏幕很近时都平滑显示。使用 GL_LINEAR 需要CPU和显卡做更多的运算。
-		如果您的机器很慢，您也许应该采用 GL_NEAREST 。
-		过滤的纹理在放大的时候，看起来斑驳的很(马赛克)。您也可以结合这两种滤波方式。在近处时使用 GL_LINEAR ，远处时 GL_NEAREST 。
-		**/
+		int textureId=textures[0];
 		GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureId);
-		GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER,GLES20.GL_NEAREST);
-		GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D,GLES20.GL_TEXTURE_MAG_FILTER,GLES20.GL_LINEAR);
+		if(isMipmap)
+		{
+			GLES20.glTexParameteri ( GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR_MIPMAP_LINEAR);   
+			GLES20.glTexParameteri ( GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR_MIPMAP_NEAREST);
+		}
+		else
+		{
+			GLES20.glTexParameteri ( GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);   
+			GLES20.glTexParameteri ( GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
+		}
+		//ST方向纹理拉伸方式
 		GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S,GLES20.GL_REPEAT);
-		GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T,GLES20.GL_REPEAT);
+		GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T,GLES20.GL_REPEAT);		
         
-        //通过输入流加载图片===============begin===================
+        //通过输入流加载图片
         InputStream is = this.getResources().openRawResource(drawableId);
         Bitmap bitmapTmp;
-        try 
+        try   
         {
-        	bitmapTmp = BitmapFactory.decodeStream(is);
+        	bitmapTmp = BitmapFactory.decodeStream(is);        	
         } 
         finally 
         {
@@ -155,54 +215,51 @@ class MySurfaceView extends GLSurfaceView
             {
                 e.printStackTrace();
             }
+        }   
+        
+        //实际加载纹理
+        GLUtils.texImage2D
+        (
+        		GLES20.GL_TEXTURE_2D,   //纹理类型，在OpenGL ES中必须为GL10.GL_TEXTURE_2D
+        		0, 					  //纹理的层次，0表示基本图像层，可以理解为直接贴图
+        		bitmapTmp, 			  //纹理图像
+        		0					  //纹理边框尺寸
+        );   
+        //自动生成Mipmap纹理
+        if(isMipmap)
+        {
+        	GLES20.glGenerateMipmap(GLES20.GL_TEXTURE_2D);
         }
-        //通过输入流加载图片===============end===================== 
-        /*
-        OpenGL 提供了三个函数来指定纹理: glTexImage1D(), glTexImage2D(), glTexImage3D().
-        这三个版本用于相应维数的纹理，我们用到的是 2D 版本: glTexImage2D().
-				void glTexImage2D (int target, int level, int internalformat, int width, int
-				height, int border, int format, int type, Buffer pixels) 参数过多，可以使用 GLUtils 中的
-				texImage2D() 函数，好处是直接将 Bitmap 数据作为参数:
-				void texImage2D (int target, int level, Bitmap bitmap, int border) 参数:
-				target 操作的目标类型，设为 GL_TEXTURE_2D 即可 level 纹理的级别，本节不涉及，设为 0 即可 bitmap 图像 border
-				边框，一般设为0
-        **/
-	   	GLUtils.texImage2D
-	    (
-	    		GLES20.GL_TEXTURE_2D, //纹理类型
-	     		0, 
-	     		GLUtils.getInternalFormat(bitmapTmp), 
-	     		bitmapTmp, //纹理图像
-	     		GLUtils.getType(bitmapTmp), 
-	     		0 //纹理边框尺寸
-	     );
-	    bitmapTmp.recycle(); 		  //纹理加载成功后释放图片
+        //释放纹理图
+        bitmapTmp.recycle();
+        //返回纹理ID
         return textureId;
 	}
-    public class RotateThread extends Thread
-    {
-        public boolean flag=true;
-        @Override
-        public void run()
-        {
-            while(flag)
-            {
-                Random rand = new Random();
-                float [] colors=new float[( mRenderer.lovo.vCount*4)];
-                for(int i=0;i<colors.length;i++){
-                    colors[i]=rand.nextFloat();
-                }
+	public class RotateThread extends Thread
+	{
+		public boolean flag=true;
+		@Override
+		public void run()
+		{
+			while(flag)
+			{
+				Random rand = new Random();
+				//Log.d("vcont",Integer.valueOf(mRender.lovo1.vCount).toString());
+				float [] colors=new float[mRender.lovo1.vCount*4];
+				for(int i=0;i<colors.length;i++){
+					colors[i]=rand.nextFloat();
+				}
 
-                mRenderer.lovo1.co=colors;
-                try
-                {
-                    Thread.sleep(200);
-                }
-                catch(Exception e)
-                {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
+				mRender.lovo1.co=colors;
+				try
+				{
+					Thread.sleep(200);
+				}
+				catch(Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 }

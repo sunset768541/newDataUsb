@@ -7,8 +7,6 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Random;
 
 public class LoadUtilLINE
@@ -29,7 +27,7 @@ public class LoadUtilLINE
     	ArrayList<Float> alvResult=new ArrayList<Float>();    	
     	//平均前各个索引对应的点的法向量集合Map
     	//此HashMap的key为点的索引， value为点所在的各个面的法向量的集合
-    	HashMap<Integer,HashSet<Normal>> hmn=new HashMap<Integer,HashSet<Normal>>();    	
+    	//HashMap<Integer,HashSet<Normal>> hmn=new HashMap<Integer,HashSet<Normal>>();
     	//原始纹理坐标列表
     	ArrayList<Float> alt=new ArrayList<Float>();  
     	//纹理坐标结果列表
