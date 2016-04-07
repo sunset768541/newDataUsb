@@ -337,7 +337,7 @@ public class calibrateModel extends android.app.Fragment {
                                      * 同时唤醒数据处理线程
                                      */
 
-                                    ((main1) getActivity()).dta.flag1 = false;
+                                    ((main1) getActivity()).dta.flag1 = false;//不要在该语句前加Log输出
                                     ((main1) getActivity()).wakeuppro();
                                     //Log.d("绘图线程run", "绘制数据图像的方法完成方法");
                                 }

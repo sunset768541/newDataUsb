@@ -248,6 +248,12 @@ public class main1 extends Activity {
         stoptempreturemodelthread = kk;
         return kk;
     }
+    boolean stopthreedimthread = false;
+
+    public boolean setstopthreedimthread(boolean kk) {
+        stopthreedimthread = kk;
+        return kk;
+    }
     /** *****************************************************************************************
      * 此处下面是各个控制按键的监听函数
      * *****************************************************************************************/
@@ -269,6 +275,7 @@ public class main1 extends Activity {
 
                 setstopcalibratemodelthred(true);
                 setstoptemprturemodelthred(true);
+                setstopthreedimthread(true);
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.replace(R.id.contineer, da, "datamodel");//datamodel为fragment的tag值，用来在数据处理线程中找到当前的fragment
                 //transaction.addToBackStack(null);
@@ -296,6 +303,7 @@ public class main1 extends Activity {
                 pro.setSuspend(true);
                 setstopdatamodelthred(true);
                 setstoptemprturemodelthred(true);
+                setstopthreedimthread(true);
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.replace(R.id.contineer, db, "calibratemodel");
                 //transaction.addToBackStack(null);//fragment压入堆栈
@@ -328,6 +336,7 @@ public class main1 extends Activity {
                 pro.setSuspend(true);
                 setstopcalibratemodelthred(true);
                 setstopdatamodelthred(true);
+                setstopthreedimthread(true);
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.replace(R.id.contineer, dc, "tempreturemodel");
                 //transaction.addToBackStack(null);
@@ -365,12 +374,30 @@ public class main1 extends Activity {
      */
     class thr implements View.OnClickListener {
         public void onClick(View v) {
+            fragmentnumber = 4;
             //setchange(false);
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
-            transaction.replace(R.id.contineer, trd, "threed");
-            //transaction.addToBackStack(null);
-            //setchange(true);
-            transaction.commit();
+            oplong = preferences.getInt("long", 0);
+            if (oplong == 0) {
+                Toast.makeText(getApplicationContext(), "还没有设置光纤的长度，请先到系统设置中设置", Toast.LENGTH_SHORT).show();
+            } else {
+                re.setSuspend(true);
+                pro.setSuspend(true);
+                setstopcalibratemodelthred(true);
+                setstopdatamodelthred(true);
+                setstoptemprturemodelthred(true);
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.contineer, trd, "threedimmodel");
+                //transaction.addToBackStack(null);
+                //setchange(true);
+                setstopthreedimthread(false);
+                transaction.commit();
+
+                re.setSuspend(false);
+                pro.setSuspend(false);
+                Log.d("三维模式", "按键回调完成");
+
+
+            }
         }
 
 
@@ -649,6 +676,9 @@ public class main1 extends Activity {
                                 case 2:
                                     tempreatureModel fragment3 = (tempreatureModel) getFragmentManager().findFragmentByTag("tempreturemodel");
                                     fragment3.wakeup();//调用fragment中的唤醒方法
+                                case 4:
+                                    threeDimModel fragment4 = (threeDimModel) getFragmentManager().findFragmentByTag("threedimmodel");
+                                    fragment4.wakeup();//调用fragment中的唤醒方法
                             }
 
                             //dataModel frgment1 = (dataModel) getFragmentManager().findFragmentByTag("datamodel");//获取当前的fragment

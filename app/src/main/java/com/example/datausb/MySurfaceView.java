@@ -40,12 +40,13 @@ public class MySurfaceView extends GLSurfaceView
 	SceneRenderer mRender;
 	float preX;
 	float preY;
+
 	public MySurfaceView(Context context)
 	{
 		super(context);
 		this.setEGLContextClientVersion(2); //设置使用OPENGL ES2.0
         mRender = new SceneRenderer();	//创建场景渲染器
-        setRenderer(mRender);				//设置渲染器		        
+		setRenderer(mRender);				//设置渲染器
         setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);//设置渲染模式为主动渲染 
 	}
 	
@@ -108,7 +109,7 @@ public class MySurfaceView extends GLSurfaceView
 		return true;
 	}
 	
-	private class SceneRenderer implements Renderer
+	public class SceneRenderer implements Renderer
     {
 		Mountion mountion;
 		//山的纹理id
@@ -117,7 +118,7 @@ public class MySurfaceView extends GLSurfaceView
 		Sky sky;
 		int skyId;
 		LoadedObjectVertexNormalTextureLINE lovo1;
-		RotateThread rthread;
+
 		@Override
 		public void onDrawFrame(GL10 gl)
 		{
@@ -134,9 +135,11 @@ public class MySurfaceView extends GLSurfaceView
             sky.drawSelf(skyId);
 			if(lovo1!=null)
 			{
+				//Log.e("draw","drawlov1");
 				lovo1.drawSelf();//画笔一
 			}
 			MatrixState.popMatrix();
+			//Log.e("drawf",Integer.valueOf(getcont()).toString());
 		}
 		@Override
 		public void onSurfaceChanged(GL10 gl, int width, int height)
@@ -154,7 +157,7 @@ public class MySurfaceView extends GLSurfaceView
 		public void onSurfaceCreated(GL10 gl, EGLConfig config)
 		{
 			//设置屏幕背景色RGBA
-            GLES20.glClearColor(1.0f,1.0f,1.0f,1.0f);
+            GLES20.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
             //打开深度检测
             GLES20.glEnable(GLES20.GL_DEPTH_TEST);
             MatrixState.setInitStack();
@@ -165,11 +168,28 @@ public class MySurfaceView extends GLSurfaceView
             //初始化纹理
             skyId=initTexture(R.drawable.sky,false); 
             mountionId=initTexture(R.drawable.grass,true);
-            rockId=initTexture(R.drawable.rock,true);
+            rockId=initTexture(R.drawable.rock, true);
+			setlov();
+//			rthread=new RotateThread();
+//			rthread.start();
+		}
+		public void setlov(){
 			lovo1=LoadUtilLINE.loadFromFile("line.obj", MySurfaceView.this.getResources(), MySurfaceView.this);
-			rthread=new RotateThread();
-			rthread.start();
-		}  
+		}
+		public int getcont(){
+			int l=0;
+			try {
+				l=lovo1.vCount*4;
+			}
+			//Log.e("getcont", lovo1.toString());
+			catch(NullPointerException e){
+				l=10;
+			}
+			return l;
+		}
+		public void setcolor(float [] colors){
+			lovo1.co=colors;
+		}
     }
 	//生成纹理Id的方法
 	public int initTexture(int drawableId,boolean isMipmap)
@@ -235,31 +255,7 @@ public class MySurfaceView extends GLSurfaceView
         //返回纹理ID
         return textureId;
 	}
-	public class RotateThread extends Thread
-	{
-		public boolean flag=true;
-		@Override
-		public void run()
-		{
-			while(flag)
-			{
-				Random rand = new Random();
-				//Log.d("vcont",Integer.valueOf(mRender.lovo1.vCount).toString());
-				float [] colors=new float[mRender.lovo1.vCount*4];
-				for(int i=0;i<colors.length;i++){
-					colors[i]=rand.nextFloat();
-				}
 
-				mRender.lovo1.co=colors;
-				try
-				{
-					Thread.sleep(200);
-				}
-				catch(Exception e)
-				{
-					e.printStackTrace();
-				}
-			}
-		}
-	}
+
+
 }
