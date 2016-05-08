@@ -197,7 +197,8 @@ public class tempreatureModel extends android.app.Fragment {
                             T1[i]=1/tt1;
                             T2[i]=1/tt2;
                         }
-
+                        //Log.e("Tmode1最后一个数据",Float.valueOf(T1[T1.length-1]).toString());
+                        //Log.e("ClabMode最后一个数据",Float.valueOf(caliPSA[caliPSA.length-2]).toString());
                         /**
                          * 定义了两支画笔
                          * paxis用来画横纵坐标轴
@@ -310,7 +311,7 @@ public class tempreatureModel extends android.app.Fragment {
     public float [] screenadapter(float [] data,int w){
         float [] adptertube=new float[w-10];//设置屏可以显示在屏幕上的数据长度
         float []databuf;
-        int interval=data.length/w+1;
+        int interval=data.length/adptertube.length+1;
         // Log.d("输出间隔",Integer.toString(interval)+"    "+Integer.valueOf(data.length).toString()+"   "+Integer.valueOf(w).toString());
         int kkk=0;
         if(interval<=1){
@@ -318,7 +319,7 @@ public class tempreatureModel extends android.app.Fragment {
         }
         else {
 
-            for(int i=0;i<data.length;i=i+interval){
+            for(int i=0;i<(data.length/interval)*interval;i=i+interval){
                 databuf= Arrays.copyOfRange(data, i, i + interval);
                 adptertube[kkk]=max(databuf);//这里出现了空指针异常
                 kkk=kkk+1;

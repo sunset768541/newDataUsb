@@ -34,10 +34,10 @@
             android:inputType="number"
             android:ems="10"
             android:id="@+id/editText"
-            android:text="℃"
             android:textColor="#ff0022"
             android:layout_weight="1"
-            android:textSize="25sp" />
+            android:textSize="25sp"
+            android:hint="℃" />
 
         <Button
             android:layout_width="match_parent"
@@ -66,10 +66,10 @@
             android:inputType="number"
             android:ems="10"
             android:id="@+id/editText2"
-            android:text="℃"
             android:textColor="#00ff11"
             android:layout_weight="1"
-            android:textSize="25sp" />
+            android:textSize="25sp"
+            android:hint="℃" />
 
         <Button
             android:layout_width="match_parent"

@@ -9,6 +9,8 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathEffect;
 import android.os.Bundle;
+import android.os.Looper;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
@@ -60,66 +62,120 @@ public class calibrateModel extends android.app.Fragment {
         calibriteT0.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(editT0.getText()==null){
-                    Toast.makeText( ((main1) getActivity()).getApplicationContext(), "请输入当前的标定温度", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    String tablename="tube1data";//要建立表格的命字
-                    //建立表格的sql命令，存在就不建立，不存在就建立
-                    String stu_table = "create table if not exists tube1data(_id integer primary key autoincrement,calibtem INTEGER,tubedata text)";
-                    ((main1) getActivity()).creatOrgettable(((main1) getActivity()).mDatabase, stu_table);
-                    int[] tuba = ((main1) getActivity()).get_TubeA1_data().getIntArray("tubea");
-                    int[] tuba1 = ((main1) getActivity()).get_TubeA1_data1().getIntArray("tubea1");
-                    float [] PSA=new float[tuba.length];
-                    for (int i=0;i<tuba.length;i++){
-                        if(tuba[i]==0){
-                            PSA[i]=0;
-                        }
+                int[] tuba;
+                int[] tuba1;
+                String tem=editT0.getText().toString().trim();
+                      if(TextUtils.isEmpty(tem)){
+                          Toast.makeText( ((main1) getActivity()).getApplicationContext(), "请输入当前的标定温度", Toast.LENGTH_SHORT).show();
+                      }
+                      else {
+                          Log.e("tt",editT0.getText().toString());
 
-                        else {
+                        final  String tablename="tube1data";//要建立表格的命字
+                          //建立表格的sql命令，存在就不建立，不存在就建立
+                          String stu_table = "create table if not exists tube1data(_id integer primary key autoincrement,calibtem INTEGER,tubedata text)";
+                          ((main1) getActivity()).creatOrgettable(((main1) getActivity()).mDatabase, stu_table);
+                          try {
+                               tuba = ((main1) getActivity()).get_TubeA1_data().getIntArray("tubea");
+                              tuba1 = ((main1) getActivity()).get_TubeA1_data1().getIntArray("tubea1");
+                             final float [] PSA=new float[tuba.length];
+                              for (int i=0;i<tuba.length;i++){
+                                  if(tuba[i]==0){
+                                      PSA[i]=0;
+                                  }
 
-                            PSA[i]=(float)tuba1[i]/tuba[i];
-                           // Log.e("PAS",Float.valueOf(PSA[i]).toString());
-                        }
+                                  else {
 
-                    }
-                    //标定直接计算出P（SA）储存。
-                    ((main1) getActivity()).updatadatabase(((main1) getActivity()).mDatabase, Integer.valueOf(editT0.getText().toString()),PSA, tablename);
-                  // db= SQLiteDatabase.openOrCreateDatabase("/mny/db/datausb.db3",null);
-                    //db.execSQL("insert into news_inf values(null,?,?)",new String[]{});
-                    //开始标定
-                }
-                //标定按钮的监听函数
-            }
+                                      PSA[i]=(float)tuba1[i]/tuba[i];
+                                      // Log.e("PAS",Float.valueOf(PSA[i]).toString());
+                                  }
+
+                              }
+                              new Thread(){
+                                public void run(){
+                                      ((main1) getActivity()).updatadatabase(((main1) getActivity()).mDatabase, Integer.valueOf(editT0.getText().toString()), PSA, tablename);
+                                    Looper.prepare();
+
+                                     Toast.makeText(((main1) getActivity()).getApplicationContext(), "传感通道1标定完成", Toast.LENGTH_SHORT).show();
+                                    Looper.loop();
+
+                                  }
+                              }.start();
+
+
+                          }
+                          catch (NullPointerException e){
+                              Toast.makeText( ((main1) getActivity()).getApplicationContext(), "通道1无数据输入", Toast.LENGTH_SHORT).show();
+
+                          }
+
+
+                          //标定直接计算出P（SA）储存。
+                          // db= SQLiteDatabase.openOrCreateDatabase("/mny/db/datausb.db3",null);
+                          //db.execSQL("insert into news_inf values(null,?,?)",new String[]{});
+                          //开始标定
+
+                      }
+                      //标定按钮的监听函数
+                  }
+
+
+
         });
         calibriteT1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(editT0.getText()==null){
-                    Toast.makeText( ((main1) getActivity()).getApplicationContext(), "请输入当前的标定温度", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    String tablename = "tube2data";
-                    String stu_table = "create table if not exists tube2data(_id integer primary key autoincrement,calibtem INTEGER,tubedata text)";
-                    ((main1) getActivity()).creatOrgettable(((main1) getActivity()).mDatabase, stu_table);
-                    int[] tubeb = ((main1) getActivity()).get_TubeA1_data2().getIntArray("tubeb");
-                    int[] tubeb1 = ((main1) getActivity()).get_TubeA1_data3().getIntArray("tubeb1");
-                    float [] PSA=new float[tubeb.length];
-                    for (int i=0;i<tubeb.length;i++){
-                        if(tubeb[i]==0){
-                            PSA[i]=0;
+                int[] tubeb;
+                int[] tubeb1;
+                String tem=editT1.getText().toString().trim();
+                        if(TextUtils.isEmpty(tem)){
+                            Toast.makeText( ((main1) getActivity()).getApplicationContext(), "请输入当前的标定温度", Toast.LENGTH_SHORT).show();
                         }
-                        else PSA[i]=(float)tubeb1[i]/tubeb[i];
-                       // Log.e("PAS",Float.valueOf(PSA[i]).toString());
-                    }
+                        else {
+                          final  String tablename = "tube2data";
+                            String stu_table = "create table if not exists tube2data(_id integer primary key autoincrement,calibtem INTEGER,tubedata text)";
+                            ((main1) getActivity()).creatOrgettable(((main1) getActivity()).mDatabase, stu_table);
+                            try{
+                                tubeb = ((main1) getActivity()).get_TubeA1_data2().getIntArray("tubeb");
+                                tubeb1 = ((main1) getActivity()).get_TubeA1_data3().getIntArray("tubeb1");
+                             final     float [] PSA1=new float[tubeb.length];
+                                for (int i=0;i<tubeb.length;i++){
+                                    if(tubeb[i]==0){
+                                        PSA1[i]=0;
+                                    }
+                                    else PSA1[i]=(float)tubeb1[i]/tubeb[i];
+                                    // Log.e("PAS",Float.valueOf(PSA[i]).toString());
+                                }
 
-                    //标定直接计算出P（SA）储存。
-                    ((main1) getActivity()).updatadatabase(((main1) getActivity()).mDatabase, Integer.valueOf(editT1.getText().toString()),PSA, tablename);
-                    // db= SQLiteDatabase.openOrCreateDatabase("/mny/db/datausb.db3",null);
-                    //db.execSQL("insert into news_inf values(null,?,?)",new String[]{});
-                    //开始标定
-                }
-                //标定按钮的监听函数
+                                //标定直接计算出P（SA）储存。
+                                new Thread(){
+                                    public void run(){
+                                        ((main1) getActivity()).updatadatabase(((main1) getActivity()).mDatabase, Integer.valueOf(editT0.getText().toString()), PSA1, tablename);
+                                        Looper.prepare();
+
+                                        Toast.makeText(((main1) getActivity()).getApplicationContext(), "传感通道2标定完成", Toast.LENGTH_SHORT).show();
+                                        Looper.loop();
+
+                                   }
+                                }.start();
+
+                            }
+
+                            catch (NullPointerException e){
+                                Toast.makeText(((main1) getActivity()).getApplicationContext(), "通道2无数据输入", Toast.LENGTH_SHORT).show();
+
+                            }
+
+
+       // db= SQLiteDatabase.openOrCreateDatabase("/mny/db/datausb.db3",null);
+                            //db.execSQL("insert into news_inf values(null,?,?)",new String[]{});
+                            //开始标定
+
+                        }
+                        //标定按钮的监听函数
+
+
+
             }
         });
                 /**
@@ -357,17 +413,18 @@ public class calibrateModel extends android.app.Fragment {
             }
     //进行屏幕大小适配的方法
     public float [] screenadapter(float [] data,int w){
-        float [] adptertube=new float[w-10];//设置屏可以显示在屏幕上的数据长度
+        float [] adptertube=new float[w-10];//设置屏可以显示在屏幕上的数据长度，adptertube的长度要与data.length匹配，其长度要大于data.length/interval
         float []databuf;
-        int interval=data.length/w+1;
-        // Log.d("输出间隔",Integer.toString(interval)+"    "+Integer.valueOf(data.length).toString()+"   "+Integer.valueOf(w).toString());
+        int interval=data.length/adptertube.length+1;
+        // Log.e("输出间隔",Integer.toString(interval)+"    "+Integer.valueOf(data.length).toString()+"   "+Integer.valueOf(w).toString());
+        //Log.e("aps",Integer.valueOf(adptertube.length).toString());
         int kkk=0;
         if(interval<=1){
             adptertube=data;
         }
         else {
 
-            for(int i=0;i<data.length;i=i+interval){
+            for(int i=0;i<(data.length/interval)*interval;i=i+interval){
                 databuf= Arrays.copyOfRange(data, i, i + interval);
                 adptertube[kkk]=max(databuf);//这里出现了空指针异常
                 kkk=kkk+1;

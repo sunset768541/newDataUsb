@@ -108,9 +108,29 @@ public class dataModel extends android.app.Fragment {
     class dataThread extends Thread {
         private SurfaceHolder holder;
         public boolean isRun;
-
+        int[] tuba;
+        int[] tuba1;
+        int[] tubeb;
+        int[] tubeb1;
         int h;
         int w;
+        /**
+         * 定义了两支画笔
+         * paxis用来画横纵坐标轴
+         * axe用来绘制坐标轴中的坐标
+         */
+        Paint paxis = new Paint();
+        Paint axe = new Paint();
+
+
+        Paint tube1 = new Paint();
+        Paint tube2 = new Paint();
+        Paint tube3 = new Paint();
+        Paint tube4 = new Paint();
+        PathEffect pe1 = new CornerPathEffect(10);
+
+
+        Canvas c;
         SurfaceView sss;
         //Bundle[] alltubedata;
         boolean dd;
@@ -133,11 +153,37 @@ public class dataModel extends android.app.Fragment {
 
         public void run() {
             try {//捕获线程运行中切换界面而产生的的空指针异常，防止程序崩溃。
+                axe.setARGB(255, 83, 83, 83);
+                axe.setStyle(Paint.Style.STROKE);
+                axe.setStrokeWidth(1);
+                paxis.setARGB(255, 83, 83, 83);
+                paxis.setStyle(Paint.Style.STROKE);
+                paxis.setStrokeWidth(3);
+                tube1.setColor(Color.GREEN);
+                tube1.setStyle(Paint.Style.STROKE);
+                tube1.setAntiAlias(true);
+                tube1.setStrokeWidth(1);
+                tube1.setPathEffect(pe1);
 
-                while (!((main1) getActivity()).stopdatamodelthread) {
+                tube2.setColor(Color.RED);
+                tube2.setStyle(Paint.Style.STROKE);
+                tube2.setAntiAlias(true);
+                tube2.setStrokeWidth(1);
+                tube2.setPathEffect(pe1);
 
+                tube3.setColor(Color.BLUE);
+                tube3.setStyle(Paint.Style.STROKE);
+                tube3.setAntiAlias(true);
+                tube3.setStrokeWidth(1);
+                tube3.setPathEffect(pe1);
 
+                tube4.setARGB(255, 255, 255, 17);
+                tube4.setStyle(Paint.Style.STROKE);
+                tube4.setAntiAlias(true);
+                tube4.setStrokeWidth(1);
+                tube4.setPathEffect(pe1);
 
+                while (!((main1) getActivity()).stopdatamodelthread) {//while中的语句是保障可以正常的结束线程
                     synchronized (((main1) getActivity()).dta) {//所有的等待和唤醒的锁都是同一个，这里选用了Activity中的一个对对象
                         /**
                          * 如果当标志位为false这个线程开始等待
@@ -153,28 +199,31 @@ public class dataModel extends android.app.Fragment {
                             ((main1) getActivity()).dta.notifyAll();
                         }
                         //下面的语句是从Activity中获取数据
-                        int[] tuba = ((main1) getActivity()).get_TubeA1_data().getIntArray("tubea");
-                        int[] tuba1 = ((main1) getActivity()).get_TubeA1_data1().getIntArray("tubea1");
-                        int[] tubeb = ((main1) getActivity()).get_TubeA1_data2().getIntArray("tubeb");
-                        int[] tubeb1 = ((main1) getActivity()).get_TubeA1_data3().getIntArray("tubeb1");
-
+                         tuba = ((main1) getActivity()).get_TubeA1_data().getIntArray("tubea");
+                         tuba1 = ((main1) getActivity()).get_TubeA1_data1().getIntArray("tubea1");
+                         tubeb = ((main1) getActivity()).get_TubeA1_data2().getIntArray("tubeb");
+                         tubeb1 = ((main1) getActivity()).get_TubeA1_data3().getIntArray("tubeb1");
+                       // Log.e("datamodel1通道",Integer.valueOf(tuba[tuba.length-1]).toString()+"  2通道: "+Integer.valueOf(tuba1[tuba.length-1]).toString());
                         /**
-                         * 定义了两支画笔
-                         * paxis用来画横纵坐标轴
-                         * axe用来绘制坐标轴中的坐标
+                         * 1通道：8191  2通道: 16383
+                         * 1通道：40959  2通道: 49151
+                         * 因为FPGA上传的数据为0--65535，FPGA上传是将16位的数据拆分成2个byte
+                         * 而我们一次接收的为65536个byte，也就是收到了一半的数据，要2次可以将65536个数全部收回
+                         * 所以可以发现，每个通道的某个点的数据是有2个可能的。因为数据的跳跃很大，过渡不是平滑的，所以也造成了图像剧烈的抖动。
                          */
-                        Paint paxis = new Paint();
-                        Paint axe = new Paint();
-                        axe.setARGB(255, 83, 83, 83);
-                        axe.setStyle(Paint.Style.STROKE);
-                        axe.setStrokeWidth(1);
-                        paxis.setARGB(255, 83, 83, 83);
-                        paxis.setStyle(Paint.Style.STROKE);
-                        paxis.setStrokeWidth(3);
+                        Path p1=new Path() ;
+                        Path p2 =new Path();
+                        Path p3=new Path() ;
+                        Path p4 =new Path();
+                        p1.moveTo(20, h-400);
+                        p2.moveTo(20, h-280);
+                        p3.moveTo(20, h-160);
+                        p4.moveTo(20, h-40);
                         /**
                          * c为锁定suface时获得的一个画布，我们可以在上面画图
                          */
-                        Canvas c = holder.lockCanvas();
+                         c = holder.lockCanvas();
+
                         /**
                          * 绘制整个画布的颜色
                          */
@@ -200,57 +249,24 @@ public class dataModel extends android.app.Fragment {
                          * 共新建4个画笔和4个路径
                          */
                         synchronized (holder) {
-                            Path p1 = new Path();
-                            Path p2 = new Path();
-                            Path p3 = new Path();
-                            Path p4 = new Path();
-
-                            Paint tube1 = new Paint();
-                            Paint tube2 = new Paint();
-                            Paint tube3 = new Paint();
-                            Paint tube4 = new Paint();
-
-                            tube1.setColor(Color.GREEN);
-                            tube1.setStyle(Paint.Style.STROKE);
-                            tube1.setAntiAlias(true);
-                            tube1.setStrokeWidth(1);
-                            PathEffect pe1 = new CornerPathEffect(10);
-                            tube1.setPathEffect(pe1);
-
-                            tube2.setColor(Color.RED);
-                            tube2.setStyle(Paint.Style.STROKE);
-                            tube2.setAntiAlias(true);
-                            tube2.setStrokeWidth(1);
-                            tube2.setPathEffect(pe1);
-
-                            tube3.setColor(Color.BLUE);
-                            tube3.setStyle(Paint.Style.STROKE);
-                            tube3.setAntiAlias(true);
-                            tube3.setStrokeWidth(1);
-                            tube3.setPathEffect(pe1);
-
-                            tube4.setARGB(255, 255, 255, 17);
-                            tube4.setStyle(Paint.Style.STROKE);
-                            tube4.setAntiAlias(true);
-                            tube4.setStrokeWidth(1);
-                            tube4.setPathEffect(pe1);
-                            p1.moveTo(20, h-400);
-                            p2.moveTo(20, h-280);
-                            p3.moveTo(20, h-160);
-                            p4.moveTo(20, h-40);
-//注意数据可能数值太大而不能再屏幕上显示，所以我能要把数据转换成光功率的数值进行显示，也方便后续的计算
-//由于 屏幕上的点数有限，所以我们只有在屏幕上显示部分点，我们可以用总的点数除以屏幕上的点数，得出的数就是我们要每几个点显示为一个点，显示的这个点为这几个点中的最大值
-//还有一个实际中存在的问题，每个通道第几个数据并不对应相应的第几个距离。可能还需要排序
-                            int [] adp1=screenadapter(tuba,w);
-                            int [] adp2=screenadapter(tuba1,w);
-                            int [] adp3=screenadapter(tubeb,w);
-                            int [] adp4=screenadapter(tubeb1,w);
+                            /*
+                            当程序发生异常的中断时，由于下位机中的USB FIFO中任然有数据待读取，这样会使数据图形看起来，通道1中的数据反而比其他的的几个
+                            都要大。
+                             */
+                        //注意数据可能数值太大而不能再屏幕上显示，所以我能要把数据转换成光功率的数值进行显示，也方便后续的计算
+                        //由于 屏幕上的点数有限，所以我们只有在屏幕上显示部分点，我们可以用总的点数除以屏幕上的点数，得出的数就是我们要每几个点显示为一个点，显示的这个点为这几个点中的最大值
+                        //还有一个实际中存在的问题，每个通道第几个数据并不对应相应的第几个距离。可能还需要排序
+                           int[]  adp1=screenadapter(tuba,w);
+                            int[] adp2=screenadapter(tuba1,w);
+                           int[] adp3=screenadapter(tubeb,w);
+                             int[] adp4=screenadapter(tubeb1,w);
+                          // Log.e("apdlength",Integer.valueOf(adp2[817]).toString()+":"+Integer.valueOf(adp1[816]).toString());
                             /**
-                             * 在FPGA上传递增的数据的时候，adp1[i]/500,其中500这个数取值影响了图像在y轴上的分布，这个值取小了，图像的纵坐标就显示不全，取太大在屏幕上看的图线的变化就不是很明显
+                             * 在FPGA上传递增的数据的时候，adp1[i]/400,其中400这个数取值影响了图像在y轴上的分布，这个值取小了，图像的纵坐标就显示不全，取太大在屏幕上看的图线的变化就不是很明显
                              */
                             for (int i = 0; i < adp1.length; i++) {//lineTo显示一条直线是因为纵坐标的数值太大；
                                 p1.lineTo(i+25, -adp1[i]/400+h-400);//在实际的的系统2的14次方，也就是16384，还要在乘以参考电压
-                                p2.lineTo(i+25, -adp2[i]/400+  h-280);
+                                p2.lineTo(i+25, -adp2[i]/400+h-280);
                                 p3.lineTo(i+25, -adp3[i]/400+h-160);
                                 p4.lineTo(i+25, -adp4[i]/400+h-40);
                             }
@@ -289,17 +305,18 @@ public class dataModel extends android.app.Fragment {
 
 //进行屏幕大小适配的方法
     public int [] screenadapter(int [] data,int w){
-        int [] adptertube=new int[w-10];//设置屏可以显示在屏幕上的数据长度
+       // Log.e("jjj",Integer.valueOf(data.length).toString());
+        int [] adptertube=new int[w-50];//设置屏可以显示在屏幕上的数据长度
         int []databuf;
-        int interval=data.length/w+1;
-       // Log.d("输出间隔",Integer.toString(interval)+"    "+Integer.valueOf(data.length).toString()+"   "+Integer.valueOf(w).toString());
+        int interval=data.length/adptertube.length+1;
+     //  Log.e("输出间隔",Integer.toString(interval)+"    "+Integer.valueOf(data.length).toString()+"   "+Integer.valueOf(w).toString());
         int kkk=0;
         if(interval<=1){
             adptertube=data;
         }
         else {
 
-                for(int i=0;i<data.length;i=i+interval){
+                for(int i=0;i<(data.length/interval)*interval;i=i+interval){//有必要将i先变成整数
                     databuf= Arrays.copyOfRange(data, i, i + interval);
                     adptertube[kkk]=max(databuf);//这里出现了空指针异常
                     kkk=kkk+1;

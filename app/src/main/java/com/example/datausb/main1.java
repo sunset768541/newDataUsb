@@ -30,6 +30,9 @@ import android.widget.ToggleButton;
 
 import org.w3c.dom.Text;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.DataOutputStream;
 import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -67,6 +70,7 @@ public class main1 extends Activity {
     tempreatureModel dc = new tempreatureModel();
     systemSeting ss = new systemSeting();
     threeDimModel trd=new threeDimModel();
+    historyRecording hr=new historyRecording();
 
     /**
      * 定义用于携带数据的Bundle
@@ -75,7 +79,12 @@ public class main1 extends Activity {
     Bundle data_a1 = new Bundle();//携带通道A1的数据的Bundle
     Bundle data_b = new Bundle();//携带通道B的数据Bundle
     Bundle data_b1 = new Bundle();//携带通道B1的数据Bundl
-
+    /**
+     * 定义静态变量TOGGLE_BUTTON，用来标识togglebutton是否是第一次按下，0表示没有按过togglebutton，当按下togglebutton后该值永远为1.
+     * 在切换显示模式时，由于会使数据接收线程和处理线程自动启动，那打开关闭设备按键的状态也要切换到正确的状态。
+     */
+    public static int TOGGLE_BUTTON=0;
+    public static int STOREDATA=0;
     /**
      * preferences为读取参数的SharePreference的实例
      * editor为修改参数的Shareferecxes.Editor的实例
@@ -88,7 +97,7 @@ public class main1 extends Activity {
     int fragmentnumber;
     private EditText oplong1;
     SQLiteDatabase mDatabase;
-
+    ToggleButton togglebutton;
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -116,11 +125,14 @@ public class main1 extends Activity {
         systemSetingselect.setOnClickListener(new ss());
         Button threeDim=(Button) findViewById(R.id.button4);
         threeDim.setOnClickListener(new thr());
+        Button historyrecording=(Button)findViewById(R.id.button5);
+        historyrecording.setOnClickListener(new hrd());
         /**
          *
          */
-        ToggleButton togglebutton = (ToggleButton) findViewById(R.id.toggleButton);
+         togglebutton = (ToggleButton) findViewById(R.id.toggleButton);
         togglebutton.setOnClickListener(new tg(togglebutton));
+       // Log.e("toggle",Boolean.valueOf(togglebutton.isChecked()).toString());
         myUsbManager = (UsbManager) getSystemService(USB_SERVICE);
         usbstate = (TextView) findViewById(R.id.usbstate);
         datasave = (TextView) findViewById(R.id.savestate);
@@ -128,6 +140,7 @@ public class main1 extends Activity {
         transmmitespeed1 = (TextView) findViewById(R.id.transmitespeed1);
         preferences = getSharedPreferences("opl", MODE_PRIVATE);
         editor = preferences.edit();
+        DataWR.ini();
         int oplong = preferences.getInt("long", 0);
         if (oplong == 0) {
             Toast.makeText(getApplicationContext(), "还没有设置光纤的长度，请先到系统设置中设置", Toast.LENGTH_SHORT).show();
@@ -169,7 +182,7 @@ public class main1 extends Activity {
     //创建或者获得表格的方法
     public void creatOrgettable(SQLiteDatabase ss,String creattable) {
         ss.execSQL(creattable);
-        Log.d("数据库操作", "数据库建立完成");
+        //Log.d("数据库操作", "数据库建立完成");
     }
 
     //向数据库中插入数据,执行一次就向表格中插入一组数据
@@ -263,6 +276,8 @@ public class main1 extends Activity {
      */
     class rd implements View.OnClickListener {
         public void onClick(View v) {
+            if(TOGGLE_BUTTON==1){
+            togglebutton.setChecked(true);}
             fragmentnumber = 0;
             // setchange(false);
             oplong = preferences.getInt("long", 0);
@@ -293,6 +308,8 @@ public class main1 extends Activity {
      */
     class ca implements View.OnClickListener {
         public void onClick(View v) {
+            if(TOGGLE_BUTTON==1){
+            togglebutton.setChecked(true);}
             fragmentnumber = 1;
             //setchange(false);
             oplong = preferences.getInt("long", 0);
@@ -326,6 +343,8 @@ public class main1 extends Activity {
      */
     class te implements View.OnClickListener {
         public void onClick(View v) {
+            if(TOGGLE_BUTTON==1){
+            togglebutton.setChecked(true);}
             fragmentnumber = 2;
             //setchange(false);
             oplong = preferences.getInt("long", 0);
@@ -355,7 +374,7 @@ public class main1 extends Activity {
     }
 
     /**
-     * 系统设置按键的监听函数
+     * 系统设置按键的监听类
      */
     class ss implements View.OnClickListener {
         public void onClick(View v) {
@@ -369,11 +388,28 @@ public class main1 extends Activity {
         }
 
 
-    }/**
+    }
+    /**
+     * 历史记录按键的监听类
+     */
+    class hrd implements View.OnClickListener {
+        public void onClick(View v) {
+            //setchange(false);
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.replace(R.id.contineer, hr, "historyrecording");
+            //transaction.addToBackStack(null);
+            //setchange(true);
+            transaction.commit();
+            Log.d("dh", "hha");
+        }
+    }
+    /**
      * 3D模式设置按键的监听函数
      */
     class thr implements View.OnClickListener {
         public void onClick(View v) {
+            if(TOGGLE_BUTTON==1){
+            togglebutton.setChecked(true);}
             fragmentnumber = 4;
             //setchange(false);
             oplong = preferences.getInt("long", 0);
@@ -408,6 +444,7 @@ public class main1 extends Activity {
      */
     class tg implements View.OnClickListener {
         ToggleButton tgg;
+        //byte [] contrlo={127,3,127,63,0,14,0,15};
 
         public tg(ToggleButton tgg) {
             this.tgg = tgg;
@@ -415,14 +452,17 @@ public class main1 extends Activity {
         }
 
         public void onClick(View v) {
+            TOGGLE_BUTTON=1;
+          //  Log.e("tos",Boolean.valueOf(tgg.isChecked()).toString());
             if (tgg.isChecked()) {
                 //  Toast.makeText(main1.this, "你喜欢球类运动", Toast.LENGTH_SHORT).show();
                 enumerateDevice();//打开应用时枚举设备
                 if (myUsbDevice != null) {
-                    tgg.setBackgroundColor(Color.GREEN);
+                    //tgg.setBackgroundColor(Color.GREEN);
                     findInterface();//找到设备接口
                     openDevice();//打开设备
                     assignEndpoint();//指派端点
+                  //  sentdata(contrlo);
                     if (re.isAlive()) {
                         re.setSuspend(false);
                         pro.setSuspend(false);
@@ -439,7 +479,7 @@ public class main1 extends Activity {
             }
             // 当按钮再次被点击时候响应的事件
             else {
-                tgg.setBackgroundColor(Color.RED);
+                //tgg.setBackgroundColor(Color.RED);
                 //  Toast.makeText(main1.this, "你不喜欢球类运动", Toast.LENGTH_SHORT).show();
                 re.setSuspend(true);
                 pro.setSuspend(true);
@@ -511,12 +551,26 @@ public class main1 extends Activity {
 
                         }
                     }
-                    byte[] Receivebytes = new byte[16384];//注意接收数据务必要为2的n次方，并且bulk的最大为16384，否侧会出现Fatal signal 11 (SIGSEGV)错误
+                    byte[] Receivebytes = new byte[65536];//接收的数据
+                    byte[] buff=new byte[512];//接收数据缓冲区,注意接收数据务必要为2的n次方，并且bulk的最大为16384，否侧会出现Fatal signal 11 (SIGSEGV)错误
                     long startTime = System.nanoTime();             // 纳秒级
                     //long startTime = System.currentTimeMillis();    // 毫秒级
-                    int xxx = myDeviceConnection.bulkTransfer(epIn, Receivebytes, 16384, 0); //do in another thread
+                    for (int i=0;i<Receivebytes.length/buff.length;i++){
+                        int xxx = myDeviceConnection.bulkTransfer(epIn, buff, 512, 0); //do in another thread
+                        for (int j=0;j<512;j++){
+                            Receivebytes[j+i*512]=buff[j];
+                        }
+
+                    }
+                    //int xxx = myDeviceConnection.bulkTransfer(epIn, Receivebytes, 16384, 0); //do in another thread
                     //  测试的代码
-                    //write(Receivebytes);//将接收到的数据直接存储为2进制文件
+                    if(STOREDATA==1){
+                        try {
+                            DataWR.writte(Receivebytes);//将接收到的数据直接存储为2进制文件
+                        }
+                        catch (Exception e){
+                        }
+                     }
                     long estimatedTime = System.nanoTime() - startTime;
 
                     //set_TubeA1_data(data_a, data_a1, data_b, data_b1);//调用传入通道A数据函数
@@ -596,8 +650,7 @@ public class main1 extends Activity {
                     int p;
                     int p1;
                     int i1 = 0;
-                    int[] combination = new int[8192];//combination用于储存合并后的16bit数据
-
+                    int[] combination = new int[r.data.length/2];//combination用于储存合并后的16bit数据
                     // for (int i = 0; i < r.data.length; i++) {//报出空指针异常的原因是接收数据还没有处理完，线程就跳转到了这里
                     for (int i = 0; i < r.data.length; i = i + 2) {//数据组合
 
@@ -620,32 +673,36 @@ public class main1 extends Activity {
 
                     long estimatedTime = System.nanoTime() - startTime;
 
-                    int[] dadd = new int[2 * 1024];
-                    int[] dadd1 = new int[2 * 1024];
-                    int[] dadd2 = new int[2 * 1024];
-                    int[] dadd3 = new int[2 * 1024];
+                    int[] dadd = new int[8 * 1024];
+                    int[] dadd1 = new int[8 * 1024];
+                    int[] dadd2 = new int[8 * 1024];
+                    int[] dadd3 = new int[8 * 1024];
+                    //Log.e("da",Integer.valueOf(dadd3.length).toString());
 //我们在实际区分4个通道的数据的时候可以用for遍历combination数组寻找表头然后放入指定的容器
 //                    for (int i=0;i<combination.length;i++)//可以用foreach
 //                    {
 //
 //                        if(combination[i]==0){
-                    dadd = Arrays.copyOfRange(combination, 0, 2048 - 1);
+                    dadd = Arrays.copyOfRange(combination, 0, combination.length/4);//copyOfRange(r,inclusive,exclusive),不包含exclusive那个
 
+                   // Log.e("com",Integer.valueOf(combination.length).toString()+"   "+Integer.valueOf(dadd.length).toString());
 //                        }
 //                        else{
 //
 //                        }
 //                        if (combination[i]==512){
-                    dadd1 = Arrays.copyOfRange(combination, 2048, 4096 - 1);
+                    dadd1 = Arrays.copyOfRange(combination, combination.length/4, combination.length/2);
 //
 //                        }
 //                        if (combination[i]==1024){
-                    dadd2 = Arrays.copyOfRange(combination, 4096, 6144 - 1);
+                    dadd2 = Arrays.copyOfRange(combination, combination.length/2, combination.length-combination.length/4);
 
 //
 //                        }
 //                        if(combination[i]==1536){
-                    dadd3 = Arrays.copyOfRange(combination, 6144, 8192 - 1);
+                    dadd3 = Arrays.copyOfRange(combination, combination.length-combination.length/4, combination.length);
+               //     Log.e("dadd3",Integer.valueOf(dadd3[dadd3.length-1]).toString());
+                 //   Log.e("dadd33",Integer.valueOf(dadd3.length).toString());
 
                     // }
 
@@ -778,7 +835,6 @@ public class main1 extends Activity {
      * 数据的存储，储存的路径为/mnt/external_sd，文件名为data.txt
      */
     private void write(byte[] content) {//注意储存字符串传入的参数为String content，储存二进制传入的参数为byte[] content
-
         try {
             if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
                 FileOutputStream raf = new FileOutputStream("/mnt/external_sd/data.txt", true);//储存二进制文件
@@ -786,6 +842,12 @@ public class main1 extends Activity {
                 // FileWriter raf=new FileWriter("/mnt/external_sd/data.txt",true);//储存为字符串
                 raf.write(content);
                 raf.close();
+//                DataOutputStream dd=new DataOutputStream(
+//                        new BufferedOutputStream(
+//                                new FileOutputStream("hh")));
+            }
+            else{
+                Toast.makeText(getApplication(),"没有检测到SD卡",Toast.LENGTH_SHORT).show();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -823,7 +885,7 @@ public class main1 extends Activity {
     /**
      * sentdata为一个用来发送数据的函数，当前没有启用
      */
-
+    //控制FPGA的指令为FF03 FF3F 0E 0F 转换为byte为 byte [] contrlo={255,3,255,63,0,14,0,15}
     public void sentdata(byte[] bytes) {//发送数据的函数
         myDeviceConnection.claimInterface(myInterface, true);
         int flag = myDeviceConnection.bulkTransfer(epOut, bytes, bytes.length, 0); //do in another thread

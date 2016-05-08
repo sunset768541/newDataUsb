@@ -149,28 +149,30 @@
             android:id="@+id/toggleButton"
             android:textOff="打开设备"
             android:textOn="关闭设备"
-            android:background="@drawable/buttoncolor" />
+            android:background="@drawable/buttoncolor"
+            android:checked="false"
+            android:layout_weight="1" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/usbstate"
             android:text="USB设备已经打开"
-            android:layout_weight="1"
+            android:layout_weight="20"
             android:layout_marginLeft="20dp" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/savestate"
             android:text="数据储存"
-            android:layout_weight="1"
+            android:layout_weight="20"
             android:layout_marginLeft="20dp" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/transmitespeed1"
             android:text="数据传输速度"
-            android:layout_weight="1"
-            android:layout_marginLeft="20dp" />
+            android:layout_marginLeft="20dp"
+            android:layout_weight="20" />
 
     </LinearLayout>
 

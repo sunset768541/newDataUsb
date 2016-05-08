@@ -149,7 +149,7 @@ public class threeDimModel extends android.app.Fragment {
                             T1[i] = 1 / tt1;
                             T2[i] = 1 / tt2;
                         }
-                        float [] TR=screenadapter(T2,mv.mRender.getcont()/4);//选择T2通道的温度进行显示
+                        float [] TR=screenadapter(T1,mv.mRender.getcont()/4);//选择T1通道的温度进行显示
                        float [] colors=new float[mv.mRender.getcont()];//创建用于给光纤模型颜色渲染的数据
                         float [] cc=colorprocess(TR);
                         colors=Arrays.copyOfRange(cc, 0,colors.length);
@@ -193,6 +193,7 @@ public class threeDimModel extends android.app.Fragment {
 
     /**
      * 利用伪颜色增强算法把温度数据转换成RGB的形式，温度的变化图请参考drawable中的tempchangecolor.jpg图片
+     * 目前这个算法算出的温度颜色与当前的数据有关系，由当前数据的最大值和最小值决定，以后要改为由传感器的测量温度范围决定
      * @param data
      * @return
      */
@@ -251,7 +252,7 @@ public class threeDimModel extends android.app.Fragment {
         }
         else {
 
-            for(int i=0;i<data.length;i=i+interval){
+            for(int i=0;i<(data.length/interval)*interval;i=i+interval){
                 databuf= Arrays.copyOfRange(data, i, i + interval);
                 adptertube[kkk]=max(databuf);//这里出现了空指针异常
                 kkk=kkk+1;
