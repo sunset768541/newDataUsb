@@ -127,7 +127,8 @@ public class tempreatureModel extends android.app.Fragment {
         SurfaceView sss;
         //Bundle[] alltubedata;
         boolean dd;
-
+        float fiberLength = 2048;
+        float maxnum = 16384;
         /**
          * 该线程的构造函数
          *
@@ -206,12 +207,18 @@ public class tempreatureModel extends android.app.Fragment {
                          */
                         Paint paxis = new Paint();
                         Paint axe = new Paint();
+                        Paint zuobioa = new Paint();
+
                         axe.setARGB(255, 83, 83, 83);
                         axe.setStyle(Paint.Style.STROKE);
                         axe.setStrokeWidth(1);
                         paxis.setARGB(255, 83, 83, 83);
                         paxis.setStyle(Paint.Style.STROKE);
                         paxis.setStrokeWidth(3);
+                        zuobioa.setColor(Color.WHITE);
+                        zuobioa.setStyle(Paint.Style.FILL);
+                        zuobioa.setTextAlign(Paint.Align.CENTER);
+                        zuobioa.setTextSize(10);
                         /**
                          * c为锁定suface时获得的一个画布，我们可以在上面画图
                          */
@@ -219,22 +226,58 @@ public class tempreatureModel extends android.app.Fragment {
                         /**
                          * 绘制整个画布的颜色
                          */
-                        c.drawRGB(38, 38, 38);
+                        c.drawRGB(15, 15, 15);
                         /**
                          * 绘制横纵坐标轴
                          */
-                        c.drawLine(20, 10, 20, h - 20, paxis);
-                        c.drawLine(20, h - 20, w - 10, h - 20, paxis);//绘制坐标轴
+                        c.drawLine(40, 20, 40, h - 40, paxis);
+                        c.drawText("n", 40, 10, zuobioa);
+                        c.drawText("m", w - 10, h - 20, zuobioa);
+                        c.drawLine(40, h - 40, w - 10, h - 40, paxis);//绘制坐标轴
                         /**
-                         * 绘制横纵轴各画10条线
+                         * 绘制横纵轴各画ci条线
                          */
-                        int ci = 10;
-                        for (int i = 1; i < ci; i++) {
-                            int k = i * h / ci;
-                            int m = i * w / ci;
-                            c.drawLine(20, k, w - 20, k, axe);
-                            c.drawLine(m, h / ci, m, h - 20, axe);
+                        int ci = 21;
+                        for (int i = 0; i < ci; i++) {
+                            float y = i * maxnum / (ci - 1);
+                            float x = i * fiberLength / (ci - 1);
+                            /**
+                             * (0,0)-------------------------------------->
+                             *     |
+                             *     | (40,k)----------------------(w-40,k)
+                             *     |
+                             *     | (40,k)----------------------(w-40,k)
+                             *     |
+                             *     | (40,k)----------------------(w-40,k)
+                             *     |
+                             *     | (40,k)----------------------(w-40,k)
+                             *     |
+                             *     | (40,k)----------------------(w-40,k)
+                             *     |
+                             *     | (40,k)----------------------(w-40,k)
+                             *     |
+                             *     | (40,k)----------------------(w-40,k)
+                             */
+                            float k = h - (i * (h - 40) / ci + 40);//画横轴直线需要的y坐标
+
+                            /**
+                             * (m,h/ci)
+                             *     |        |       |       |       |
+                             *     |        |       |       |       |
+                             *     |        |       |       |       |
+                             *     |        |       |       |       |
+                             *     |        |       |       |       |
+                             *     |        |       |       |       |
+                             *     |        |       |       |       |
+                             * (m,h-40)
+                             */
+                            float m = i * (w - 40) / ci + 40;//纵轴间距
+                            c.drawLine(40, k, w - 40, k, axe);//画横轴(40,k,w-40,k)-->(x1,y1,x2,y2)画的横轴的长度是w-80,为每个循环得到画横轴的纵坐标的值
+                            c.drawText(Integer.valueOf((int) y).toString(), (float) 18, (float) k, zuobioa);//在纵坐标上画字符
+                            c.drawText(Integer.valueOf((int) x).toString(), (float) m, (float) (h - 10), zuobioa);//在横坐标上画字符
+                            c.drawLine(m, h / (ci), m, h - 40, axe);//画纵轴m为每次画纵轴的x坐标，2h-40-h/ci为该纵轴的长度
                         }
+
 
                         /**
                          * 绘制各个通道的图像
@@ -263,14 +306,15 @@ public class tempreatureModel extends android.app.Fragment {
                             tube2.setPathEffect(pe1);
 
 
-                            p1.moveTo(20, h /2);
-                            p2.moveTo(20, h /3);
-
-                            float [] adp1=screenadapter(T1,w);
-                            float [] adp2=screenadapter(T2,w);
+                            p1.moveTo(40, h /2);
+                            p2.moveTo(40, h /3);
+                            float[]hh1=interpolation(w-80,T1);
+                            float[]hh2=interpolation(w-80,T2);
+                            float [] adp1=screenadapter(hh1,w-80);
+                            float [] adp2=screenadapter(hh2,w-80);
                             for (int i = 1; i < adp1.length; i++) {
-                                p1.lineTo(i+25, -adp1[i]+h /2);
-                                p2.lineTo(i+25, -adp2[i]+h /3);
+                                p1.lineTo(i+45, -adp1[i]+h /2);
+                                p2.lineTo(i+45, -adp2[i]+h /3);
                                // Log.e("通道1的温度",Float.valueOf(adp1[i]).toString());
                             }
                             c.drawPath(p1, tube1);
@@ -308,33 +352,83 @@ public class tempreatureModel extends android.app.Fragment {
 
     }
     //进行屏幕大小适配的方法
-    public float [] screenadapter(float [] data,int w){
-        float [] adptertube=new float[w-10];//设置屏可以显示在屏幕上的数据长度
-        float []databuf;
-        int interval=data.length/adptertube.length+1;
-        // Log.d("输出间隔",Integer.toString(interval)+"    "+Integer.valueOf(data.length).toString()+"   "+Integer.valueOf(w).toString());
-        int kkk=0;
-        if(interval<=1){
-            adptertube=data;
-        }
-        else {
+    public float[] screenadapter(float[] data, int w) {
+        // Log.e("jjj",Integer.valueOf(data.length).toString());
+        float[] adptertube = new float[w];//设置屏可以显示在屏幕上的数据长度
+        float[] databuf;
+        int interval = data.length / adptertube.length;
+        //  Log.e("输出间隔",Integer.toString(interval)+"    "+Integer.valueOf(data.length).toString()+"   "+Integer.valueOf(w).toString());
+        int kkk = 0;
+        if (interval <= 1) {
+            adptertube = data;
+        } else {
 
-            for(int i=0;i<(data.length/interval)*interval;i=i+interval){
-                databuf= Arrays.copyOfRange(data, i, i + interval);
-                adptertube[kkk]=max(databuf);//这里出现了空指针异常
-                kkk=kkk+1;
+            for (int i = 0; i < (data.length / interval) * interval; i = i + interval) {//有必要将i先变成整数
+                databuf = Arrays.copyOfRange(data, i, i + interval);
+                adptertube[kkk] = max(databuf);//这里出现了空指针异常
+                kkk = kkk + 1;
             }
         }
 
         return adptertube;
     }
+
     //对一个数组输出最大值方法
-    public float  max(float [] a){
+    public float max(float[] a) {
         float b;
         Arrays.sort(a);
-        b= a[a.length-1];
+        b = a[a.length - 1];
         return b;
     }
+
+    /**
+     * 屏幕点数与数据匹配函数
+     * 基本思想，利用总的数据长度除以显示控件横向像素点数得出一个整数将这个整数+1就得到了interval，interval的作用就是扩展源数据长度
+     * 使其可以整除显示控件的横向像素点数。interval*viewwidth viewwidth就是显示控件（坐标系）的横向像素点数，乘积的结果就是要扩展的
+     * 数组的长度。为了保证扩展后的数据图像的趋势与源数组的图像趋势一致，通过对源数组的插值来获得扩展数组。插值的点数就是扩展数组的长度
+     * 减去源数组的长度。插值的方法就是在interval的一半处进行插值，所插值通过相邻的两个数据计算平均值得出。并将源数组的数据插入到扩展
+     * 数组中。插值完成后，再将源数组中没有插值的最后一段数据全部拷贝到扩展数组中。
+     * @param viewwidth
+     * @param interpolatdata
+     * @return
+     */
+
+    public float[] interpolation(int viewwidth, float[] interpolatdata) {
+
+        int interval = interpolatdata.length / viewwidth + 1;//计算扩展数组的长度使用
+        int targetlength = interval * viewwidth;//扩展数据的长度
+        int interpotatenum = targetlength - interpolatdata.length;//需要在源数组中插值的个数
+        // int chazhijiange=interpolatdata.length/interpotatenum+1;
+        int chazhijiange = interval / 2;//在源数组中插值的位置
+        // Log.e("cc",Integer.valueOf(chazhijiange).toString());
+        // int mm = interpolatdata.length / chazhijiange;
+        float[] afterinterpolate = new float[targetlength];//插值后的数组
+        float[] zhongji = new float[interval];//保存从原数组拷贝的一段数据
+        int jj = 0;//插值的间隔
+        for (int i = 0; i < interpotatenum; i++) {//插值循环
+            float cha = (interpolatdata[jj + chazhijiange - 1] + interpolatdata[jj + chazhijiange]) / 2;//计算插值的数值
+            afterinterpolate[jj + chazhijiange] = cha;//将需要插得值放入新的数组中的指定插值位置
+            zhongji = Arrays.copyOfRange(interpolatdata, jj, jj + chazhijiange);//从源数组拷贝出一段数据
+            int pp = jj;
+            for (int kk = 0; kk < chazhijiange; kk++) {//将从源数组中拷贝的数据填入到新的数组中的对应位置
+                // Log.e("kk","   当kk=  "+Integer.valueOf(kk).toString()+"  zhongji=   "+Integer.valueOf(zhongji[kk]).toString());
+                afterinterpolate[pp + kk] = zhongji[kk];
+            }
+
+
+            //  Log.e("jj",Integer.valueOf(jj+chazhijiange).toString()+"  ii="+Integer.valueOf(i).toString());
+            jj = jj + chazhijiange + 1;
+        }
+        //插值完毕后，将剩下的没有插值的一段数据从源数组拷贝到扩展数组中
+        int sourceinterpointer = chazhijiange * interpotatenum;//源数组插值的结束位置
+        int targeinterpointer = chazhijiange * interpotatenum + interpotatenum;//扩展数组填入数据的结束位置
+        int cc = interpolatdata.length - sourceinterpointer;//没有插值的一段数据的长度
+        float[] uuu = Arrays.copyOfRange(interpolatdata, sourceinterpointer, interpolatdata.length);//从源数组拷贝出没有插值的一段数据
+        for (int yy = 0; yy < cc; yy++) {//将没有插值的一段数据拷贝到扩展数组的对应位置
+            afterinterpolate[yy + targeinterpointer] = uuu[yy];
+        }
+        // for (int qq=0;qq<afterinterpolate.length;qq++){
+        // Log.e("aaa"," 当i= "+Integer.valueOf(qq).toString()+" af值为  "+Integer.valueOf(afterinterpolate[qq]).toString());}
+        return afterinterpolate;
+    }
 }
-
-

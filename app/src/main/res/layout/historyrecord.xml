@@ -1,9 +1,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     android:theme="@style/Base.Widget.AppCompat.ListView"
-    android:baselineAligned="false">
+    android:baselineAligned="false"
+    android:weightSum="1">
 
     <LinearLayout
         android:orientation="vertical"
@@ -20,7 +21,7 @@
 
         <LinearLayout
             android:orientation="horizontal"
-            android:layout_width="wrap_content"
+            android:layout_width="221dp"
             android:layout_height="wrap_content">
 
             <Spinner
@@ -61,7 +62,7 @@
             android:id="@+id/listView"
             android:layout_gravity="center_vertical"
             android:entries="@array/hour"
-            android:layout_below="@id/spinner"/>
+            android:layout_below="@id/spinner" />
 
     </LinearLayout>
 
@@ -69,7 +70,9 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1">
+        android:background="#072b0e"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -77,6 +80,19 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Medium Text"
             android:id="@+id/textView18" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Text"
+            android:id="@+id/textView23" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Medium Text"
+            android:id="@+id/textView24" />
     </LinearLayout>
 
 </LinearLayout>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="year">
-        <item>2016年</item>
+        <item>2016</item>
         <item>2017年</item>
         <item>2018年</item>
         <item>2019年</item>
@@ -14,7 +14,7 @@
         <item>1月</item>
         <item>2月</item>
         <item>3月</item>
-        <item>4月</item>
+        <item>04</item>
         <item>5月</item>
         <item>6月</item>
         <item>7月</item>
@@ -29,7 +29,7 @@
         <item>2日</item>
         <item>3日</item>
         <item>4日</item>
-        <item>5日</item>
+        <item>05</item>
         <item>6日</item>
         <item>7日</item>
         <item>8日</item>

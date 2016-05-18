@@ -20,7 +20,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="通道1当前温度"
-            android:textSize="25sp"
             android:textColor="#ff0022"
             android:textStyle="normal"
             android:layout_weight="1"
@@ -36,7 +35,6 @@
             android:id="@+id/editText"
             android:textColor="#ff0022"
             android:layout_weight="1"
-            android:textSize="25sp"
             android:hint="℃" />
 
         <Button
@@ -45,15 +43,13 @@
             android:text="执行标定"
             android:id="@+id/button8"
             android:textColor="#ff0022"
-            android:layout_weight="1"
-            android:textSize="25sp" />
+            android:layout_weight="1" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="通道2当前温度"
-            android:textSize="25sp"
-            android:textColor="#00ff11"
+            android:textColor="#ff00ffff"
             android:textStyle="normal"
             android:layout_weight="1"
             android:id="@+id/textView14"
@@ -66,9 +62,8 @@
             android:inputType="number"
             android:ems="10"
             android:id="@+id/editText2"
-            android:textColor="#00ff11"
+            android:textColor="#ff00ffff"
             android:layout_weight="1"
-            android:textSize="25sp"
             android:hint="℃" />
 
         <Button
@@ -76,9 +71,8 @@
             android:layout_height="wrap_content"
             android:text="执行标定"
             android:id="@+id/button9"
-            android:textColor="#00ff11"
-            android:layout_weight="1"
-            android:textSize="25sp" />
+            android:textColor="#ff00ffff"
+            android:layout_weight="1" />
 
     </LinearLayout>
 

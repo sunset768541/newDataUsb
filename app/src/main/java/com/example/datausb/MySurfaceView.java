@@ -69,13 +69,27 @@ public class MySurfaceView extends GLSurfaceView
 
 							if(x>0&&x<WIDTH/2&&y>0&&y<HEIGHT/2)
 							{//向前
+								if ((-15<cz&&cz<28)&&(-10<cx&&cx<10)){//判断cx cz的位置，超出界限则摄像机重置到初始的位置
 								cx=cx-(float)Math.sin(direction)*1.0f;
 								cz=cz-(float)Math.cos(direction)*1.0f;
+								}
+								else {
+									cz=20;
+									cx=0;
+									//cx=cx+(float)1;
+								}
+
 							}
 							else if(x>WIDTH/2&&x<WIDTH&&y>0&&y<HEIGHT/2)
 							{//向后
+								if (-15<cz&&cz<28&&(-10<cx&&cx<10)){//判断cx cz的位置，超出界限则摄像机重置到初始的位置
 								cx=cx+(float)Math.sin(direction)*1.0f;
-								cz=cz+(float)Math.cos(direction)*1.0f;
+								cz=cz+(float)Math.cos(direction)*1.0f;}
+								else {
+									cz=20;
+									cx=0;
+									//cx=cx-(float)1;
+								}
 							}
 							else if(x>0&&x<WIDTH/2&&y>HEIGHT/2&&y<HEIGHT)
 							{
@@ -104,6 +118,7 @@ public class MySurfaceView extends GLSurfaceView
 		}
 		
 		//设置新的观察目标点XZ坐标
+		Log.e("cxcz",Float.valueOf(cx).toString()+"cz:   "+Float.valueOf(cz).toString());
 		tx=(float)(cx-Math.sin(direction)*Offset);//观察目标点x坐标 
         tz=(float)(cz-Math.cos(direction)*Offset);//观察目标点z坐标
 		return true;

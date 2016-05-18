@@ -24,6 +24,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -115,17 +116,17 @@ public class main1 extends Activity {
          * temperature用来切换到温度距离显示模式
          * 并为按钮添加监听函数
          */
-        Button datamodle = (Button) findViewById(R.id.button);
+        ImageButton datamodle = (ImageButton) findViewById(R.id.imageButton);
         datamodle.setOnClickListener(new rd());
-        Button calibration = (Button) findViewById(R.id.button2);
+        ImageButton calibration = (ImageButton) findViewById(R.id.imageButton2);
         calibration.setOnClickListener(new ca());
-        Button temperature = (Button) findViewById(R.id.button3);
+        ImageButton temperature = (ImageButton) findViewById(R.id.imageButton3);
         temperature.setOnClickListener(new te());
-        Button systemSetingselect = (Button) findViewById(R.id.button6);
+        ImageButton systemSetingselect = (ImageButton) findViewById(R.id.imageButton5);
         systemSetingselect.setOnClickListener(new ss());
-        Button threeDim=(Button) findViewById(R.id.button4);
+        ImageButton threeDim=(ImageButton) findViewById(R.id.imageButton4);
         threeDim.setOnClickListener(new thr());
-        Button historyrecording=(Button)findViewById(R.id.button5);
+        ImageButton historyrecording=(ImageButton)findViewById(R.id.imageButton6);
         historyrecording.setOnClickListener(new hrd());
         /**
          *
@@ -157,7 +158,7 @@ public class main1 extends Activity {
         public void handleMessage(Message msg1) {
             if (msg1.what == COMPLETED) {
                 try {
-                    transmmitespeed1.setText("shuj" + msg1.obj);
+                    transmmitespeed1.setText("采样数据：" + msg1.obj);
                 } catch (NullPointerException e) {
                 }
             }

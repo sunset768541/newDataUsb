@@ -83,7 +83,9 @@ public class DataWR {
 
     public static String[] read(String year,String month,String day,Context cc) {
 
-        String finddatafile="/mnt/external_sd/"+"/"+year+"/"+month+"/"+day;
+
+        String finddatafile="/mnt/external_sd/"+year+"/"+month+"/"+day;
+        Log.e("s", finddatafile);
         File datapathfile=new File(finddatafile);
         if (!datapathfile.exists()){
             dataname=null;

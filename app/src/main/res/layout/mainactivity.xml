@@ -4,17 +4,26 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/uuuu">
+    android:background="@drawable/background">
 
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="拉曼光纤传感温度实时显示系统"
-        android:id="@+id/textView16"
         android:layout_gravity="center_horizontal"
-        android:paddingTop="10dp"
-        android:textSize="20sp" />
+        android:gravity="center"
+        android:background="@drawable/ui">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="拉曼光纤传感温度实时显示系统"
+            android:id="@+id/textView16"
+            android:paddingTop="10dp"
+            android:textSize="20sp"
+            android:textColor="#ffffffff" />
+    </LinearLayout>
 
     <LinearLayout
         android:orientation="horizontal"
@@ -29,92 +38,104 @@
             android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:gravity="center">
+            android:gravity="center"
+            android:background="@drawable/togglebuttoncolor">
 
-            <Button
+
+            <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/imageButton"
+                android:src="@drawable/dm"
+                android:background="#00ffffff" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="数据模式"
-                android:id="@+id/button"
-                android:layout_weight="1"
-                android:focusable="true"
-                android:background="@drawable/buttoncolor"
-                android:gravity="center"
-                android:layout_marginTop="1dp"
-                android:layout_marginBottom="1dp" />
+                android:id="@+id/textView25"
+                android:textSize="12sp"
+                android:layout_marginBottom="15dp" />
 
-            <Button
+            <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/imageButton2"
+                android:src="@drawable/cla"
+                android:background="#00ffffff" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="标定模式"
-                android:id="@+id/button2"
-                android:paddingTop="10dp"
-                android:layout_weight="1"
-                android:focusable="true"
-                android:background="@drawable/buttoncolor"
-                android:gravity="center"
-                android:layout_marginBottom="1dp"
-                android:layout_marginTop="1dp" />
+                android:id="@+id/textView26"
+                android:textSize="12sp"
+                android:layout_marginBottom="15dp" />
 
-            <Button
+            <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/imageButton3"
+                android:src="@drawable/te"
+                android:background="#00ffffff" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="温度模式"
-                android:id="@+id/button3"
-                android:layout_weight="1"
-                android:focusable="true"
-                android:background="@drawable/buttoncolor"
-                android:gravity="center"
-                android:layout_marginTop="1dp"
-                android:layout_marginBottom="1dp" />
+                android:id="@+id/textView27"
+                android:textSize="12sp"
+                android:layout_marginBottom="15dp" />
 
-            <Button
+            <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/imageButton4"
+                android:src="@drawable/thr"
+                android:background="#00ffffff" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="三维模式"
-                android:id="@+id/button4"
-                android:layout_weight="1"
-                android:focusable="true"
-                android:background="@drawable/buttoncolor"
-                android:gravity="center"
-                android:layout_marginBottom="1dp"
-                android:layout_marginTop="1dp" />
+                android:id="@+id/textView28"
+                android:textSize="12sp"
+                android:layout_marginBottom="15dp" />
 
-            <Button
+            <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="历史记录"
-                android:id="@+id/button5"
-                android:layout_weight="1"
-                android:focusable="true"
-                android:background="@drawable/buttoncolor"
-                android:gravity="center"
-                android:layout_marginTop="1dp"
-                android:layout_marginBottom="1dp" />
+                android:id="@+id/imageButton5"
+                android:src="@drawable/set"
+                android:background="#00ffffff" />
 
-            <Button
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="系统设置"
-                android:id="@+id/button6"
-                android:layout_weight="1"
-                android:focusable="true"
-                android:background="@drawable/buttoncolor"
-                android:gravity="center"
-                android:layout_marginBottom="1dp"
-                android:layout_marginTop="1dp" />
+                android:id="@+id/textView29"
+                android:textSize="12sp"
+                android:layout_marginBottom="15dp" />
 
-            <Button
+            <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="退出系统"
-                android:id="@+id/button7"
-                android:layout_weight="1"
-                android:focusable="true"
-                android:background="@drawable/buttoncolor"
-                android:gravity="center"
-                android:layout_marginTop="1dp"
-                android:layout_marginBottom="1dp" />
+                android:id="@+id/imageButton6"
+                android:src="@drawable/his"
+                android:background="#00ffffff" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="数据存储"
+                android:id="@+id/textView30"
+                android:textSize="12sp" />
 
         </LinearLayout>
 
@@ -126,7 +147,9 @@
             <FrameLayout
                 android:id="@+id/contineer"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp">
 
             </FrameLayout>
 
@@ -142,37 +165,48 @@
         android:layout_weight="0"
         android:paddingLeft="10dp">
 
-        <ToggleButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="开启设备"
-            android:id="@+id/toggleButton"
-            android:textOff="打开设备"
-            android:textOn="关闭设备"
-            android:background="@drawable/buttoncolor"
-            android:checked="false"
-            android:layout_weight="1" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/usbstate"
-            android:text="USB设备已经打开"
-            android:layout_weight="20"
-            android:layout_marginLeft="20dp" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/savestate"
-            android:text="数据储存"
-            android:layout_weight="20"
-            android:layout_marginLeft="20dp" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/transmitespeed1"
-            android:text="数据传输速度"
-            android:layout_marginLeft="20dp"
-            android:layout_weight="20" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/usbstate"
+                android:text="USB设备已经打开"
+                android:layout_alignParentStart="true"
+                android:layout_centerInParent="true"
+                android:layout_centerHorizontal="true"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/savestate"
+                android:layout_toRightOf="@id/usbstate"
+                android:layout_centerInParent="true"
+                android:text="                                数据存储                                " />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/transmitespeed1"
+                android:layout_toRightOf="@id/savestate"
+                android:layout_centerInParent="true"
+                android:text="采样数据                                                                                        " />
+
+            <ToggleButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="开启设备"
+                android:id="@+id/toggleButton"
+                android:textOff="打开设备"
+                android:textOn="关闭设备"
+                android:background="@drawable/buttoncolor"
+                android:checked="false"
+                android:layout_marginRight="20dp"
+                android:layout_gravity="right|top"
+                android:layout_alignParentEnd="true" />
+        </RelativeLayout>
 
     </LinearLayout>
 
