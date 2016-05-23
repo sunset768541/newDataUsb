@@ -61,7 +61,6 @@
             android:layout_height="match_parent"
             android:id="@+id/listView"
             android:layout_gravity="center_vertical"
-            android:entries="@array/hour"
             android:layout_below="@id/spinner" />
 
     </LinearLayout>

@@ -85,7 +85,8 @@ public class main1 extends Activity {
      * 在切换显示模式时，由于会使数据接收线程和处理线程自动启动，那打开关闭设备按键的状态也要切换到正确的状态。
      */
     public static int TOGGLE_BUTTON=0;
-    public static int STOREDATA=0;
+    public static int STOREDATA=0;//数据存储标志
+    public static int TEM_ALERT=0;//温度报警标志
     /**
      * preferences为读取参数的SharePreference的实例
      * editor为修改参数的Shareferecxes.Editor的实例
@@ -457,7 +458,7 @@ public class main1 extends Activity {
           //  Log.e("tos",Boolean.valueOf(tgg.isChecked()).toString());
             if (tgg.isChecked()) {
                 //  Toast.makeText(main1.this, "你喜欢球类运动", Toast.LENGTH_SHORT).show();
-                enumerateDevice();//打开应用时枚举设备
+                enumerateDevice();//枚举设备，当按下该togglbutton时才打开USB
                 if (myUsbDevice != null) {
                     //tgg.setBackgroundColor(Color.GREEN);
                     findInterface();//找到设备接口
@@ -884,7 +885,7 @@ public class main1 extends Activity {
     public dataProcess pro = new dataProcess(r, dta);
 
     /**
-     * sentdata为一个用来发送数据的函数，当前没有启用
+     * sentdata为一个用来发送数据的函数
      */
     //控制FPGA的指令为FF03 FF3F 0E 0F 转换为byte为 byte [] contrlo={255,3,255,63,0,14,0,15}
     public void sentdata(byte[] bytes) {//发送数据的函数

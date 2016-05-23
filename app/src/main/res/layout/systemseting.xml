@@ -8,84 +8,301 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <GridLayout
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:rowCount="2"
-        android:columnCount="2">
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="#df4343"
-            android:backgroundTintMode="src_in">
+            android:layout_height="match_parent"
+            android:background="@drawable/togglebuttoncolor"
+            android:layout_weight="1">
 
-            <TextView
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="数据存储"
+                    android:id="@+id/textView32" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <Switch
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/switch1"
+                        android:showText="false"
+                        android:textOn="打开"
+                        android:textOff="关闭"
+                        android:singleLine="false"
+                        android:splitTrack="false"
+                        android:textAlignment="center"
+                        android:checked="false"
+                        android:background="#00ffffff"
+                        android:layout_alignParentEnd="true" />
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="请输入光纤长度"
-                android:id="@+id/textView19"
-                android:textIsSelectable="false"
-                android:textSize="25sp" />
+                android:layout_gravity="center">
 
-            <EditText
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="存储策略"
+                    android:id="@+id/textView33" />
+
+                <Spinner
+                    android:layout_width="125dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/spinner5"
+                    android:entries="@array/savestrategy" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="number"
-                android:ems="10"
-                android:id="@+id/editText5"
-                android:textSize="25sp"
-                android:hint="Km" />
+                android:layout_gravity="center"
+                android:layout_centerInParent="true">
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="确认"
-                android:id="@+id/button11"
-                android:textSize="25sp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="存储空间"
+                    android:id="@+id/textView34" />
+            </LinearLayout>
 
         </LinearLayout>
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:background="@drawable/togglebuttoncolor"
+            android:layout_weight="1">
 
-            <EditText
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="报警设置"
+                    android:id="@+id/textView36" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <Switch
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/switch2"
+                        android:layout_alignParentEnd="true" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/editText3"
-                android:layout_weight="1"
-                android:hint="输入要发送的内容" />
+                android:layout_gravity="center">
 
-            <Button
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="通道1报警温度"
+                    android:id="@+id/textView37" />
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:ems="10"
+                    android:id="@+id/editText4"
+                    android:width="100dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="发送到FPGA"
-                android:id="@+id/button10"
-                android:layout_weight="1" />
+                android:layout_gravity="center">
 
-            <TextView
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="通道2报警温度"
+                    android:id="@+id/textView38" />
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:ems="10"
+                    android:id="@+id/editText6"
+                    android:width="100dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:backgroundTintMode="src_in"
+            android:background="@drawable/togglebuttoncolor"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="全局变量"
+                    android:id="@+id/textView35" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="发送的16进制数"
-                android:id="@+id/textView17"
-                android:layout_weight="1"
-                android:textSize="25sp" />
+                android:layout_gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="光纤长度:"
+                    android:id="@+id/textView19"
+                    android:textIsSelectable="false"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:ems="10"
+                    android:id="@+id/editText5"
+                    android:textSize="20sp"
+                    android:hint="Km"
+                    android:width="100dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="三维场景"
+                    android:id="@+id/textView31" />
+
+                <Spinner
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/spinner4"
+                    android:entries="@array/scence" />
+            </LinearLayout>
+
         </LinearLayout>
 
-        <Switch
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/switch1"
-            android:showText="false"
-            android:textOn="Save On"
-            android:textOff="Save Off"
-            android:singleLine="false"
-            android:splitTrack="false"
-            android:textAlignment="center"
-            android:checked="false" />
-    </GridLayout>
+            android:layout_height="match_parent"
+            android:background="@drawable/togglebuttoncolor"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:id="@+id/textView40"
+                    android:text="FPGA控制" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center">
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/editText3"
+                    android:layout_weight="1"
+                    android:hint="输入要发送的USB内容"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="发送的16进制数"
+                    android:id="@+id/textView17"
+                    android:layout_weight="1"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="发送"
+                    android:id="@+id/button10"
+                    android:layout_weight="1"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </LinearLayout>

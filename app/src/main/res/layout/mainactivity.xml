@@ -18,7 +18,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="拉曼光纤传感温度实时显示系统"
+            android:text="拉曼光纤温度传感显示系统"
             android:id="@+id/textView16"
             android:paddingTop="10dp"
             android:textSize="20sp"
@@ -46,8 +46,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/imageButton"
-                android:src="@drawable/dm"
-                android:background="#00ffffff" />
+                android:background="@drawable/dmbutton" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -63,7 +62,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/imageButton2"
                 android:src="@drawable/cla"
-                android:background="#00ffffff" />
+                android:background="@drawable/clabutton" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -79,7 +78,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/imageButton3"
                 android:src="@drawable/te"
-                android:background="#00ffffff" />
+                android:background="@drawable/tembutton" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -95,7 +94,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/imageButton4"
                 android:src="@drawable/thr"
-                android:background="#00ffffff" />
+                android:background="@drawable/thrbutton" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -111,7 +110,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/imageButton5"
                 android:src="@drawable/set"
-                android:background="#00ffffff" />
+                android:background="@drawable/setbutton" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -127,7 +126,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/imageButton6"
                 android:src="@drawable/his"
-                android:background="#00ffffff" />
+                android:background="@drawable/hisbutton" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -199,8 +198,8 @@
                 android:layout_height="wrap_content"
                 android:text="开启设备"
                 android:id="@+id/toggleButton"
-                android:textOff="打开设备"
-                android:textOn="关闭设备"
+                android:textOff="开始"
+                android:textOn="暂停"
                 android:background="@drawable/buttoncolor"
                 android:checked="false"
                 android:layout_marginRight="20dp"

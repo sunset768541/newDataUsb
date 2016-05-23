@@ -81,4 +81,13 @@
         <item>22点</item>
         <item>23点</item>
     </string-array>
+    <string-array name="scence">
+        <item>山地</item>
+        <item>建筑</item>
+        <item>城市</item>
+    </string-array>
+    <string-array name="savestrategy">
+        <item>无损存储</item>
+        <item>部分存储</item>
+    </string-array>
 </resources>
