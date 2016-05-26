@@ -70,8 +70,8 @@ public class main1 extends Activity {
     calibrateModel db = new calibrateModel();
     tempreatureModel dc = new tempreatureModel();
     systemSeting ss = new systemSeting();
-    threeDimModel trd=new threeDimModel();
-    historyRecording hr=new historyRecording();
+    threeDimModel trd = new threeDimModel();
+    historyRecording hr = new historyRecording();
 
     /**
      * 定义用于携带数据的Bundle
@@ -84,9 +84,9 @@ public class main1 extends Activity {
      * 定义静态变量TOGGLE_BUTTON，用来标识togglebutton是否是第一次按下，0表示没有按过togglebutton，当按下togglebutton后该值永远为1.
      * 在切换显示模式时，由于会使数据接收线程和处理线程自动启动，那打开关闭设备按键的状态也要切换到正确的状态。
      */
-    public static int TOGGLE_BUTTON=0;
-    public static int STOREDATA=0;//数据存储标志
-    public static int TEM_ALERT=0;//温度报警标志
+    public static int TOGGLE_BUTTON = 0;
+    public static int STOREDATA = 0;//数据存储标志
+    public static int TEM_ALERT = 0;//温度报警标志
     /**
      * preferences为读取参数的SharePreference的实例
      * editor为修改参数的Shareferecxes.Editor的实例
@@ -100,6 +100,7 @@ public class main1 extends Activity {
     private EditText oplong1;
     SQLiteDatabase mDatabase;
     ToggleButton togglebutton;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -109,7 +110,7 @@ public class main1 extends Activity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setContentView(R.layout.mainactivity);
         //执行创建名字为datatusb的数据库，然而实际在内存卡上建立的数据库的名字为filesdatausb.db3
-        mDatabase = SQLiteDatabase.openOrCreateDatabase(this.getFilesDir().toString()+"datausb.db3", null);
+        mDatabase = SQLiteDatabase.openOrCreateDatabase(this.getFilesDir().toString() + "datausb.db3", null);
         /**
          * 实例化3个按钮用来切换不同的Fragment
          * datamodle用来切换到数据显示模式
@@ -125,16 +126,16 @@ public class main1 extends Activity {
         temperature.setOnClickListener(new te());
         ImageButton systemSetingselect = (ImageButton) findViewById(R.id.imageButton5);
         systemSetingselect.setOnClickListener(new ss());
-        ImageButton threeDim=(ImageButton) findViewById(R.id.imageButton4);
+        ImageButton threeDim = (ImageButton) findViewById(R.id.imageButton4);
         threeDim.setOnClickListener(new thr());
-        ImageButton historyrecording=(ImageButton)findViewById(R.id.imageButton6);
+        ImageButton historyrecording = (ImageButton) findViewById(R.id.imageButton6);
         historyrecording.setOnClickListener(new hrd());
         /**
          *
          */
-         togglebutton = (ToggleButton) findViewById(R.id.toggleButton);
+        togglebutton = (ToggleButton) findViewById(R.id.toggleButton);
         togglebutton.setOnClickListener(new tg(togglebutton));
-       // Log.e("toggle",Boolean.valueOf(togglebutton.isChecked()).toString());
+        // Log.e("toggle",Boolean.valueOf(togglebutton.isChecked()).toString());
         myUsbManager = (UsbManager) getSystemService(USB_SERVICE);
         usbstate = (TextView) findViewById(R.id.usbstate);
         datasave = (TextView) findViewById(R.id.savestate);
@@ -182,13 +183,13 @@ public class main1 extends Activity {
      * 数据库的操作方法
      **********************************************/
     //创建或者获得表格的方法
-    public void creatOrgettable(SQLiteDatabase ss,String creattable) {
+    public void creatOrgettable(SQLiteDatabase ss, String creattable) {
         ss.execSQL(creattable);
         //Log.d("数据库操作", "数据库建立完成");
     }
 
     //向数据库中插入数据,执行一次就向表格中插入一组数据
-    public void insert(SQLiteDatabase db, int currrenttemp, float[] tuebdata,String tablename) {
+    public void insert(SQLiteDatabase db, int currrenttemp, float[] tuebdata, String tablename) {
         //实例化常量值
         ContentValues cValue = new ContentValues();
         cValue.put("calibtem", currrenttemp);
@@ -202,7 +203,7 @@ public class main1 extends Activity {
     }
 
     //从数据库中读取数据
-    public float[] getfromdatabase(SQLiteDatabase sq,String tablename) {
+    public float[] getfromdatabase(SQLiteDatabase sq, String tablename) {
         Cursor cursor = sq.query(tablename, null, null, null, null, null, null);
         //moveToFirst为指针指向了表格的行数
         cursor.moveToFirst();
@@ -216,8 +217,9 @@ public class main1 extends Activity {
         }
         return temp;
     }
+
     //更新数据库中的数据
-    public void updatadatabase(SQLiteDatabase sq,int currenttemp,float [] tubedata,String tablenaem){
+    public void updatadatabase(SQLiteDatabase sq, int currenttemp, float[] tubedata, String tablenaem) {
         String ss = "";
         for (int i = 0; i < tubedata.length; i++) {
             ss = ss + Float.toString(tubedata[i]) + "!!";
@@ -225,9 +227,9 @@ public class main1 extends Activity {
         ContentValues cValue = new ContentValues();
         cValue.put("calibtem", currenttemp);//
         cValue.put("tubedata", ss);
-        int affet=sq.update(tablenaem, cValue, "_id=?", new String[]{Integer.toString(1)});//修改主健值为1的一行中的数据
-        if(affet==0){//这样就用updata储存数据而不必用insert了，因为如果每次都标定都用insert那会使数据库一直在递增数据，这样就保证了数据库中的表格中只包含一行标定数据
-            insert(sq,currenttemp,tubedata,tablenaem);
+        int affet = sq.update(tablenaem, cValue, "_id=?", new String[]{Integer.toString(1)});//修改主健值为1的一行中的数据
+        if (affet == 0) {//这样就用updata储存数据而不必用insert了，因为如果每次都标定都用insert那会使数据库一直在递增数据，这样就保证了数据库中的表格中只包含一行标定数据
+            insert(sq, currenttemp, tubedata, tablenaem);
         }
     }
 
@@ -263,6 +265,7 @@ public class main1 extends Activity {
         stoptempreturemodelthread = kk;
         return kk;
     }
+
     boolean stopthreedimthread = false;
 
     public boolean setstopthreedimthread(boolean kk) {
@@ -278,8 +281,9 @@ public class main1 extends Activity {
      */
     class rd implements View.OnClickListener {
         public void onClick(View v) {
-            if(TOGGLE_BUTTON==1){
-            togglebutton.setChecked(true);}
+            if (TOGGLE_BUTTON == 1) {
+                togglebutton.setChecked(true);
+            }
             fragmentnumber = 0;
             // setchange(false);
             oplong = preferences.getInt("long", 0);
@@ -310,8 +314,9 @@ public class main1 extends Activity {
      */
     class ca implements View.OnClickListener {
         public void onClick(View v) {
-            if(TOGGLE_BUTTON==1){
-            togglebutton.setChecked(true);}
+            if (TOGGLE_BUTTON == 1) {
+                togglebutton.setChecked(true);
+            }
             fragmentnumber = 1;
             //setchange(false);
             oplong = preferences.getInt("long", 0);
@@ -345,8 +350,9 @@ public class main1 extends Activity {
      */
     class te implements View.OnClickListener {
         public void onClick(View v) {
-            if(TOGGLE_BUTTON==1){
-            togglebutton.setChecked(true);}
+            if (TOGGLE_BUTTON == 1) {
+                togglebutton.setChecked(true);
+            }
             fragmentnumber = 2;
             //setchange(false);
             oplong = preferences.getInt("long", 0);
@@ -391,6 +397,7 @@ public class main1 extends Activity {
 
 
     }
+
     /**
      * 历史记录按键的监听类
      */
@@ -405,13 +412,15 @@ public class main1 extends Activity {
             Log.d("dh", "hha");
         }
     }
+
     /**
      * 3D模式设置按键的监听函数
      */
     class thr implements View.OnClickListener {
         public void onClick(View v) {
-            if(TOGGLE_BUTTON==1){
-            togglebutton.setChecked(true);}
+            if (TOGGLE_BUTTON == 1) {
+                togglebutton.setChecked(true);
+            }
             fragmentnumber = 4;
             //setchange(false);
             oplong = preferences.getInt("long", 0);
@@ -454,8 +463,8 @@ public class main1 extends Activity {
         }
 
         public void onClick(View v) {
-            TOGGLE_BUTTON=1;
-          //  Log.e("tos",Boolean.valueOf(tgg.isChecked()).toString());
+            TOGGLE_BUTTON = 1;
+            //  Log.e("tos",Boolean.valueOf(tgg.isChecked()).toString());
             if (tgg.isChecked()) {
                 //  Toast.makeText(main1.this, "你喜欢球类运动", Toast.LENGTH_SHORT).show();
                 enumerateDevice();//枚举设备，当按下该togglbutton时才打开USB
@@ -464,7 +473,7 @@ public class main1 extends Activity {
                     findInterface();//找到设备接口
                     openDevice();//打开设备
                     assignEndpoint();//指派端点
-                  //  sentdata(contrlo);
+                    //  sentdata(contrlo);
                     if (re.isAlive()) {
                         re.setSuspend(false);
                         pro.setSuspend(false);
@@ -554,25 +563,24 @@ public class main1 extends Activity {
                         }
                     }
                     byte[] Receivebytes = new byte[65536];//接收的数据
-                    byte[] buff=new byte[512];//接收数据缓冲区,注意接收数据务必要为2的n次方，并且bulk的最大为16384，否侧会出现Fatal signal 11 (SIGSEGV)错误
+                    byte[] buff = new byte[512];//接收数据缓冲区,注意接收数据务必要为2的n次方，并且bulk的最大为16384，否侧会出现Fatal signal 11 (SIGSEGV)错误
                     long startTime = System.nanoTime();             // 纳秒级
                     //long startTime = System.currentTimeMillis();    // 毫秒级
-                    for (int i=0;i<Receivebytes.length/buff.length;i++){
+                    for (int i = 0; i < Receivebytes.length / buff.length; i++) {
                         int xxx = myDeviceConnection.bulkTransfer(epIn, buff, 512, 0); //do in another thread
-                        for (int j=0;j<512;j++){
-                            Receivebytes[j+i*512]=buff[j];
+                        for (int j = 0; j < 512; j++) {
+                            Receivebytes[j + i * 512] = buff[j];
                         }
 
                     }
                     //int xxx = myDeviceConnection.bulkTransfer(epIn, Receivebytes, 16384, 0); //do in another thread
                     //  测试的代码
-                    if(STOREDATA==1){
+                    if (STOREDATA == 1) {
                         try {
                             DataWR.writte(Receivebytes);//将接收到的数据直接存储为2进制文件
+                        } catch (Exception e) {
                         }
-                        catch (Exception e){
-                        }
-                     }
+                    }
                     long estimatedTime = System.nanoTime() - startTime;
 
                     //set_TubeA1_data(data_a, data_a1, data_b, data_b1);//调用传入通道A数据函数
@@ -588,7 +596,7 @@ public class main1 extends Activity {
                     //r.speed = t;
                     r.flag = true;
                     r.notify();
-                   // Log.d("接收", "数据接收线程完成");
+                    // Log.d("接收", "数据接收线程完成");
                 }
             }
 
@@ -652,7 +660,7 @@ public class main1 extends Activity {
                     int p;
                     int p1;
                     int i1 = 0;
-                    int[] combination = new int[r.data.length/2];//combination用于储存合并后的16bit数据
+                    int[] combination = new int[r.data.length / 2];//combination用于储存合并后的16bit数据
                     // for (int i = 0; i < r.data.length; i++) {//报出空指针异常的原因是接收数据还没有处理完，线程就跳转到了这里
                     for (int i = 0; i < r.data.length; i = i + 2) {//数据组合
 
@@ -685,26 +693,26 @@ public class main1 extends Activity {
 //                    {
 //
 //                        if(combination[i]==0){
-                    dadd = Arrays.copyOfRange(combination, 0, combination.length/4);//copyOfRange(r,inclusive,exclusive),不包含exclusive那个
+                    dadd = Arrays.copyOfRange(combination, 0, combination.length / 4);//copyOfRange(r,inclusive,exclusive),不包含exclusive那个
 
-                   // Log.e("com",Integer.valueOf(combination.length).toString()+"   "+Integer.valueOf(dadd.length).toString());
+                    // Log.e("com",Integer.valueOf(combination.length).toString()+"   "+Integer.valueOf(dadd.length).toString());
 //                        }
 //                        else{
 //
 //                        }
 //                        if (combination[i]==512){
-                    dadd1 = Arrays.copyOfRange(combination, combination.length/4, combination.length/2);
+                    dadd1 = Arrays.copyOfRange(combination, combination.length / 4, combination.length / 2);
 //
 //                        }
 //                        if (combination[i]==1024){
-                    dadd2 = Arrays.copyOfRange(combination, combination.length/2, combination.length-combination.length/4);
+                    dadd2 = Arrays.copyOfRange(combination, combination.length / 2, combination.length - combination.length / 4);
 
 //
 //                        }
 //                        if(combination[i]==1536){
-                    dadd3 = Arrays.copyOfRange(combination, combination.length-combination.length/4, combination.length);
-               //     Log.e("dadd3",Integer.valueOf(dadd3[dadd3.length-1]).toString());
-                 //   Log.e("dadd33",Integer.valueOf(dadd3.length).toString());
+                    dadd3 = Arrays.copyOfRange(combination, combination.length - combination.length / 4, combination.length);
+                    //     Log.e("dadd3",Integer.valueOf(dadd3[dadd3.length-1]).toString());
+                    //   Log.e("dadd33",Integer.valueOf(dadd3.length).toString());
 
                     // }
 
@@ -713,6 +721,16 @@ public class main1 extends Activity {
                     data_a1.putIntArray("tubea1", dadd1);//待传入通道A1的数据
                     data_b.putIntArray("tubeb", dadd2);//待传入通道B的数据
                     data_b1.putIntArray("tubeb1", dadd3);//待传入通道B1的数据
+                    if (TEM_ALERT == 1) {
+                        if (TemAlert.alertfinish == 1) {
+                            TemAlert.alertfinish = 0;
+                            TemAlert.tua1 = dadd;
+                            TemAlert.tua2 = dadd1;
+                            TemAlert.tub1 = dadd2;
+                            TemAlert.tub2 = dadd3;
+                            TemAlert.gettempalert();
+                        }
+                    }
                     /***
                      * 这个线程同步的作用是发送处理好的数据交给fragment线程进行处理，在fragment显示线程进行数据显示的过程中，要求当前数据处理线程进行等待
                      */
@@ -771,7 +789,7 @@ public class main1 extends Activity {
                     r.notify();
                     setchange(true);
 
-                   // Log.d("数据处理", "数据处理线程完成");
+                    // Log.d("数据处理", "数据处理线程完成");
                 }
             }
 
@@ -847,9 +865,8 @@ public class main1 extends Activity {
 //                DataOutputStream dd=new DataOutputStream(
 //                        new BufferedOutputStream(
 //                                new FileOutputStream("hh")));
-            }
-            else{
-                Toast.makeText(getApplication(),"没有检测到SD卡",Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getApplication(), "没有检测到SD卡", Toast.LENGTH_SHORT).show();
             }
         } catch (Exception e) {
             e.printStackTrace();

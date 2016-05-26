@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:id="@+id/sysset"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
 
     <requestFocus
         android:layout_gravity="center_horizontal"
@@ -139,10 +142,11 @@
                 <EditText
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:inputType="number"
+                    android:inputType="numberSigned"
                     android:ems="10"
                     android:id="@+id/editText4"
-                    android:width="100dp" />
+                    android:width="100dp"
+                    />
             </LinearLayout>
 
             <LinearLayout
@@ -161,10 +165,11 @@
                 <EditText
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:inputType="number"
+                    android:inputType="numberSigned"
                     android:ems="10"
                     android:id="@+id/editText6"
-                    android:width="100dp" />
+                    android:width="100dp"
+                     />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

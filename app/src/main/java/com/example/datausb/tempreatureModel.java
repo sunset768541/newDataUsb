@@ -19,6 +19,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.util.Arrays;
 
 /**
@@ -129,6 +131,7 @@ public class tempreatureModel extends android.app.Fragment {
         boolean dd;
         float fiberLength = 2048;
         float maxnum = 16384;
+       // FileWriter ps;
         /**
          * 该线程的构造函数
          *
@@ -143,6 +146,12 @@ public class tempreatureModel extends android.app.Fragment {
             h = sss.getHeight();
             w = sss.getWidth();
             this.dd = dd;
+          //  StrStore.cresave();
+//            try {
+//            //   ps= new FileWriter("/mnt/external_sd/temdata.txt");
+//
+//            }
+//            catch (Exception e){}
         }
 
         public void run() {
@@ -195,6 +204,17 @@ public class tempreatureModel extends android.app.Fragment {
                             //Log.e("calopsa","当前温度"+Float.valueOf(caliPSA[caliPSA.length-1]).toString()+"Acli"+Float.valueOf(caliPSA[i]).toString()+"Bcli"+Float.valueOf(caliPSB[i]).toString());
                             float tt1=(float)(Math.log(bb1)+1/caliPSA[caliPSA.length-1]);
                             float tt2=(float)(Math.log(bb2)+1/caliPSB[caliPSB.length-1]);
+                           // StrStore.s1="通道1第 "+Integer.valueOf(i).toString() + " 个温度为" + Float.valueOf(tt1).toString()+"\n"+"通道2第 "+Integer.valueOf(i).toString() + " 个温度为" + Float.valueOf(tt2).toString()+"\n";
+
+//                            try {
+//                                ps.write(s1+"\n");
+//                                ps.write(s2+"\n");
+//                            }
+//                            catch (Exception e){
+//
+//                            }
+
+                           // StrStore.saves();
                             T1[i]=1/tt1;
                             T2[i]=1/tt2;
                         }
