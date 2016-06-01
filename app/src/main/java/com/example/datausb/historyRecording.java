@@ -53,7 +53,10 @@ public class historyRecording extends android.app.Fragment {
                     String ss = "/mnt/external_sd/" + yea + "/" + mon + "/" + da + "/" + datalist[position].toString();
                     Log.e("D",ss);
                     try {
-                        DataRD.seek=0;
+                        DataRD.HAVE_READ_FINISEH=true;
+                        while (DataRD.SHOW_DATA_THREAT_FLAG){
+                            Log.e("show线程执行中","");
+                        }
                         DataRD.iniread(ss);
                         //DataRD.readonce();
                         //int mm[]=new int[DataRD.data.length/2];
@@ -83,8 +86,55 @@ public class historyRecording extends android.app.Fragment {
                 spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
 
                 {
-                    public void onItemSelected (AdapterView < ? > parent,
-                        View view,int position, long id){
+                    public void onItemSelected(AdapterView<?> parent,
+                                               View view, int position, long id) {
+                        yea = spinner.getSelectedItem().toString();
+                        mon = spinner2.getSelectedItem().toString();
+                        da = spinner3.getSelectedItem().toString();
+                        datalist = DataWR.read(yea, mon, da, ((main1) getActivity()).getApplication());
+                        String ss = null;
+                        if (datalist != null) {
+                            ss = datalist[1] + datalist[2] + datalist[datalist.length - 1];
+                            adapter = new ArrayAdapter<String>(((main1) getActivity()).getApplication(), R.layout.lis, datalist);
+                            listView.setAdapter(adapter);
+                        } else {
+                            Toast.makeText(((main1) getActivity()).getApplication(), "当前日期没有数据存储", Toast.LENGTH_SHORT).show();
+                        }
+                        Log.e("ss", yea + "-" + mon + "-" + da + "-" + ss);
+                    }
+
+                    public void onNothingSelected(AdapterView<?> parent) {
+                    }
+                });
+            spinner2=(Spinner)getActivity().findViewById(R.id.spinner2);
+            spinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    yea = spinner.getSelectedItem().toString();
+                    mon = spinner2.getSelectedItem().toString();
+                    da = spinner3.getSelectedItem().toString();
+                    datalist = DataWR.read(yea, mon, da, ((main1) getActivity()).getApplication());
+                    String ss = null;
+                    if (datalist != null) {
+                        ss = datalist[1] + datalist[2] + datalist[datalist.length - 1];
+                        adapter = new ArrayAdapter<String>(((main1) getActivity()).getApplication(), R.layout.lis, datalist);
+                        listView.setAdapter(adapter);
+                    } else {
+                        Toast.makeText(((main1) getActivity()).getApplication(), "当前日期没有数据存储", Toast.LENGTH_SHORT).show();
+                    }
+                    Log.e("ss", yea + "-" + mon + "-" + da + "-" + ss);
+
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+            spinner3=(Spinner)getActivity().findViewById(R.id.spinner3);
+            spinner3.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     yea = spinner.getSelectedItem().toString();
                     mon = spinner2.getSelectedItem().toString();
                     da = spinner3.getSelectedItem().toString();
@@ -100,11 +150,11 @@ public class historyRecording extends android.app.Fragment {
                     Log.e("ss", yea + "-" + mon + "-" + da + "-" + ss);
                 }
 
+                @Override
                 public void onNothingSelected(AdapterView<?> parent) {
+
                 }
             });
-            spinner2=(Spinner)getActivity().findViewById(R.id.spinner2);
-            spinner3=(Spinner)getActivity().findViewById(R.id.spinner3);
            // showdata=new threeDimModel();
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.replace(R.id.showdataframe, showdata, "showdata");//datamodel为fragment的tag值，用来在数据处理线程中找到当前的fragment

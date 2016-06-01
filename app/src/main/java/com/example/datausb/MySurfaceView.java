@@ -28,7 +28,8 @@ public class MySurfaceView extends GLSurfaceView
 	static float direction=0;//视线方向
     static float cx=0;//摄像机x坐标 
     static float cz=20;//摄像机z坐标
-    
+   // public float WIDTH;
+	//public float HEIGHT;
     static float tx=0;//观察目标点x坐标
     static float tz=0;//观察目标点z坐标   
     static final float DEGREE_SPAN=(float)(3.0/180.0f*Math.PI);//摄像机每次转动的角度
@@ -47,7 +48,9 @@ public class MySurfaceView extends GLSurfaceView
 		this.setEGLContextClientVersion(2); //设置使用OPENGL ES2.0
         mRender = new SceneRenderer();	//创建场景渲染器
 		setRenderer(mRender);				//设置渲染器
-        setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);//设置渲染模式为主动渲染 
+        setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);//设置渲染模式为主动渲染
+		//WIDTH=w;
+		//HEIGHT=h;
 	}
 	
 	@Override

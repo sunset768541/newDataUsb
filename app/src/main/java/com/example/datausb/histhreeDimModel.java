@@ -94,11 +94,14 @@ public class histhreeDimModel extends android.app.Fragment {
             }
             try {//捕获线程运行中切换界面而产生的的空指针异常，防止程序崩溃。
                 while (!DataRD.HAVE_READ_FINISEH) {
+                    DataRD.SHOW_DATA_THREAT_FLAG=true;//标志读取一组数据的操作开始
                     try {
-                        for (int i=0;i<DataRD.datalength;i++){
-                            DataRD.dataInput.seek(DataRD.seek + i);
-                            DataRD.data[i]=DataRD.dataInput.readByte();
-                        }
+//                        for (int i=0;i<DataRD.datalength;i++){//用每次读取一个Byte的数据放到数组中的效率十分低下，1分钟的数据可以读取6--7分钟；
+//                            DataRD.dataInput.seek(DataRD.seek + i);
+//                            DataRD.data[i]=DataRD.dataInput.readByte();
+//                        }
+                        DataRD.dataInput.read(DataRD.data);//这种读取方式十分快，1分钟数据20读取完成
+                        DataRD.dataInput.seek(DataRD.seek + DataRD.data.length);
 
                     } catch (IOException e) {
                         Log.e("出现IO异常", "histhreeDim"+e.toString());
@@ -164,7 +167,7 @@ public class histhreeDimModel extends android.app.Fragment {
                     }
                     Log.e("读文件大小",Long.toString(DataRD.datafilelength));
                     Log.e("指针的位置",Long.toString(DataRD.seek));
-
+                DataRD.SHOW_DATA_THREAT_FLAG=false;//标志读取一组数据操作完成
                 }
                 try {
                     DataRD.stopread();
