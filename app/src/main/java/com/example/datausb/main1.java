@@ -143,7 +143,7 @@ public class main1 extends Activity {
         transmmitespeed1 = (TextView) findViewById(R.id.transmitespeed1);
         preferences = getSharedPreferences("opl", MODE_PRIVATE);
         editor = preferences.edit();
-        DataWR.ini();
+      //  DataWR.ini();
         int oplong = preferences.getInt("long", 0);
         if (oplong == 0) {
             Toast.makeText(getApplicationContext(), "还没有设置光纤的长度，请先到系统设置中设置", Toast.LENGTH_SHORT).show();

@@ -218,7 +218,15 @@ public class systemSeting extends android.app.Fragment {
                         Toast.makeText(((main1) getActivity()).getApplication(), "没有检测到SD卡,或重启系统", Toast.LENGTH_SHORT).show();
                     }
                 }
+                try {
+                    DataWR.cla = ((main1) getActivity()).getfromdatabase(((main1) getActivity()).mDatabase, "tube1data");
+                    DataWR.clb = ((main1) getActivity()).getfromdatabase(((main1) getActivity()).mDatabase, "tube2data");
+                } catch (Exception e) {
+                    Toast.makeText(((main1) getActivity()).getApplicationContext(), "标定数据不存在，请先在标定模式下进行标定", Toast.LENGTH_SHORT).show();
+
+                }
             }
+
 
         });
         sentdata.setOnClickListener(new View.OnClickListener() {
