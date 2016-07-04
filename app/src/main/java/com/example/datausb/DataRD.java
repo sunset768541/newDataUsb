@@ -27,7 +27,7 @@ public class DataRD {
     public static int[] data_b1;//
     public static boolean SHOW_DATA_THREAT_FLAG=false;//3维显示数据线程开始显示一组数据的开始和结束标志位
     public static void iniread(String filepath) throws IOException {//初始化读取数据
-        dataInput = new RandomAccessFile(filepath,"r");//开启新的随机输入流
+        dataInput = new RandomAccessFile(filepath,"resourceObj");//开启新的随机输入流
         data = new byte[datalength];//重新设置数组
         seek=0;//数据读取位置为文件的第一个位置
         datafilelength=filelength(filepath);//获取要读取文件的长度
@@ -51,10 +51,10 @@ public class DataRD {
             dataInput.seek(seek+i);
             data[i]=dataInput.readByte();
         }
-        //dataInput.read(data);
+        //dataInput.read(dataObj);
        // dataInput.skipBytes(12);
        // Log.d("oo", Long.valueOf(dataInput.length()).toString());
-        //dataInput.read(data,dataoffset,32758);//
+        //dataInput.read(dataObj,dataoffset,32758);//
         //Log.d("oo", "读取ok2");
        // dataoffset=datalength+datalength;
 
@@ -78,7 +78,7 @@ public class DataRD {
         int p1;
         int i1 = 0;
         int[] combination = new int[bytestyle.length / 2];//combination用于储存合并后的16bit数据
-        // for (int i = 0; i < r.data.length; i++) {//报出空指针异常的原因是接收数据还没有处理完，线程就跳转到了这里
+        // for (int i = 0; i < resourceObj.dataObj.length; i++) {//报出空指针异常的原因是接收数据还没有处理完，线程就跳转到了这里
         for (int i = 0; i < bytestyle.length; i = i + 2) {//数据组合
 
             if (bytestyle[i] < 0) {
@@ -101,7 +101,7 @@ public class DataRD {
     }
     public static void splitdata(){//将数据分为4个通道
         int[] dd=bytetoint(data);
-        data_a = Arrays.copyOfRange(dd, 0, dd.length / 4);//copyOfRange(r,inclusive,exclusive),不包含exclusive那个
+        data_a = Arrays.copyOfRange(dd, 0, dd.length / 4);//copyOfRange(resourceObj,inclusive,exclusive),不包含exclusive那个
 
         // Log.e("com",Integer.valueOf(combination.length).toString()+"   "+Integer.valueOf(dadd.length).toString());
 //                        }

@@ -28,14 +28,12 @@ import java.util.GregorianCalendar;
  * 根据年月日建立存储数据的文件夹
  */
 public class DataWR {
-
     public static SimpleDateFormat fileFormat = new SimpleDateFormat("yyyy-MM-dd-kk-mm");//设置储存文件的显示格式
     public static SimpleDateFormat docFormaty = new SimpleDateFormat("yyyy");//建立文件夹年的名字
     public static SimpleDateFormat docFormatm = new SimpleDateFormat("MM");//建立文件夹月的名字
     public static SimpleDateFormat docFormatd = new SimpleDateFormat("dd");//建立文件夹日的名字
     public static Date date = new Date();
     public static String dir = docFormaty.format(date) + "/" + docFormatm.format(date) + "/" + docFormatd.format(date) + "/";//存储数据文件夹的目录
-
     public static File file;//file对象用来建立文件夹
     public static String filename = "/mnt/external_sd/" + dir + fileFormat.format(date) + ".dat";//存储数据文件的名字
     public static BufferedOutputStream d;//定义具有缓冲功能的输出流
@@ -44,16 +42,6 @@ public class DataWR {
     public static float[] clb;
     public static boolean isexis = false;
     public static boolean datadoccreat = false;
-    /**
-     * 初始化函数
-     */
-//    public static void ini() {
-//        try {
-//         //   d = new BufferedOutputStream(new FileOutputStream(filename, true));
-//        } catch (Exception e) {
-//
-//        }
-//    }
 
     /**
      * 储存数据的静态方法
@@ -75,7 +63,7 @@ public class DataWR {
             try {
                 //在数据文件的最后写时间数据之前要判断是d是否执行了d.write()，以确定是在上一个文档中写入数据
 
-                //在建立新的文件之前对上一个文件写入文件尾，内容为结束的开始时间,时间为毫秒 data.getTime()来获取一个Long型的时间数据，为从1970.1.1到现在的毫秒数
+                //在建立新的文件之前对上一个文件写入文件尾，内容为结束的开始时间,时间为毫秒 dataObj.getTime()来获取一个Long型的时间数据，为从1970.1.1到现在的毫秒数
                 if (isexis) {
                     d.write(getBytes(date.getTime()));
                     d.close();

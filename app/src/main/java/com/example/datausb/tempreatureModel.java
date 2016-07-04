@@ -19,8 +19,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import java.io.FileWriter;
-import java.io.PrintWriter;
 import java.util.Arrays;
 
 /**
@@ -30,7 +28,7 @@ import java.util.Arrays;
  * 然后在surfaceview上显示出比值的图形
  */
 
-public class tempreatureModel extends android.app.Fragment {
+public class TempreatureModel extends android.app.Fragment {
     /**
      * 定义一个SurfaceHolder用来管理surface
      */
@@ -41,7 +39,7 @@ public class tempreatureModel extends android.app.Fragment {
      * 这个函数的作用是使Activity可以唤醒fragment中的显示线程
      */
     public void wakeup() {
-        ((main1) getActivity()).dta.notifyAll();
+        ((Main) getActivity()).dataObj.notifyAll();
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -52,11 +50,11 @@ public class tempreatureModel extends android.app.Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);//
         try{
-            caliPSA=((main1) getActivity()).getfromdatabase(((main1) getActivity()).mDatabase, "tube1data");
-            caliPSB=((main1) getActivity()).getfromdatabase(((main1) getActivity()).mDatabase, "tube2data");
+            caliPSA=DataBaseOperation.mDataBaseOperation.getfromdatabase("tube1data");
+            caliPSB=DataBaseOperation.mDataBaseOperation.getfromdatabase("tube2data");
         }
         catch (Exception e){
-            Toast.makeText(((main1) getActivity()).getApplicationContext(), "标定数据不存在，请先在标定模式下进行标定", Toast.LENGTH_SHORT).show();
+            Toast.makeText(((Main) getActivity()).getApplicationContext(), "标定数据不存在，请先在标定模式下进行标定", Toast.LENGTH_SHORT).show();
 
         }
 
@@ -101,7 +99,7 @@ public class tempreatureModel extends android.app.Fragment {
 
         public void surfaceChanged(SurfaceHolder holder1, int a, int b, int c) {
             holder1.addCallback(this);
-            boolean datareceive = ((main1) getActivity()).getchange();
+            boolean datareceive = ((Main) getActivity()).GetByteDataProcessComlete();
             myThread = new tempreatureThread(holder1, ss, datareceive);//创建一个绘图线程
             myThread.start();
         }
@@ -156,30 +154,30 @@ public class tempreatureModel extends android.app.Fragment {
 
         public void run() {
             try {//捕获线程运行中切换界面而产生的的空指针异常，防止程序崩溃。
-            while (!((main1) getActivity()).stoptempreturemodelthread) {
+            while (!((Main) getActivity()).stopTemperatureModelThread) {
 
 
 
 
-                    synchronized (((main1) getActivity()).dta) {//所有的等待和唤醒的锁都是同一个，这里选用了Activity中的一个对对象
+                    synchronized (((Main) getActivity()).dataObj) {//所有的等待和唤醒的锁都是同一个，这里选用了Activity中的一个对对象
                         /**
                          * 如果当标志位为false这个线程开始等待
                          */
-                        if (!((main1) getActivity()).dta.flag1)
+                        if (!((Main) getActivity()).dataObj.flag1)
                             try {
-                                ((main1) getActivity()).dta.wait();
+                                ((Main) getActivity()).dataObj.wait();
 
                             } catch (InterruptedException ex) {
 
                             }
                         else {
-                            ((main1) getActivity()).dta.notifyAll();
+                            ((Main) getActivity()).dataObj.notifyAll();
                         }
                         //下面的语句是从Activity中获取数据
-                        int[] tuba = ((main1) getActivity()).get_TubeA1_data().getIntArray("tubea");
-                        int[] tuba1 = ((main1) getActivity()).get_TubeA1_data1().getIntArray("tubea1");
-                        int[] tubeb = ((main1) getActivity()).get_TubeA1_data2().getIntArray("tubeb");
-                        int[] tubeb1 = ((main1) getActivity()).get_TubeA1_data3().getIntArray("tubeb1");
+                        int[] tuba = ((Main) getActivity()).get_TubeA1_data().getIntArray("tubea");
+                        int[] tuba1 = ((Main) getActivity()).get_TubeA1_data1().getIntArray("tubea1");
+                        int[] tubeb = ((Main) getActivity()).get_TubeA1_data2().getIntArray("tunnelBdata");
+                        int[] tubeb1 = ((Main) getActivity()).get_TubeA1_data3().getIntArray("tunnelB1data");
                         float[] T1=new float[tuba.length];
                         float[] T2=new float[tuba.length];
                         float [] PSA1=new float[tuba.length];
@@ -264,24 +262,24 @@ public class tempreatureModel extends android.app.Fragment {
                             /**
                              * (0,0)-------------------------------------->
                              *     |
-                             *     | (40,k)----------------------(w-40,k)
+                             *     | (40,k)----------------------(showLineViewWidth-40,k)
                              *     |
-                             *     | (40,k)----------------------(w-40,k)
+                             *     | (40,k)----------------------(showLineViewWidth-40,k)
                              *     |
-                             *     | (40,k)----------------------(w-40,k)
+                             *     | (40,k)----------------------(showLineViewWidth-40,k)
                              *     |
-                             *     | (40,k)----------------------(w-40,k)
+                             *     | (40,k)----------------------(showLineViewWidth-40,k)
                              *     |
-                             *     | (40,k)----------------------(w-40,k)
+                             *     | (40,k)----------------------(showLineViewWidth-40,k)
                              *     |
-                             *     | (40,k)----------------------(w-40,k)
+                             *     | (40,k)----------------------(showLineViewWidth-40,k)
                              *     |
-                             *     | (40,k)----------------------(w-40,k)
+                             *     | (40,k)----------------------(showLineViewWidth-40,k)
                              */
                             float k = h - (i * (h - 40) / ci + 40);//画横轴直线需要的y坐标
 
                             /**
-                             * (m,h/ci)
+                             * (m,showLineViewHeigth/ci)
                              *     |        |       |       |       |
                              *     |        |       |       |       |
                              *     |        |       |       |       |
@@ -289,13 +287,13 @@ public class tempreatureModel extends android.app.Fragment {
                              *     |        |       |       |       |
                              *     |        |       |       |       |
                              *     |        |       |       |       |
-                             * (m,h-40)
+                             * (m,showLineViewHeigth-40)
                              */
                             float m = i * (w - 40) / ci + 40;//纵轴间距
-                            c.drawLine(40, k, w - 40, k, axe);//画横轴(40,k,w-40,k)-->(x1,y1,x2,y2)画的横轴的长度是w-80,为每个循环得到画横轴的纵坐标的值
+                            c.drawLine(40, k, w - 40, k, axe);//画横轴(40,k,showLineViewWidth-40,k)-->(x1,y1,x2,y2)画的横轴的长度是w-80,为每个循环得到画横轴的纵坐标的值
                             c.drawText(Integer.valueOf((int) y).toString(), (float) 18, (float) k, zuobioa);//在纵坐标上画字符
                             c.drawText(Integer.valueOf((int) x).toString(), (float) m, (float) (h - 10), zuobioa);//在横坐标上画字符
-                            c.drawLine(m, h / (ci), m, h - 40, axe);//画纵轴m为每次画纵轴的x坐标，2h-40-h/ci为该纵轴的长度
+                            c.drawLine(m, h / (ci), m, h - 40, axe);//画纵轴m为每次画纵轴的x坐标，2h-40-showLineViewHeigth/ci为该纵轴的长度
                         }
 
 
@@ -350,8 +348,8 @@ public class tempreatureModel extends android.app.Fragment {
                              * 同时唤醒数据处理线程
                              */
 
-                            ((main1) getActivity()).dta.flag1 = false;
-                            ((main1) getActivity()).wakeuppro();
+                            ((Main) getActivity()).dataObj.flag1 = false;
+                            ((Main) getActivity()).wakeUpAllMainThread();
                            // Log.d("绘图线程run", "绘制数据图像的方法完成方法");
                         }
 
@@ -373,11 +371,11 @@ public class tempreatureModel extends android.app.Fragment {
     }
     //进行屏幕大小适配的方法
     public float[] screenadapter(float[] data, int w) {
-        // Log.e("jjj",Integer.valueOf(data.length).toString());
+        // Log.e("jjj",Integer.valueOf(dataObj.length).toString());
         float[] adptertube = new float[w];//设置屏可以显示在屏幕上的数据长度
         float[] databuf;
         int interval = data.length / adptertube.length;
-        //  Log.e("输出间隔",Integer.toString(interval)+"    "+Integer.valueOf(data.length).toString()+"   "+Integer.valueOf(w).toString());
+        //  Log.e("输出间隔",Integer.toString(interval)+"    "+Integer.valueOf(dataObj.length).toString()+"   "+Integer.valueOf(showLineViewWidth).toString());
         int kkk = 0;
         if (interval <= 1) {
             adptertube = data;

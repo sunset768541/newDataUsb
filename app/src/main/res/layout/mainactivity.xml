@@ -54,8 +54,8 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="数据模式"
                 android:id="@+id/textView25"
-                android:textSize="12sp"
-                android:layout_marginBottom="15dp" />
+                android:layout_marginBottom="1dp"
+                android:textSize="10sp" />
 
             <ImageButton
                 android:layout_width="wrap_content"
@@ -70,8 +70,8 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="标定模式"
                 android:id="@+id/textView26"
-                android:textSize="12sp"
-                android:layout_marginBottom="15dp" />
+                android:layout_marginBottom="1dp"
+                android:textSize="10sp" />
 
             <ImageButton
                 android:layout_width="wrap_content"
@@ -86,8 +86,8 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="温度模式"
                 android:id="@+id/textView27"
-                android:textSize="12sp"
-                android:layout_marginBottom="15dp" />
+                android:layout_marginBottom="1dp"
+                android:textSize="10sp" />
 
             <ImageButton
                 android:layout_width="wrap_content"
@@ -102,8 +102,8 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="三维模式"
                 android:id="@+id/textView28"
-                android:textSize="12sp"
-                android:layout_marginBottom="15dp" />
+                android:layout_marginBottom="1dp"
+                android:textSize="10sp" />
 
             <ImageButton
                 android:layout_width="wrap_content"
@@ -118,8 +118,8 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="系统设置"
                 android:id="@+id/textView29"
-                android:textSize="12sp"
-                android:layout_marginBottom="15dp" />
+                android:layout_marginBottom="1dp"
+                android:textSize="10sp" />
 
             <ImageButton
                 android:layout_width="wrap_content"
@@ -134,7 +134,7 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="查看数据"
                 android:id="@+id/textView30"
-                android:textSize="12sp" />
+                android:textSize="10sp" />
 
         </LinearLayout>
 

@@ -1,21 +1,16 @@
 package com.example.datausb;
 
 import android.app.Notification;
-import android.app.Notification.Builder;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.os.IBinder;
-import android.util.Log;
-import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -42,7 +37,7 @@ public class Service1 extends Service {
             UsbDevice device = deviceIterator.next();
             if (device.getVendorId() == 1204 && device.getProductId() == 241) {
                 ss = ss + "FPGA开发板接入系统成功";
-                Intent intent1 = new Intent(this, main1.class);
+                Intent intent1 = new Intent(this, Main.class);
                 pendingIntent = PendingIntent.getActivity(this, 0, intent1, 0);
 
             } else {

@@ -11,15 +11,13 @@ import android.view.MotionEvent;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Random;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import static com.example.datausb.Constant.*;
 import static com.example.datausb.Constant.loadLandforms;
 import static  com.example.datausb.Constant.yArray;
-import static com.example.datausb.threeDimModel.*;
+import static com.example.datausb.ThreeDimensionModel.*;
 //import static uuuuuuu.com.example.gamesky.Sample11_6Activity.HEIGHT;
 //import static uuuuuuu.com.example.gamesky.Sample11_6Activity.WIDTH;
 
@@ -49,8 +47,8 @@ public class MySurfaceView extends GLSurfaceView
         mRender = new SceneRenderer();	//创建场景渲染器
 		setRenderer(mRender);				//设置渲染器
         setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);//设置渲染模式为主动渲染
-		//WIDTH=w;
-		//HEIGHT=h;
+		//WIDTH=showLineViewWidth;
+		//HEIGHT=showLineViewHeigth;
 	}
 	
 	@Override

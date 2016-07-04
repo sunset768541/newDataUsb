@@ -50,11 +50,11 @@ public class TemAlert {
                 //如果发现通道1的某一温度大于设定的报警温度
                // Log.e("tt1","第 "+Integer.valueOf(i).toString()+" 米温度为 "+Float.valueOf(tt1).toString());
                 //Log.e("tt2","第 "+Integer.valueOf(i).toString()+" 米温度为 "+Float.valueOf(tt2).toString());
-                if((1/tt11)>system.TEM_ALERT_TUBE1){
+                if((1/tt11)> SystemParameter.TEM_ALERT_TUBE1){
                    Log.e("警报。。警报。。","通道1的 "+Integer.valueOf(i).toString()+" 米处发生了温度异常"+"--异常温度为:"+Float.valueOf(1/tt11).toString());
                 }
                 //如果发现通道2的某一点的温度大于设定的报警温度
-                if ((1/tt21)>system.TEM_ALERT_TUBE2){
+                if ((1/tt21)> SystemParameter.TEM_ALERT_TUBE2){
                    Log.e("警报。。警报。。","通道2的 "+Integer.valueOf(i).toString()+" 米处发生了温度异常"+"--异常温度为:"+Float.valueOf(1/tt21).toString());
                 }
                 alertfinish=1;
