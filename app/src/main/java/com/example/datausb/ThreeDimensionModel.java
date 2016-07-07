@@ -111,8 +111,8 @@ public class ThreeDimensionModel extends android.app.Fragment {
                             ((Main) getActivity()).dataObj.notifyAll();
                         }
                         //下面的语句是从Activity中获取数据
-                        int[] tuba = ((Main) getActivity()).get_TubeA1_data().getIntArray("tubea");
-                        int[] tuba1 = ((Main) getActivity()).get_TubeA1_data1().getIntArray("tubea1");
+                        int[] tuba = ((Main) getActivity()).get_TubeA1_data().getIntArray("tunnelAdata");
+                        int[] tuba1 = ((Main) getActivity()).get_TubeA1_data1().getIntArray("tunnelA1data");
                         int[] tubeb = ((Main) getActivity()).get_TubeA1_data2().getIntArray("tunnelBdata");
                         int[] tubeb1 = ((Main) getActivity()).get_TubeA1_data3().getIntArray("tunnelB1data");
                         float[] T1 = new float[tuba.length];

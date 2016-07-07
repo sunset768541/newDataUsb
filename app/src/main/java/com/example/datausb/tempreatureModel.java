@@ -144,12 +144,7 @@ public class TempreatureModel extends android.app.Fragment {
             h = sss.getHeight();
             w = sss.getWidth();
             this.dd = dd;
-          //  StrStore.cresave();
-//            try {
-//            //   ps= new FileWriter("/mnt/external_sd/temdata.txt");
-//
-//            }
-//            catch (Exception e){}
+
         }
 
         public void run() {
@@ -174,8 +169,8 @@ public class TempreatureModel extends android.app.Fragment {
                             ((Main) getActivity()).dataObj.notifyAll();
                         }
                         //下面的语句是从Activity中获取数据
-                        int[] tuba = ((Main) getActivity()).get_TubeA1_data().getIntArray("tubea");
-                        int[] tuba1 = ((Main) getActivity()).get_TubeA1_data1().getIntArray("tubea1");
+                        int[] tuba = ((Main) getActivity()).get_TubeA1_data().getIntArray("tunnelAdata");
+                        int[] tuba1 = ((Main) getActivity()).get_TubeA1_data1().getIntArray("tunnelA1data");
                         int[] tubeb = ((Main) getActivity()).get_TubeA1_data2().getIntArray("tunnelBdata");
                         int[] tubeb1 = ((Main) getActivity()).get_TubeA1_data3().getIntArray("tunnelB1data");
                         float[] T1=new float[tuba.length];
@@ -198,26 +193,12 @@ public class TempreatureModel extends android.app.Fragment {
                         for (int i=0;i<tuba.length;i++){
                             double bb1=(double)PSA1[i]/caliPSA[i];
                             double bb2=(double)PSA2[i]/caliPSB[i];
-                            //Log.e("PSA","PSA"+Double.valueOf(PSA1[i]).toString()+"PSB"+Double.valueOf(PSA2[i]).toString());
-                            //Log.e("calopsa","当前温度"+Float.valueOf(caliPSA[caliPSA.length-1]).toString()+"Acli"+Float.valueOf(caliPSA[i]).toString()+"Bcli"+Float.valueOf(caliPSB[i]).toString());
                             float tt1=(float)(Math.log(bb1)+1/caliPSA[caliPSA.length-1]);
                             float tt2=(float)(Math.log(bb2)+1/caliPSB[caliPSB.length-1]);
-                           // StrStore.s1="通道1第 "+Integer.valueOf(i).toString() + " 个温度为" + Float.valueOf(tt1).toString()+"\n"+"通道2第 "+Integer.valueOf(i).toString() + " 个温度为" + Float.valueOf(tt2).toString()+"\n";
 
-//                            try {
-//                                ps.write(s1+"\n");
-//                                ps.write(s2+"\n");
-//                            }
-//                            catch (Exception e){
-//
-//                            }
-
-                           // StrStore.saves();
                             T1[i]=1/tt1;
                             T2[i]=1/tt2;
                         }
-                        //Log.e("Tmode1最后一个数据",Float.valueOf(T1[T1.length-1]).toString());
-                        //Log.e("ClabMode最后一个数据",Float.valueOf(caliPSA[caliPSA.length-2]).toString());
                         /**
                          * 定义了两支画笔
                          * paxis用来画横纵坐标轴
@@ -324,15 +305,16 @@ public class TempreatureModel extends android.app.Fragment {
                             tube2.setPathEffect(pe1);
 
 
-                            p1.moveTo(40, h /2);
-                            p2.moveTo(40, h /3);
-                            float[]hh1=interpolation(w-80,T1);
-                            float[]hh2=interpolation(w-80,T2);
-                            float [] adp1=screenadapter(hh1,w-80);
-                            float [] adp2=screenadapter(hh2,w-80);
+                            c.translate(40, (float) h-40);
+                            float[]hh1=DisplayAdapterUtil.arrayInterpolation(w-80,T1);
+                            float[]hh2=DisplayAdapterUtil.arrayInterpolation(w-80,T2);
+                            float [] adp1=DisplayAdapterUtil.displyViewWidthAdapter(hh1,w-80);
+                            float [] adp2=DisplayAdapterUtil.displyViewWidthAdapter(hh2,w-80);
+                            p1.moveTo(0, -adp1[0]-20);
+                            p2.moveTo(0, -adp2[0]-20);
                             for (int i = 1; i < adp1.length; i++) {
-                                p1.lineTo(i+45, -adp1[i]+h /2);
-                                p2.lineTo(i+45, -adp2[i]+h /3);
+                                p1.lineTo(i, -adp1[i]-20);
+                                p2.lineTo(i, -adp2[i]-20);
                                // Log.e("通道1的温度",Float.valueOf(adp1[i]).toString());
                             }
                             c.drawPath(p1, tube1);
@@ -350,7 +332,6 @@ public class TempreatureModel extends android.app.Fragment {
 
                             ((Main) getActivity()).dataObj.flag1 = false;
                             ((Main) getActivity()).wakeUpAllMainThread();
-                           // Log.d("绘图线程run", "绘制数据图像的方法完成方法");
                         }
 
 
@@ -369,84 +350,5 @@ public class TempreatureModel extends android.app.Fragment {
 
 
     }
-    //进行屏幕大小适配的方法
-    public float[] screenadapter(float[] data, int w) {
-        // Log.e("jjj",Integer.valueOf(dataObj.length).toString());
-        float[] adptertube = new float[w];//设置屏可以显示在屏幕上的数据长度
-        float[] databuf;
-        int interval = data.length / adptertube.length;
-        //  Log.e("输出间隔",Integer.toString(interval)+"    "+Integer.valueOf(dataObj.length).toString()+"   "+Integer.valueOf(showLineViewWidth).toString());
-        int kkk = 0;
-        if (interval <= 1) {
-            adptertube = data;
-        } else {
 
-            for (int i = 0; i < (data.length / interval) * interval; i = i + interval) {//有必要将i先变成整数
-                databuf = Arrays.copyOfRange(data, i, i + interval);
-                adptertube[kkk] = max(databuf);//这里出现了空指针异常
-                kkk = kkk + 1;
-            }
-        }
-
-        return adptertube;
-    }
-
-    //对一个数组输出最大值方法
-    public float max(float[] a) {
-        float b;
-        Arrays.sort(a);
-        b = a[a.length - 1];
-        return b;
-    }
-
-    /**
-     * 屏幕点数与数据匹配函数
-     * 基本思想，利用总的数据长度除以显示控件横向像素点数得出一个整数将这个整数+1就得到了interval，interval的作用就是扩展源数据长度
-     * 使其可以整除显示控件的横向像素点数。interval*viewwidth viewwidth就是显示控件（坐标系）的横向像素点数，乘积的结果就是要扩展的
-     * 数组的长度。为了保证扩展后的数据图像的趋势与源数组的图像趋势一致，通过对源数组的插值来获得扩展数组。插值的点数就是扩展数组的长度
-     * 减去源数组的长度。插值的方法就是在interval的一半处进行插值，所插值通过相邻的两个数据计算平均值得出。并将源数组的数据插入到扩展
-     * 数组中。插值完成后，再将源数组中没有插值的最后一段数据全部拷贝到扩展数组中。
-     * @param viewwidth
-     * @param interpolatdata
-     * @return
-     */
-
-    public float[] interpolation(int viewwidth, float[] interpolatdata) {
-
-        int interval = interpolatdata.length / viewwidth + 1;//计算扩展数组的长度使用
-        int targetlength = interval * viewwidth;//扩展数据的长度
-        int interpotatenum = targetlength - interpolatdata.length;//需要在源数组中插值的个数
-        // int chazhijiange=interpolatdata.length/interpotatenum+1;
-        int chazhijiange = interval / 2;//在源数组中插值的位置
-        // Log.e("cc",Integer.valueOf(chazhijiange).toString());
-        // int mm = interpolatdata.length / chazhijiange;
-        float[] afterinterpolate = new float[targetlength];//插值后的数组
-        float[] zhongji = new float[interval];//保存从原数组拷贝的一段数据
-        int jj = 0;//插值的间隔
-        for (int i = 0; i < interpotatenum; i++) {//插值循环
-            float cha = (interpolatdata[jj + chazhijiange - 1] + interpolatdata[jj + chazhijiange]) / 2;//计算插值的数值
-            afterinterpolate[jj + chazhijiange] = cha;//将需要插得值放入新的数组中的指定插值位置
-            zhongji = Arrays.copyOfRange(interpolatdata, jj, jj + chazhijiange);//从源数组拷贝出一段数据
-            int pp = jj;
-            for (int kk = 0; kk < chazhijiange; kk++) {//将从源数组中拷贝的数据填入到新的数组中的对应位置
-                // Log.e("kk","   当kk=  "+Integer.valueOf(kk).toString()+"  zhongji=   "+Integer.valueOf(zhongji[kk]).toString());
-                afterinterpolate[pp + kk] = zhongji[kk];
-            }
-
-
-            //  Log.e("jj",Integer.valueOf(jj+chazhijiange).toString()+"  ii="+Integer.valueOf(i).toString());
-            jj = jj + chazhijiange + 1;
-        }
-        //插值完毕后，将剩下的没有插值的一段数据从源数组拷贝到扩展数组中
-        int sourceinterpointer = chazhijiange * interpotatenum;//源数组插值的结束位置
-        int targeinterpointer = chazhijiange * interpotatenum + interpotatenum;//扩展数组填入数据的结束位置
-        int cc = interpolatdata.length - sourceinterpointer;//没有插值的一段数据的长度
-        float[] uuu = Arrays.copyOfRange(interpolatdata, sourceinterpointer, interpolatdata.length);//从源数组拷贝出没有插值的一段数据
-        for (int yy = 0; yy < cc; yy++) {//将没有插值的一段数据拷贝到扩展数组的对应位置
-            afterinterpolate[yy + targeinterpointer] = uuu[yy];
-        }
-        // for (int qq=0;qq<afterinterpolate.length;qq++){
-        // Log.e("aaa"," 当i= "+Integer.valueOf(qq).toString()+" af值为  "+Integer.valueOf(afterinterpolate[qq]).toString());}
-        return afterinterpolate;
-    }
 }

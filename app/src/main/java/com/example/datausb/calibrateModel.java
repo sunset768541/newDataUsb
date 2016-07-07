@@ -70,8 +70,8 @@ public class CalibrateModel extends android.app.Fragment {
                     String stu_table = "create table if not exists tube1data(_id integer primary key autoincrement,calibtem INTEGER,tubedata text)";
                     DataBaseOperation.mDataBaseOperation.creatOrgettable(stu_table);
                     try {
-                        tuba = ((Main) getActivity()).get_TubeA1_data().getIntArray("tubea");
-                        tuba1 = ((Main) getActivity()).get_TubeA1_data1().getIntArray("tubea1");
+                        tuba = ((Main) getActivity()).get_TubeA1_data().getIntArray("tunnelAdata");
+                        tuba1 = ((Main) getActivity()).get_TubeA1_data1().getIntArray("tunnelA1data");
                         final float [] PSA=new float[tuba.length];
                         for (int i=0;i<tuba.length;i++){
                             if(tuba[i]==0){
@@ -260,8 +260,8 @@ public class CalibrateModel extends android.app.Fragment {
                             ((Main) getActivity()).dataObj.notifyAll();
                         }
                         //下面的语句是从Activity中获取数据
-                        int[] tuba = ((Main) getActivity()).get_TubeA1_data().getIntArray("tubea");
-                        int[] tuba1 = ((Main) getActivity()).get_TubeA1_data1().getIntArray("tubea1");
+                        int[] tuba = ((Main) getActivity()).get_TubeA1_data().getIntArray("tunnelAdata");
+                        int[] tuba1 = ((Main) getActivity()).get_TubeA1_data1().getIntArray("tunnelA1data");
                         int[] tubeb = ((Main) getActivity()).get_TubeA1_data2().getIntArray("tunnelBdata");
                         int[] tubeb1 = ((Main) getActivity()).get_TubeA1_data3().getIntArray("tunnelB1data");
                         /**
@@ -388,20 +388,23 @@ public class CalibrateModel extends android.app.Fragment {
                             tube2.setStrokeWidth(1);
                             tube2.setPathEffect(pe1);
 
-                            p1.moveTo(40, 3* showLineViewHeigth /4);
-                            p2.moveTo(40, showLineViewHeigth /2);
-                            float[]hh1=interpolation(showLineViewWidth -80,PSA1);
-                            float[]hh2=interpolation(showLineViewWidth -80,PSA2);
-                            float [] adp1=screenadapter(hh1, showLineViewWidth -80);
-                            float [] adp2=screenadapter(hh2, showLineViewWidth -80);
+
+                            float[]hh1=DisplayAdapterUtil.arrayInterpolation(showLineViewWidth -80,PSA1);
+                            float[]hh2=DisplayAdapterUtil.arrayInterpolation(showLineViewWidth -80,PSA2);
+                            float [] adp1=DisplayAdapterUtil.displyViewWidthAdapter(hh1, showLineViewWidth -80);
+                            float [] adp2=DisplayAdapterUtil.displyViewWidthAdapter(hh2, showLineViewWidth -80);
+                            p1.moveTo(0, -adp1[0]-20);
+                            p2.moveTo(0, -adp2[0]-20);
                             for (int i = 1; i < adp1.length; i++) {
-                                p1.lineTo(i+45, -adp1[i]+3* showLineViewHeigth /4);
-                                p2.lineTo(i+45, -adp2[i] + showLineViewHeigth /2);
+                                p1.lineTo(i,-adp1[i]-20);
+                                p2.lineTo(i,-adp2[i]-20);
                             }
+                            c.translate(40, (float) showLineViewHeigth-40);
+                            //c.scale((float)(showLineViewWidth-80)/(float) PSA1.length,1);
+                           // tube1.setStrokeWidth((float) PSA1.length/(float)(showLineViewWidth-80));
+                            //tube2.setStrokeWidth((float) PSA1.length/(float)(showLineViewWidth-80));
                             c.drawPath(p1, tube1);
                             c.drawPath(p2, tube2);
-
-
                             /**
                              * 结束锁定画布并显示
                              */
@@ -429,86 +432,7 @@ public class CalibrateModel extends android.app.Fragment {
 
         }
     }
-    //进行屏幕大小适配的方法
-    public float[] screenadapter(float[] data, int w) {
-        // Log.e("jjj",Integer.valueOf(dataObj.length).toString());
-        float[] adptertube = new float[w];//设置屏可以显示在屏幕上的数据长度
-        float[] databuf;
-        int interval = data.length / adptertube.length;
-        //  Log.e("输出间隔",Integer.toString(interval)+"    "+Integer.valueOf(dataObj.length).toString()+"   "+Integer.valueOf(showLineViewWidth).toString());
-        int kkk = 0;
-        if (interval <= 1) {
-            adptertube = data;
-        } else {
 
-            for (int i = 0; i < (data.length / interval) * interval; i = i + interval) {//有必要将i先变成整数
-                databuf = Arrays.copyOfRange(data, i, i + interval);
-                adptertube[kkk] = max(databuf);//这里出现了空指针异常
-                kkk = kkk + 1;
-            }
-        }
-
-        return adptertube;
-    }
-
-    //对一个数组输出最大值方法
-    public float max(float[] a) {
-        float b;
-        Arrays.sort(a);
-        b = a[a.length - 1];
-        return b;
-    }
-
-    /**
-     * 屏幕点数与数据匹配函数
-     * 基本思想，利用总的数据长度除以显示控件横向像素点数得出一个整数将这个整数+1就得到了interval，interval的作用就是扩展源数据长度
-     * 使其可以整除显示控件的横向像素点数。interval*viewwidth viewwidth就是显示控件（坐标系）的横向像素点数，乘积的结果就是要扩展的
-     * 数组的长度。为了保证扩展后的数据图像的趋势与源数组的图像趋势一致，通过对源数组的插值来获得扩展数组。插值的点数就是扩展数组的长度
-     * 减去源数组的长度。插值的方法就是在interval的一半处进行插值，所插值通过相邻的两个数据计算平均值得出。并将源数组的数据插入到扩展
-     * 数组中。插值完成后，再将源数组中没有插值的最后一段数据全部拷贝到扩展数组中。
-     * @param viewwidth
-     * @param interpolatdata
-     * @return
-     */
-
-    public float[] interpolation(int viewwidth, float[] interpolatdata) {
-
-        int interval = interpolatdata.length / viewwidth + 1;//计算扩展数组的长度使用
-        int targetlength = interval * viewwidth;//扩展数据的长度
-        int interpotatenum = targetlength - interpolatdata.length;//需要在源数组中插值的个数
-        // int chazhijiange=interpolatdata.length/interpotatenum+1;
-        int chazhijiange = interval / 2;//在源数组中插值的位置
-        // Log.e("cc",Integer.valueOf(chazhijiange).toString());
-        // int mm = interpolatdata.length / chazhijiange;
-        float[] afterinterpolate = new float[targetlength];//插值后的数组
-        float[] zhongji = new float[interval];//保存从原数组拷贝的一段数据
-        int jj = 0;//插值的间隔
-        for (int i = 0; i < interpotatenum; i++) {//插值循环
-            float cha = (interpolatdata[jj + chazhijiange - 1] + interpolatdata[jj + chazhijiange]) / 2;//计算插值的数值
-            afterinterpolate[jj + chazhijiange] = cha;//将需要插得值放入新的数组中的指定插值位置
-            zhongji = Arrays.copyOfRange(interpolatdata, jj, jj + chazhijiange);//从源数组拷贝出一段数据
-            int pp = jj;
-            for (int kk = 0; kk < chazhijiange; kk++) {//将从源数组中拷贝的数据填入到新的数组中的对应位置
-                // Log.e("kk","   当kk=  "+Integer.valueOf(kk).toString()+"  zhongji=   "+Integer.valueOf(zhongji[kk]).toString());
-                afterinterpolate[pp + kk] = zhongji[kk];
-            }
-
-
-            //  Log.e("jj",Integer.valueOf(jj+chazhijiange).toString()+"  ii="+Integer.valueOf(i).toString());
-            jj = jj + chazhijiange + 1;
-        }
-        //插值完毕后，将剩下的没有插值的一段数据从源数组拷贝到扩展数组中
-        int sourceinterpointer = chazhijiange * interpotatenum;//源数组插值的结束位置
-        int targeinterpointer = chazhijiange * interpotatenum + interpotatenum;//扩展数组填入数据的结束位置
-        int cc = interpolatdata.length - sourceinterpointer;//没有插值的一段数据的长度
-        float[] uuu = Arrays.copyOfRange(interpolatdata, sourceinterpointer, interpolatdata.length);//从源数组拷贝出没有插值的一段数据
-        for (int yy = 0; yy < cc; yy++) {//将没有插值的一段数据拷贝到扩展数组的对应位置
-            afterinterpolate[yy + targeinterpointer] = uuu[yy];
-        }
-        // for (int qq=0;qq<afterinterpolate.length;qq++){
-        // Log.e("aaa"," 当i= "+Integer.valueOf(qq).toString()+" af值为  "+Integer.valueOf(afterinterpolate[qq]).toString());}
-        return afterinterpolate;
-    }
 }
 
 

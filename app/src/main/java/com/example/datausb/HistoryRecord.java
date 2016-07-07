@@ -52,18 +52,12 @@ public class HistoryRecord extends android.app.Fragment {
                         while (DataRD.SHOW_DATA_THREAT_FLAG){
                             Log.e("show线程执行中","");
                         }
-                        DataRD.iniread(ss);
-                        //DataRD.readonce();
-                        //int mm[]=new int[DataRD.dataObj.length/2];
-                        //mm=DataRD.bytetoint(DataRD.dataObj);
-                        //Log.e("read", Integer.valueOf(mm[0]).toString() + "  " + Integer.valueOf(mm[1]).toString());
-                        //Log.e("read1", Integer.valueOf(mm[2]).toString() + "  " + Integer.valueOf(mm[3]).toString());
-                        //Log.e("read2", Integer.valueOf(mm[16384 - 3]).toString() + "  " + Integer.valueOf(mm[16384 - 4]).toString());
-                        //Log.e("read3", Integer.valueOf(mm[16384 - 2]).toString() + "  " + Integer.valueOf(mm[16384 - 1]).toString());
-                        //DataRD.stopread();
+                       if (DataRD.iniReadDataFile(ss))
                         showdata.threadstart();
+                        else  Toast.makeText(((Main) getActivity()).getApplication(), "读取数据文件损坏", Toast.LENGTH_SHORT).show();
+
                     }
-                    catch (IOException e){
+                    catch (Exception e){
                         Log.e("读取失败",e.toString());
                     }
                     }

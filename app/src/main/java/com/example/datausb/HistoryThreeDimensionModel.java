@@ -1,14 +1,20 @@
 package com.example.datausb;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 
 /**
@@ -18,9 +24,9 @@ public class HistoryThreeDimensionModel extends android.app.Fragment {
     public MySurfaceView mv;
     static float WIDTH;
     static float HEIGHT;
-    float[] caliPSA;
-    float[] caliPSB;
+    public SeekBar seeekbar;
     private threedimThread myThread;
+    private TextView showTime;
 
     //    public void wakeUp() {
     //}
@@ -39,18 +45,17 @@ public class HistoryThreeDimensionModel extends android.app.Fragment {
         mv = new MySurfaceView((Main) getActivity());
         mv.requestFocus();//获取焦点
         mv.setFocusableInTouchMode(true);//设置为可触控
+        seeekbar=(SeekBar)((Main)getActivity()).findViewById(R.id.seekBar);
+        seeekbar.setEnabled(true);
+        showTime=(TextView)((Main)getActivity()).findViewById(R.id.textView18);
+
+
     }
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        try {
-            caliPSA=DataBaseOperation.mDataBaseOperation.getfromdatabase("tube1data");
-            caliPSB=DataBaseOperation.mDataBaseOperation.getfromdatabase("tube2data");
-        } catch (Exception e) {
-            Toast.makeText(((Main) getActivity()).getApplicationContext(), "标定数据不存在，请先在标定模式下进行标定", Toast.LENGTH_SHORT).show();
 
-        }
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         View view = mv;
-        // Log.e("onCreat", Integer.valueOf(mv.getcont()).toString());
         return view;
     }
 
@@ -76,6 +81,24 @@ public class HistoryThreeDimensionModel extends android.app.Fragment {
         //mv.onPause();
     }
 
+
+    private final int COMPLETED = 0;
+    DecimalFormat decimalFormat=new DecimalFormat(".00");//构造方法的字符格式这里如果小数不足2位,会以0补足.
+    private Handler handler = new Handler() {//多线程中用于UI的更新
+        @Override
+        public void handleMessage(Message msg1) {
+            if (msg1.what == COMPLETED) {
+                try {
+                    Log.e("UI更新线程","-----之心");
+                    seeekbar.incrementProgressBy((int)DataRD.dataBuffer.length);
+                    //String usetime=Integer.valueOf(msg1.arg2).toString();
+                    showTime.setText(decimalFormat.format((float)msg1.arg2/(float)msg1.arg1*100)+"%");
+                } catch (NullPointerException e) {
+                }
+            }
+        }
+    };
+
     class threedimThread extends Thread {
 
 
@@ -91,39 +114,25 @@ public class HistoryThreeDimensionModel extends android.app.Fragment {
             } catch (InterruptedException e) {
             }
             try {//捕获线程运行中切换界面而产生的的空指针异常，防止程序崩溃。
+                seeekbar.setMax((int)DataRD.pureDataLength);
+                seeekbar.setProgress(0);
+                int readDataLength=0;
                 while (!DataRD.HAVE_READ_FINISEH) {
+                    long startTime = System.currentTimeMillis();
                     DataRD.SHOW_DATA_THREAT_FLAG=true;//标志读取一组数据的操作开始
                     try {
-//                        for (int i=0;i<DataRD.datalength;i++){//用每次读取一个Byte的数据放到数组中的效率十分低下，1分钟的数据可以读取6--7分钟；
-//                            DataRD.dataInput.seek(DataRD.seek + i);
-//                            DataRD.dataObj[i]=DataRD.dataInput.readByte();
-//                        }
-                        DataRD.dataInput.read(DataRD.data);//这种读取方式十分快，1分钟数据20读取完成
-                        DataRD.dataInput.seek(DataRD.seek + DataRD.data.length);
+                        DataRD.dataInput.read(DataRD.dataBuffer);//这种读取方式十分快，1分钟数据20s读取完成
+                        DataRD.dataInput.seek(DataRD.seek + DataRD.dataBuffer.length);
 
                     } catch (IOException e) {
                         Log.e("出现IO异常", "histhreeDim"+e.toString());
                     }
-                    DataRD.splitdata();
+                    DataRD.seperateTunnelData();
 
-//                        /**
-//                         * 如果当标志位为false这个线程开始等待
-//                         */
-//                        if (!((main1) getActivity()).dataObj.flag1)
-//                            try {
-//                                ((main1) getActivity()).dataObj.wait();
-//
-//                            } catch (InterruptedException ex) {
-//
-//                            }
-//                        else {
-//                            ((main1) getActivity()).dataObj.notifyAll();
-//                        }
-                    //下面的语句是从Activity中获取数据
-                    int[] tuba = DataRD.data_a;
-                    int[] tuba1 = DataRD.data_a1;
-                    int[] tubeb = DataRD.data_b;
-                    int[] tubeb1 = DataRD.data_b1;
+                    int[] tuba = DataRD.tunnelAdata;
+                    int[] tuba1 = DataRD.tunnelA1data;
+                    int[] tubeb = DataRD.tunnelBdata;
+                    int[] tubeb1 = DataRD.tunnelB1data;
                     float[] T1 = new float[tuba.length];
                     float[] T2 = new float[tuba.length];
                     float[] PSA1 = new float[tuba.length];
@@ -141,12 +150,12 @@ public class HistoryThreeDimensionModel extends android.app.Fragment {
                      * 由公式计算出温度
                      */
                     for (int i = 0; i < tuba.length; i++) {
-                        double bb1 = (double) PSA1[i] / caliPSA[i];
-                        double bb2 = (double) PSA2[i] / caliPSB[i];
+                        double bb1 = (double) PSA1[i] / DataRD.clabiraA[i];
+                        double bb2 = (double) PSA2[i] / DataRD.clabiraB[i];
                         //Log.e("PSA","PSA"+Double.valueOf(PSA1[i]).toString()+"PSB"+Double.valueOf(PSA2[i]).toString());
                         //Log.e("calopsa","当前温度"+Float.valueOf(caliPSA[caliPSA.length-1]).toString()+"Acli"+Float.valueOf(caliPSA[i]).toString()+"Bcli"+Float.valueOf(caliPSB[i]).toString());
-                        float tt1 = (float) (Math.log(bb1) + 1 / caliPSA[caliPSA.length - 1]);
-                        float tt2 = (float) (Math.log(bb2) + 1 / caliPSB[caliPSB.length - 1]);
+                        float tt1 = (float) (Math.log(bb1) + 1 / DataRD.clabiraA[DataRD.clabiraA.length - 1]);
+                        float tt2 = (float) (Math.log(bb2) + 1 / DataRD.clabiraB[DataRD.clabiraB.length - 1]);
                         T1[i] = 1 / tt1;
                         T2[i] = 1 / tt2;
                     }
@@ -155,20 +164,33 @@ public class HistoryThreeDimensionModel extends android.app.Fragment {
                     float[] cc = colorprocess(TR);
                     colors = Arrays.copyOfRange(cc, 0, colors.length);
                     mv.mRender.setcolor(colors);
-                    DataRD.seek = DataRD.seek + DataRD.datalength;
+                    DataRD.seek = DataRD.seek + DataRD.dataLength;
+                    Log.e("读文件大小",Long.toString(DataRD.fileLength));
+                    Log.e("指针的位置",Long.toString(DataRD.seek));
                     try {
-                        DataRD.moveseek();
-                       // DataRD.stopread();
+                        DataRD.moveSeek();
                     }
                     catch (IOException e){
 
                     }
-                    Log.e("读文件大小",Long.toString(DataRD.datafilelength));
-                    Log.e("指针的位置",Long.toString(DataRD.seek));
+                    Message msg1 = new Message();
+                    msg1.what = COMPLETED;
+                    msg1.arg1=(int)DataRD.pureDataLength;
+                    readDataLength=DataRD.dataBuffer.length+readDataLength;
+                    msg1.arg2=readDataLength;
+                    handler.sendMessage(msg1);
+                    long estimatedTime = System.currentTimeMillis() - startTime;
+                    try {
+                        if(DataRD.meanTimePerData>estimatedTime)
+                        Thread.sleep(DataRD.meanTimePerData-estimatedTime);
+                    }
+                    catch (Exception e){
+                        Log.e("His",Log.getStackTraceString(e));
+                    }
                 DataRD.SHOW_DATA_THREAT_FLAG=false;//标志读取一组数据操作完成
                 }
                 try {
-                    DataRD.stopread();
+                    DataRD.closeReadStream();
                 }
                 catch (IOException e){
 
@@ -180,7 +202,6 @@ public class HistoryThreeDimensionModel extends android.app.Fragment {
 
             {
                 Log.d("threedimModel", "历史记录的3维模式出现空指针异常");
-
 
             }
         }

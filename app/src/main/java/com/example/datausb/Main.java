@@ -398,7 +398,7 @@ public class Main extends Activity {
                     byte[] Receivebytes = usbControl.ReceivceDataFromUsb(65536);//接收的数据
                     if (STOREDATA == 1) {
                         try {
-                            DataWR.writte(Receivebytes);//将接收到的数据直接存储为2进制文件
+                            DataWR.saveData(Receivebytes);//将接收到的数据直接存储为2进制文件
                         } catch (Exception e) {
                         }
                     }
@@ -492,7 +492,7 @@ public class Main extends Activity {
                         i1 = i1 + 1;
                     }
 
-                    long estimatedTime = System.nanoTime() - startTime;
+
 
                    // int[] dadd = new int[2048];
                     // = new int[2048];
@@ -586,8 +586,8 @@ public class Main extends Activity {
                         } catch (NullPointerException ee) {
                         }
                     }
-
-                    //set_TubeA1_data(data_a, data_a1, data_b, data_b1);//调用传入通道A数据函数
+                    long estimatedTime = System.nanoTime() - startTime;
+                    //set_TubeA1_data(tunnelAdata, tunnelA1data, tunnelBdata, tunnelB1data);//调用传入通道A数据函数
                     Message msg1 = new Message();
                     msg1.what = COMPLETED;
                     msg1.obj = tunnelAdata[2] + "+" + tunnelA1data[2] + "+" + tunnelBdata[2] + "+" + tunnelB1data[2];
