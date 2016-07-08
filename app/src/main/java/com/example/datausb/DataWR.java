@@ -21,9 +21,11 @@ public class DataWR {
     private static SimpleDateFormat docFormatm = new SimpleDateFormat("MM");//建立文件夹月的名字
     private static SimpleDateFormat docFormatd = new SimpleDateFormat("dd");//建立文件夹日的名字
     private static Date date = new Date();
+    //public static String SDcardPath="/mnt/external_sd/";
+    public static String SDcardPath="/storage/sdcard0/";
     private static String dir = docFormaty.format(date) + "/" + docFormatm.format(date) + "/" + docFormatd.format(date) + "/";//存储数据文件夹的目录
   //  private static  file;//file对象用来建立文件夹
-    private static String preFileName = "/mnt/external_sd/" + dir + fileFormat.format(date) + ".dat";//存储数据文件的名字
+    private static String preFileName = SDcardPath + dir + fileFormat.format(date) + ".dat";//存储数据文件的名字
     private static BufferedOutputStream d;//定义具有缓冲功能的输出流
    // private static  dataname;
     public static float[] cla;
@@ -33,19 +35,50 @@ public class DataWR {
     private static byte[] paraIndicator=new byte[]{0,0,0,0,0,0,0,0};
     public static int fiberNum=4;
     /**
+     * 初始化储存
+     *
+     */
+    public static boolean iniSave(){
+        boolean iniOk=true;
+        try {
+            File file = new File(SDcardPath + dir);
+            iniOk = file.exists();
+            if (!iniOk) {
+                iniOk = file.mkdirs();
+                Log.e("初始化储存","创建文件成功");
+
+            }
+            if (iniOk) {
+               Log.e("初始化储存","文件夹已经存在");
+            }
+        }
+        catch (Exception e){
+            Log.e("初始化储存失败",Log.getStackTraceString(e));
+            iniOk=false;
+        }
+        return iniOk;
+    }
+    /**
      * 储存数据的静态方法
      */
     public static void saveData(byte[] data) {
         date = new Date();
+      //  Log.e("dir",dir);
         String dir1 = docFormaty.format(date) + "/" + docFormatm.format(date) + "/" + docFormatd.format(date) + "/";//存储数据文件夹的目录
-        if (dir != dir1) {//如果日期变了就创建新的文件夹年/月/日
+        //Log.e("dir1",dir1);
+        if (!dir.equals(dir1)) {//如果日期变了就创建新的文件夹年/月/日
             dir = dir1;
-            File file = new File("/mnt/external_sd/" + dir);
-            if (!file.exists()) {//若文件夹已经存在则不创建，不存在则创建
-                file.mkdirs();
+            File file = new File(SDcardPath + dir);
+            boolean isDirectoryCreated=file.exists();
+            if (!isDirectoryCreated) {
+                isDirectoryCreated= file.mkdirs();
+            }
+            if(isDirectoryCreated) {
+                Log.e("存储数据","--文件夹创建失败");
             }
         }
-        String currentFileName = "/mnt/external_sd/" + dir + fileFormat.format(date) + ".dat";//根据时间创建保存数据的文件名
+       // Log.e("pre")
+        String currentFileName = SDcardPath + dir + fileFormat.format(date) + ".dat";//根据时间创建保存数据的文件名
         if (!preFileName.equals(currentFileName)) {//每次写入数据之前判断存储数据的文件名是否改变
             doSave = false;
             preFileName = currentFileName;
@@ -111,7 +144,7 @@ public class DataWR {
                 doSave =true;
                 //在文件创建的时候为文件添加头，头的内容为数据长度()，标定数据（标定数据的末尾是标定温度）开始时间，时间为毫秒 ,头的长度是固定的
             } catch (Exception e) {
-                Log.e("创建数据文件失败", e.toString());
+                Log.e("创建数据文件失败", Log.getStackTraceString(e));
             }
         }
         try {
@@ -128,7 +161,7 @@ public class DataWR {
     public static String[] read(String year, String month, String day, Context cc) {
 
         String[] dataname = null;
-        String finddatafile = "/mnt/external_sd/" + year + "/" + month + "/" + day;
+        String finddatafile = SDcardPath + year + "/" + month + "/" + day;
         Log.e("s", finddatafile);
         File datapathfile = new File(finddatafile);
         if (!datapathfile.exists()) {

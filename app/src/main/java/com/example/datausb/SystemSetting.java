@@ -64,38 +64,7 @@ public class SystemSetting extends android.app.Fragment {
                 Log.e("焦点1变化", "" + SystemParameter.TEM_ALERT_TUBE1);
             }
         });
-//        temalerttube1.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//                //Log.e("bef：",temalerttube1.getText().toString());
-//
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//               // Log.e("on：",temalerttube1.getText().toString());
-//
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//                if (!temalerttube1.getText().toString().equals("")){
-//
-//                  //  Log.e("jj",temalerttube1.getText().toString());
-//                    if (temalerttube1.getText().toString().equals("-")){
-//
-//                    }
-//                    //system.TEM_ALERT_TUBE1=Integer.valueOf(temalerttube1.getText().toString());
-//                }
-//                else {//当文本框中内容为“”时，设置监控温度为0度
-//                   // Log.e("jj99",temalerttube1.getText().toString());//当getText为""的时候，Log不会执行
-//
-//                    system.TEM_ALERT_TUBE1=0;
-//                }
-//              //  Log.e("通道1的监控温度为：",Integer.valueOf(system.TEM_ALERT_TUBE1)+"ll");
-//
-//            }
-//        });
+
         temalerttube2 = (EditText) getActivity().findViewById(R.id.editText6);
         temalerttube2.setEnabled(false);
         temalerttube2.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -120,36 +89,8 @@ public class SystemSetting extends android.app.Fragment {
                 Log.e("焦点2变化", "" + SystemParameter.TEM_ALERT_TUBE2);
             }
         });
-//        temalerttube2.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//
-//
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//                if (!temalerttube2.getText().toString().equals("")){
-//
-//                  //  Log.e("jj",temalerttube2.getText().toString());
-//                    system.TEM_ALERT_TUBE2=Integer.valueOf(temalerttube2.getText().toString());
-//                }
-//                else {
-//                    // Log.e("jj99",temalerttube1.getText().toString());//当getText为""的时候，Log不会执行
-//
-//                    system.TEM_ALERT_TUBE2=0;
-//                }
-//                //  Log.e("通道1的监控温度为：",Integer.valueOf(system.TEM_ALERT_TUBE1)+"ll");
-//
-//
-//            }
-//        });
+
+
         sentdata = (Button) getActivity().findViewById(R.id.button10);
         showbyte = (TextView) getActivity().findViewById(R.id.textView17);
         datasavetrr = (Spinner) getActivity().findViewById(R.id.spinner5);
@@ -192,7 +133,8 @@ public class SystemSetting extends android.app.Fragment {
         sw.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                File file = new File("mnt/external_sd/LOST.DIR");//用来检测是否插入了sd卡，因为只要插入sd卡，系统就会在这个sd卡下建立LOST.DIR文件夹
+                File file = new File(DataWR.SDcardPath+"360");//用来检测是否插入了sd卡，因为只要插入sd卡，系统就会在这个sd卡下建立LOST.DIR文件夹
+                //File file = new File(DataWR.SDcardPath+"LOST.DIR");//用来检测是否插入了sd卡，因为只要插入sd卡，系统就会在这个sd卡下建立LOST.DIR文件夹
                 //  Environment.getExternalStorageState();
                 // Log.e("ee",Boolean.valueOf(file.exists()).toString());
                 //Log.e("ee",Boolean.valueOf(sw.isChecked()).toString());
@@ -202,6 +144,7 @@ public class SystemSetting extends android.app.Fragment {
                 }
                 if (sw.isChecked() && (file.exists())) {//如果开关sw打开，并且插入了sd卡，那么就可以设置STOREDATA标志
                     ((Main) getActivity()).STOREDATA = 1;
+                    DataWR.iniSave();
                     Toast.makeText(((Main) getActivity()).getApplication(), "数据存储打开", Toast.LENGTH_SHORT).show();
 
                 } else {
@@ -228,7 +171,6 @@ public class SystemSetting extends android.app.Fragment {
             public void onClick(View v) {
                 String s = data.getText().toString();//String变量
                 byte[] b = s.getBytes();//String转换为byte[]
-                // String res = new String(b);
                 String hex = "0";
                 String hh = "";
                 for (int i = 0; i < b.length; i++) {
@@ -271,15 +213,6 @@ public class SystemSetting extends android.app.Fragment {
             oplong.setText(Integer.toString(ll));
         }
 
-        // setopl = (Button) getActivity().findViewById(R.id.button11);
-//        setopl.setOnClickListener(new View.OnClickListener() {
-//                                      @Override
-//                                      public void onClick(View v) {
-//                                          int ol = Integer.valueOf(oplong.getText().toString());
-//                                          ((main1) getActivity()).setFiberLength(ol);
-//                                      }
-//                                  }
-//        );
         View sysseting = getActivity().findViewById(R.id.sysset);
         /**
          想要一个EditText失去焦点后，其他控件（尤其是别的可以编辑的EditText）不要获得焦点，则可以：

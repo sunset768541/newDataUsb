@@ -28,11 +28,9 @@ public class HistoryThreeDimensionModel extends android.app.Fragment {
     private threedimThread myThread;
     private TextView showTime;
 
-    //    public void wakeUp() {
-    //}
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FrameLayout ff = (FrameLayout) ((Main) getActivity()).findViewById(R.id.showdataframe);
+        FrameLayout ff = (FrameLayout) getActivity().findViewById(R.id.showdataframe);
         float x = ff.getWidth();
         float y = ff.getHeight();
         if (x > y) {
@@ -42,12 +40,12 @@ public class HistoryThreeDimensionModel extends android.app.Fragment {
             WIDTH = y;
             HEIGHT = x;
         }
-        mv = new MySurfaceView((Main) getActivity());
+        mv = new MySurfaceView(getActivity());
         mv.requestFocus();//获取焦点
         mv.setFocusableInTouchMode(true);//设置为可触控
-        seeekbar=(SeekBar)((Main)getActivity()).findViewById(R.id.seekBar);
+        seeekbar=(SeekBar)getActivity().findViewById(R.id.seekBar);
         seeekbar.setEnabled(true);
-        showTime=(TextView)((Main)getActivity()).findViewById(R.id.textView18);
+        showTime=(TextView)getActivity().findViewById(R.id.textView18);
 
 
     }
@@ -61,8 +59,6 @@ public class HistoryThreeDimensionModel extends android.app.Fragment {
 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);//
-
-
     }
     public void threadstart(){
         myThread = new threedimThread();//创建一个绘图线程
@@ -72,13 +68,11 @@ public class HistoryThreeDimensionModel extends android.app.Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        //mv.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        //mv.onPause();
     }
 
 
@@ -91,7 +85,6 @@ public class HistoryThreeDimensionModel extends android.app.Fragment {
                 try {
                     Log.e("UI更新线程","-----之心");
                     seeekbar.incrementProgressBy((int)DataRD.dataBuffer.length);
-                    //String usetime=Integer.valueOf(msg1.arg2).toString();
                     showTime.setText(decimalFormat.format((float)msg1.arg2/(float)msg1.arg1*100)+"%");
                 } catch (NullPointerException e) {
                 }
@@ -152,14 +145,12 @@ public class HistoryThreeDimensionModel extends android.app.Fragment {
                     for (int i = 0; i < tuba.length; i++) {
                         double bb1 = (double) PSA1[i] / DataRD.clabiraA[i];
                         double bb2 = (double) PSA2[i] / DataRD.clabiraB[i];
-                        //Log.e("PSA","PSA"+Double.valueOf(PSA1[i]).toString()+"PSB"+Double.valueOf(PSA2[i]).toString());
-                        //Log.e("calopsa","当前温度"+Float.valueOf(caliPSA[caliPSA.length-1]).toString()+"Acli"+Float.valueOf(caliPSA[i]).toString()+"Bcli"+Float.valueOf(caliPSB[i]).toString());
                         float tt1 = (float) (Math.log(bb1) + 1 / DataRD.clabiraA[DataRD.clabiraA.length - 1]);
                         float tt2 = (float) (Math.log(bb2) + 1 / DataRD.clabiraB[DataRD.clabiraB.length - 1]);
                         T1[i] = 1 / tt1;
                         T2[i] = 1 / tt2;
                     }
-                    float[] TR = screenadapter(T1, mv.mRender.getcont() / 4);//选择T1通道的温度进行显示
+                    float[] TR = screenadapter(T2, mv.mRender.getcont() / 4);//选择T1通道的温度进行显示
                     float[] colors = new float[mv.mRender.getcont()];//创建用于给光纤模型颜色渲染的数据
                     float[] cc = colorprocess(TR);
                     colors = Arrays.copyOfRange(cc, 0, colors.length);
@@ -286,7 +277,6 @@ public class HistoryThreeDimensionModel extends android.app.Fragment {
             float[] adptertube = new float[w];//设置屏可以显示在屏幕上的数据长度
             float[] databuf;
             int interval = data.length / w + 1;
-            // Log.d("输出间隔",Integer.toString(interval)+"    "+Integer.valueOf(dataObj.length).toString()+"   "+Integer.valueOf(showLineViewWidth).toString());
             int kkk = 0;
             if (interval <= 1) {
                 adptertube = data;

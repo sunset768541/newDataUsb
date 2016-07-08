@@ -590,7 +590,7 @@ public class Main extends Activity {
                     //set_TubeA1_data(tunnelAdata, tunnelA1data, tunnelBdata, tunnelB1data);//调用传入通道A数据函数
                     Message msg1 = new Message();
                     msg1.what = COMPLETED;
-                    msg1.obj = tunnelAdata[2] + "+" + tunnelA1data[2] + "+" + tunnelBdata[2] + "+" + tunnelB1data[2];
+                    msg1.obj = tunnelAdata[2] + "+" + tunnelA1data[2];
                     //msg1.obj =combination[0]+"+"+combination[20480]+"+"+combination[30720]+"+"+combination[40959];//要显示的数据，测试使用
                     //msg1.obj =resourceObj.dataObj[0]+"+"+resourceObj.dataObj[40960]+"+"+resourceObj.dataObj[61440]+"+"+resourceObj.dataObj[81919];//要显示的数据，测试使用
                     msg1.arg1 = r.speed;//数据的传输速度

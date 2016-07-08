@@ -191,7 +191,7 @@
                 android:id="@+id/transmitespeed1"
                 android:layout_toRightOf="@id/savestate"
                 android:layout_centerInParent="true"
-                android:text="采样数据                                                                                        " />
+                android:text="采样数据" />
 
             <ToggleButton
                 android:layout_width="wrap_content"

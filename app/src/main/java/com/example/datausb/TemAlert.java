@@ -43,7 +43,6 @@ public class TemAlert {
             for (int i=0;i<tua1.length;i++){
                 double bb11=(double)PSA11[i]/cla1[i];
                 double bb21=(double)PSA22[i]/cla2[i];
-                //Log.e("PSA","PSA"+Double.valueOf(PSA1[i]).toString()+"PSB"+Double.valueOf(PSA2[i]).toString());
                 //Log.e("calopsa","当前温度"+Float.valueOf(caliPSA[caliPSA.length-1]).toString()+"Acli"+Float.valueOf(caliPSA[i]).toString()+"Bcli"+Float.valueOf(caliPSB[i]).toString());
                 float tt11=(float)(Math.log(bb11)+1/cla1[cla1.length-1]);
                 float tt21=(float)(Math.log(bb21)+1/cla2[cla2.length-1]);

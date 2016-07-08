@@ -87,7 +87,7 @@ public class ThreeDimensionModel extends android.app.Fragment {
              * 就可以被该线程访问了
              */
             try {
-                this.sleep(350);
+                this.sleep(800);
 
             }
             catch (InterruptedException e){
@@ -152,7 +152,7 @@ public class ThreeDimensionModel extends android.app.Fragment {
                     }
                 }
             } catch (NullPointerException e) {
-                Log.d("threedimModel", "3维模式出现空指针异常");
+                Log.d("threedimModel", Log.getStackTraceString(e));
 
 
             }

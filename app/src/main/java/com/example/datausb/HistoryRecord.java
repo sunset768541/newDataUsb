@@ -45,7 +45,7 @@ public class HistoryRecord extends android.app.Fragment {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Log.e("点击了", datalist[position].toString());
-                    String ss = "/mnt/external_sd/" + yea + "/" + mon + "/" + da + "/" + datalist[position].toString();
+                    String ss = DataWR.SDcardPath + yea + "/" + mon + "/" + da + "/" + datalist[position].toString();
                     Log.e("D",ss);
                     try {
                         DataRD.HAVE_READ_FINISEH=true;
