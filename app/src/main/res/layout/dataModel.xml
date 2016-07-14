@@ -2,20 +2,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <SurfaceView
-        android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="right">
+
+    <FrameLayout
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:id="@+id/sura"
         android:layout_weight="1"
-        android:layout_margin="5dp" />
+        android:id="@+id/datamodelfram"
+        android:background="#0f0f0f"></FrameLayout>
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:background="@drawable/togglebuttoncolor"
-        android:layout_margin="7dp"
-        android:alpha="100">
+        android:alpha="100"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:gravity="center_vertical">
 
         <TextView
             android:layout_width="wrap_content"
@@ -23,10 +28,10 @@
             android:text="A通道"
             android:textColor="#ff0022"
             android:textStyle="normal"
-            android:layout_weight="1"
             android:id="@+id/textView13"
             android:layout_marginRight="2dp"
-            android:layout_marginLeft="2dp" />
+            android:layout_marginLeft="2dp"
+            android:textSize="10sp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -34,9 +39,9 @@
             android:text="峰值:33456"
             android:textColor="#ff0022"
             android:textStyle="normal"
-            android:layout_weight="1"
             android:layout_marginRight="2dp"
-            android:layout_marginLeft="2dp" />
+            android:layout_marginLeft="2dp"
+            android:textSize="10sp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -45,9 +50,9 @@
             android:id="@+id/textView"
             android:textColor="#ff0022"
             android:textStyle="normal"
-            android:layout_weight="1"
             android:layout_marginRight="2dp"
-            android:layout_marginLeft="2dp" />
+            android:layout_marginLeft="2dp"
+            android:textSize="10sp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -56,9 +61,10 @@
             android:id="@+id/textView2"
             android:textColor="#ff0022"
             android:textStyle="normal"
-            android:layout_weight="1"
             android:layout_marginRight="2dp"
-            android:layout_marginLeft="2dp" />
+            android:layout_marginLeft="2dp"
+            android:paddingBottom="5dp"
+            android:textSize="10sp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -66,10 +72,10 @@
             android:text="B通道"
             android:textColor="#ffff11"
             android:textStyle="normal"
-            android:layout_weight="1"
             android:id="@+id/textView15"
             android:layout_marginRight="2dp"
-            android:layout_marginLeft="2dp" />
+            android:layout_marginLeft="2dp"
+            android:textSize="10sp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -78,9 +84,9 @@
             android:id="@+id/textView3"
             android:textStyle="normal"
             android:textColor="#ffff11"
-            android:layout_weight="1"
             android:layout_marginRight="2dp"
-            android:layout_marginLeft="2dp" />
+            android:layout_marginLeft="2dp"
+            android:textSize="10sp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -89,9 +95,9 @@
             android:id="@+id/textView4"
             android:textStyle="normal"
             android:textColor="#ffff11"
-            android:layout_weight="1"
             android:layout_marginRight="2dp"
-            android:layout_marginLeft="2dp" />
+            android:layout_marginLeft="2dp"
+            android:textSize="10sp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -100,9 +106,10 @@
             android:id="@+id/textView5"
             android:textStyle="normal"
             android:textColor="#ffff11"
-            android:layout_weight="1"
             android:layout_marginRight="2dp"
-            android:layout_marginLeft="2dp" />
+            android:layout_marginLeft="2dp"
+            android:paddingBottom="5dp"
+            android:textSize="10sp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -110,10 +117,10 @@
             android:text="C通道"
             android:textColor="#ff00ffff"
             android:textStyle="normal"
-            android:layout_weight="1"
             android:id="@+id/textView14"
             android:layout_marginRight="2dp"
-            android:layout_marginLeft="2dp" />
+            android:layout_marginLeft="2dp"
+            android:textSize="10sp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -121,9 +128,9 @@
             android:text="峰值:5643"
             android:id="@+id/textView6"
             android:textColor="#ff00ffff"
-            android:layout_weight="1"
             android:layout_marginRight="2dp"
-            android:layout_marginLeft="2dp" />
+            android:layout_marginLeft="2dp"
+            android:textSize="10sp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -131,9 +138,9 @@
             android:text="时间:06.18"
             android:id="@+id/textView7"
             android:textColor="#ff00ffff"
-            android:layout_weight="1"
             android:layout_marginRight="2dp"
-            android:layout_marginLeft="2dp" />
+            android:layout_marginLeft="2dp"
+            android:textSize="10sp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -141,9 +148,10 @@
             android:text="地点:900m处"
             android:id="@+id/textView8"
             android:textColor="#ff00ffff"
-            android:layout_weight="1"
             android:layout_marginRight="2dp"
-            android:layout_marginLeft="2dp" />
+            android:layout_marginLeft="2dp"
+            android:paddingBottom="5dp"
+            android:textSize="10sp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -151,10 +159,10 @@
             android:text="D通道"
             android:textColor="#0011ff"
             android:textStyle="normal"
-            android:layout_weight="1"
             android:id="@+id/textView12"
             android:layout_marginRight="2dp"
-            android:layout_marginLeft="2dp" />
+            android:layout_marginLeft="2dp"
+            android:textSize="10sp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -162,9 +170,10 @@
             android:text="峰值:45466"
             android:id="@+id/textView9"
             android:textColor="#0011ff"
-            android:layout_weight="1"
             android:layout_marginRight="2dp"
-            android:layout_marginLeft="2dp" />
+            android:layout_marginLeft="2dp"
+            android:textIsSelectable="false"
+            android:textSize="10sp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -172,9 +181,9 @@
             android:text="时间:11.12"
             android:id="@+id/textView10"
             android:textColor="#0011ff"
-            android:layout_weight="1"
             android:layout_marginRight="2dp"
-            android:layout_marginLeft="2dp" />
+            android:layout_marginLeft="2dp"
+            android:textSize="10sp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -182,9 +191,9 @@
             android:text="地点:634m处"
             android:id="@+id/textView11"
             android:textColor="#0011ff"
-            android:layout_weight="1"
             android:layout_marginRight="2dp"
-            android:layout_marginLeft="2dp" />
+            android:layout_marginLeft="2dp"
+            android:textSize="10sp" />
 
     </LinearLayout>
 

@@ -19,9 +19,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import java.io.FileWriter;
-import java.io.PrintWriter;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by sunset on 15/11/19.
@@ -30,7 +29,7 @@ import java.util.Arrays;
  * 然后在surfaceview上显示出比值的图形
  */
 
-public class tempreatureModel extends android.app.Fragment {
+public class TempreatureModel extends android.app.Fragment {
     /**
      * 定义一个SurfaceHolder用来管理surface
      */
@@ -41,7 +40,7 @@ public class tempreatureModel extends android.app.Fragment {
      * 这个函数的作用是使Activity可以唤醒fragment中的显示线程
      */
     public void wakeup() {
-        ((main1) getActivity()).dta.notifyAll();
+        ((Main) getActivity()).dataObj.notifyAll();
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -52,11 +51,11 @@ public class tempreatureModel extends android.app.Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);//
         try{
-            caliPSA=((main1) getActivity()).getfromdatabase(((main1) getActivity()).mDatabase, "tube1data");
-            caliPSB=((main1) getActivity()).getfromdatabase(((main1) getActivity()).mDatabase, "tube2data");
+            caliPSA=DataBaseOperation.mDataBaseOperation.getFromDataBase("tube1data");
+            caliPSB=DataBaseOperation.mDataBaseOperation.getFromDataBase("tube2data");
         }
         catch (Exception e){
-            Toast.makeText(((main1) getActivity()).getApplicationContext(), "标定数据不存在，请先在标定模式下进行标定", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity().getApplicationContext(), "标定数据不存在，请先在标定模式下进行标定", Toast.LENGTH_SHORT).show();
 
         }
 
@@ -71,7 +70,7 @@ public class tempreatureModel extends android.app.Fragment {
         /**
          * 实例化一个surfaceview
          */
-        VV v1 = new VV(getActivity(), holder, sur);
+        drawLineSurface v1 = new drawLineSurface(getActivity(), holder, sur);
         /**
          * 调用这个surfaceview的surfaceCreated方法
          */
@@ -80,29 +79,28 @@ public class tempreatureModel extends android.app.Fragment {
     }
 
     /**
-     * 一个集成Surfaceview并实现了SurfaceHolder.Callback方法的的类
+     * 一个继承Surfaceview并实现了SurfaceHolder.Callback方法的的类
      */
 
-    class VV extends SurfaceView implements SurfaceHolder.Callback {
+    class drawLineSurface extends SurfaceView implements SurfaceHolder.Callback {
         private tempreatureThread myThread;
-        SurfaceView ss;
+        SurfaceView surfaceView;
 
         /**
          * 该类的构造函数
          *
          * @param context
          * @param holder1，传入holder，给绘图线程使用
-         * @param sur，传入sur使绘图线程获得当前surfaceview的大小
+         * @param surfaceView，传入sur使绘图线程获得当前surfaceview的大小
          */
-        public VV(Context context, SurfaceHolder holder1, SurfaceView sur) {
+        public drawLineSurface(Context context, SurfaceHolder holder1, SurfaceView surfaceView) {
             super(context);
-            ss = sur;
+            this.surfaceView = surfaceView;
         }
 
         public void surfaceChanged(SurfaceHolder holder1, int a, int b, int c) {
             holder1.addCallback(this);
-            boolean datareceive = ((main1) getActivity()).getchange();
-            myThread = new tempreatureThread(holder1, ss, datareceive);//创建一个绘图线程
+            myThread = new tempreatureThread(holder1, surfaceView);//创建一个绘图线程
             myThread.start();
         }
 
@@ -124,62 +122,50 @@ public class tempreatureModel extends android.app.Fragment {
         private SurfaceHolder holder;
         public boolean isRun;
 
-        int h;
-        int w;
-        SurfaceView sss;
-        //Bundle[] alltubedata;
-        boolean dd;
+        int showLineSurfaceViewHeught;
+        int showLineSurfaceViewWidth;
+        SurfaceView showLineSurfaceView;
         float fiberLength = 2048;
         float maxnum = 16384;
-       // FileWriter ps;
+        List<Float> T1p=new ArrayList<>();
+        List<Float> T2p=new ArrayList<>();
         /**
          * 该线程的构造函数
          *
          * @param holder，传入的holder用来指定绘图的surfaceview
-         * @param ss1，用来获得surfaceview的大小
+         * @param surfaceView，用来获得surfaceview的大小
          */
-        public tempreatureThread(SurfaceHolder holder, SurfaceView ss1, boolean dd) {
+        public tempreatureThread(SurfaceHolder holder, SurfaceView surfaceView) {
             this.holder = holder;
-            sss = ss1;
+            showLineSurfaceView = surfaceView;
             isRun = true;
-            //alltubedata=cc;
-            h = sss.getHeight();
-            w = sss.getWidth();
-            this.dd = dd;
-          //  StrStore.cresave();
-//            try {
-//            //   ps= new FileWriter("/mnt/external_sd/temdata.txt");
-//
-//            }
-//            catch (Exception e){}
+            showLineSurfaceViewHeught = showLineSurfaceView.getHeight();
+            showLineSurfaceViewWidth = showLineSurfaceView.getWidth();
+
         }
 
         public void run() {
             try {//捕获线程运行中切换界面而产生的的空指针异常，防止程序崩溃。
-            while (!((main1) getActivity()).stoptempreturemodelthread) {
-
-
-
-
-                    synchronized (((main1) getActivity()).dta) {//所有的等待和唤醒的锁都是同一个，这里选用了Activity中的一个对对象
+            while (!((Main) getActivity()).stopTemperatureModelThread) {
+                    synchronized (((Main) getActivity()).dataObj) {//所有的等待和唤醒的锁都是同一个，这里选用了Activity中的一个对象
                         /**
                          * 如果当标志位为false这个线程开始等待
                          */
-                        if (!((main1) getActivity()).dta.flag1)
+                        if (!((Main) getActivity()).dataObj.flag1)
                             try {
-                                ((main1) getActivity()).dta.wait();
+                                ((Main) getActivity()).dataObj.wait();
 
                             } catch (InterruptedException ex) {
 
                             }
                         else {
-                            ((main1) getActivity()).dta.notifyAll();
+                            ((Main) getActivity()).dataObj.notifyAll();
                         }
                         //下面的语句是从Activity中获取数据
-                        int[] tuba = ((main1) getActivity()).get_TubeA1_data().getIntArray("tubea");
-                        int[] tuba1 = ((main1) getActivity()).get_TubeA1_data1().getIntArray("tubea1");
-                        int[] tubeb = ((main1) getActivity()).get_TubeA1_data2().getIntArray("tubeb");
-                        int[] tubeb1 = ((main1) getActivity()).get_TubeA1_data3().getIntArray("tubeb1");
+                        int[] tuba = ((Main) getActivity()).get_TubeA1_data().getIntArray("tunnelAdata");
+                        int[] tuba1 = ((Main) getActivity()).get_TubeA1_data1().getIntArray("tunnelA1data");
+                        int[] tubeb = ((Main) getActivity()).get_TubeA1_data2().getIntArray("tunnelBdata");
+                        int[] tubeb1 = ((Main) getActivity()).get_TubeA1_data3().getIntArray("tunnelB1data");
                         float[] T1=new float[tuba.length];
                         float[] T2=new float[tuba.length];
                         float [] PSA1=new float[tuba.length];
@@ -200,26 +186,12 @@ public class tempreatureModel extends android.app.Fragment {
                         for (int i=0;i<tuba.length;i++){
                             double bb1=(double)PSA1[i]/caliPSA[i];
                             double bb2=(double)PSA2[i]/caliPSB[i];
-                            //Log.e("PSA","PSA"+Double.valueOf(PSA1[i]).toString()+"PSB"+Double.valueOf(PSA2[i]).toString());
-                            //Log.e("calopsa","当前温度"+Float.valueOf(caliPSA[caliPSA.length-1]).toString()+"Acli"+Float.valueOf(caliPSA[i]).toString()+"Bcli"+Float.valueOf(caliPSB[i]).toString());
                             float tt1=(float)(Math.log(bb1)+1/caliPSA[caliPSA.length-1]);
                             float tt2=(float)(Math.log(bb2)+1/caliPSB[caliPSB.length-1]);
-                           // StrStore.s1="通道1第 "+Integer.valueOf(i).toString() + " 个温度为" + Float.valueOf(tt1).toString()+"\n"+"通道2第 "+Integer.valueOf(i).toString() + " 个温度为" + Float.valueOf(tt2).toString()+"\n";
 
-//                            try {
-//                                ps.write(s1+"\n");
-//                                ps.write(s2+"\n");
-//                            }
-//                            catch (Exception e){
-//
-//                            }
-
-                           // StrStore.saves();
                             T1[i]=1/tt1;
                             T2[i]=1/tt2;
                         }
-                        //Log.e("Tmode1最后一个数据",Float.valueOf(T1[T1.length-1]).toString());
-                        //Log.e("ClabMode最后一个数据",Float.valueOf(caliPSA[caliPSA.length-2]).toString());
                         /**
                          * 定义了两支画笔
                          * paxis用来画横纵坐标轴
@@ -250,10 +222,10 @@ public class tempreatureModel extends android.app.Fragment {
                         /**
                          * 绘制横纵坐标轴
                          */
-                        c.drawLine(40, 20, 40, h - 40, paxis);
+                        c.drawLine(40, 20, 40, showLineSurfaceViewHeught - 40, paxis);
                         c.drawText("n", 40, 10, zuobioa);
-                        c.drawText("m", w - 10, h - 20, zuobioa);
-                        c.drawLine(40, h - 40, w - 10, h - 40, paxis);//绘制坐标轴
+                        c.drawText("m", showLineSurfaceViewWidth - 10, showLineSurfaceViewHeught - 20, zuobioa);
+                        c.drawLine(40, showLineSurfaceViewHeught - 40, showLineSurfaceViewWidth - 10, showLineSurfaceViewHeught - 40, paxis);//绘制坐标轴
                         /**
                          * 绘制横纵轴各画ci条线
                          */
@@ -264,24 +236,24 @@ public class tempreatureModel extends android.app.Fragment {
                             /**
                              * (0,0)-------------------------------------->
                              *     |
-                             *     | (40,k)----------------------(w-40,k)
+                             *     | (40,k)----------------------(showLineSurfaceViewWidth-40,k)
                              *     |
-                             *     | (40,k)----------------------(w-40,k)
+                             *     | (40,k)----------------------(showLineSurfaceViewWidth-40,k)
                              *     |
-                             *     | (40,k)----------------------(w-40,k)
+                             *     | (40,k)----------------------(showLineSurfaceViewWidth-40,k)
                              *     |
-                             *     | (40,k)----------------------(w-40,k)
+                             *     | (40,k)----------------------(showLineSurfaceViewWidth-40,k)
                              *     |
-                             *     | (40,k)----------------------(w-40,k)
+                             *     | (40,k)----------------------(showLineSurfaceViewWidth-40,k)
                              *     |
-                             *     | (40,k)----------------------(w-40,k)
+                             *     | (40,k)----------------------(showLineSurfaceViewWidth-40,k)
                              *     |
-                             *     | (40,k)----------------------(w-40,k)
+                             *     | (40,k)----------------------(showLineSurfaceViewWidth-40,k)
                              */
-                            float k = h - (i * (h - 40) / ci + 40);//画横轴直线需要的y坐标
+                            float k = showLineSurfaceViewHeught - (i * (showLineSurfaceViewHeught - 40) / ci + 40);//画横轴直线需要的y坐标
 
                             /**
-                             * (m,h/ci)
+                             * (m,showLineViewHeigth/ci)
                              *     |        |       |       |       |
                              *     |        |       |       |       |
                              *     |        |       |       |       |
@@ -289,13 +261,13 @@ public class tempreatureModel extends android.app.Fragment {
                              *     |        |       |       |       |
                              *     |        |       |       |       |
                              *     |        |       |       |       |
-                             * (m,h-40)
+                             * (m,showLineViewHeigth-40)
                              */
-                            float m = i * (w - 40) / ci + 40;//纵轴间距
-                            c.drawLine(40, k, w - 40, k, axe);//画横轴(40,k,w-40,k)-->(x1,y1,x2,y2)画的横轴的长度是w-80,为每个循环得到画横轴的纵坐标的值
+                            float m = i * (showLineSurfaceViewWidth - 40) / ci + 40;//纵轴间距
+                            c.drawLine(40, k, showLineSurfaceViewWidth - 40, k, axe);//画横轴(40,k,showLineSurfaceViewWidth-40,k)-->(x1,y1,x2,y2)画的横轴的长度是w-80,为每个循环得到画横轴的纵坐标的值
                             c.drawText(Integer.valueOf((int) y).toString(), (float) 18, (float) k, zuobioa);//在纵坐标上画字符
-                            c.drawText(Integer.valueOf((int) x).toString(), (float) m, (float) (h - 10), zuobioa);//在横坐标上画字符
-                            c.drawLine(m, h / (ci), m, h - 40, axe);//画纵轴m为每次画纵轴的x坐标，2h-40-h/ci为该纵轴的长度
+                            c.drawText(Integer.valueOf((int) x).toString(), (float) m, (float) (showLineSurfaceViewHeught - 10), zuobioa);//在横坐标上画字符
+                            c.drawLine(m, showLineSurfaceViewHeught / (ci), m, showLineSurfaceViewHeught - 40, axe);//画纵轴m为每次画纵轴的x坐标，2h-40-showLineViewHeigth/ci为该纵轴的长度
                         }
 
 
@@ -304,41 +276,48 @@ public class tempreatureModel extends android.app.Fragment {
                          * 共新建4个画笔和4个路径
                          */
                         synchronized (holder) {
-                            Path p1 = new Path();
-                            Path p2 = new Path();
+                            Path fiber1Path = new Path();
+                            Path fiber2Path = new Path();
 
 
-                            Paint tube1 = new Paint();
-                            Paint tube2 = new Paint();
+                            Paint fiber1Paint = new Paint();
+                            Paint fiber2Paint = new Paint();
+                            PathEffect pathEffect = new CornerPathEffect(10);
 
+                            fiber1Paint.setColor(Color.RED);
+                            fiber1Paint.setStyle(Paint.Style.STROKE);
+                            fiber1Paint.setAntiAlias(true);
+                            fiber1Paint.setStrokeWidth(1);
+                            fiber1Paint.setPathEffect(pathEffect);
 
-                            tube1.setColor(Color.RED);
-                            tube1.setStyle(Paint.Style.STROKE);
-                            tube1.setAntiAlias(true);
-                            tube1.setStrokeWidth(1);
-                            PathEffect pe1 = new CornerPathEffect(10);
-                            tube1.setPathEffect(pe1);
+                            fiber2Paint.setColor(Color.GREEN);
+                            fiber2Paint.setStyle(Paint.Style.STROKE);
+                            fiber2Paint.setAntiAlias(true);
+                            fiber2Paint.setStrokeWidth(1);
+                            fiber2Paint.setPathEffect(pathEffect);
 
-                            tube2.setColor(Color.GREEN);
-                            tube2.setStyle(Paint.Style.STROKE);
-                            tube2.setAntiAlias(true);
-                            tube2.setStrokeWidth(1);
-                            tube2.setPathEffect(pe1);
-
-
-                            p1.moveTo(40, h /2);
-                            p2.moveTo(40, h /3);
-                            float[]hh1=interpolation(w-80,T1);
-                            float[]hh2=interpolation(w-80,T2);
-                            float [] adp1=screenadapter(hh1,w-80);
-                            float [] adp2=screenadapter(hh2,w-80);
-                            for (int i = 1; i < adp1.length; i++) {
-                                p1.lineTo(i+45, -adp1[i]+h /2);
-                                p2.lineTo(i+45, -adp2[i]+h /3);
-                               // Log.e("通道1的温度",Float.valueOf(adp1[i]).toString());
+                            c.translate(40, (float) showLineSurfaceViewHeught -40);
+                            for (int kk=0;kk<T1.length;kk++){
+                                T1p.add((float)kk);
+                                T1p.add(T1[kk]);
+                                T2p.add((float)kk);
+                                T2p.add(T2[kk]);
                             }
-                            c.drawPath(p1, tube1);
-                            c.drawPath(p2, tube2);
+                            drawPath(c,T1p,fiber1Paint,true);
+                            drawPath(c,T2p,fiber2Paint,true);
+                            Log.e("熟悉","时间");
+//                            float[]hh1=DisplayAdapterUtil.arrayInterpolation(showLineSurfaceViewWidth -80,T1);//插值
+//                            float[]hh2=DisplayAdapterUtil.arrayInterpolation(showLineSurfaceViewWidth -80,T2);
+//                            float [] adp1=DisplayAdapterUtil.displyViewWidthAdapter(hh1, showLineSurfaceViewWidth -80);//适配
+//                            float [] adp2=DisplayAdapterUtil.displyViewWidthAdapter(hh2, showLineSurfaceViewWidth -80);
+//                            fiber1Path.moveTo(0, -adp1[0]-20);
+//                            fiber2Path.moveTo(0, -adp2[0]-20);
+//                            for (int i = 1; i < adp1.length; i++) {
+//                                fiber1Path.lineTo(i, -adp1[i]-20);
+//                                fiber2Path.lineTo(i, -adp2[i]-20);
+//                            }
+//                            c.drawPath(fiber1Path, fiber1Paint);
+//                            c.drawPath(fiber2Path, fiber2Paint);
 
 
                             /**
@@ -350,9 +329,8 @@ public class tempreatureModel extends android.app.Fragment {
                              * 同时唤醒数据处理线程
                              */
 
-                            ((main1) getActivity()).dta.flag1 = false;
-                            ((main1) getActivity()).wakeuppro();
-                           // Log.d("绘图线程run", "绘制数据图像的方法完成方法");
+                            ((Main) getActivity()).dataObj.flag1 = false;
+                            ((Main) getActivity()).wakeUpAllMainThread();
                         }
 
 
@@ -362,7 +340,7 @@ public class tempreatureModel extends android.app.Fragment {
                 }
                 }
             catch (NullPointerException e) {
-                Log.d("tempretureModel", "温度模式出现空指针异常");
+                Log.d("tempretureModel", Log.getStackTraceString(e));
 
 
             }
@@ -370,85 +348,119 @@ public class tempreatureModel extends android.app.Fragment {
         }
 
 
-    }
-    //进行屏幕大小适配的方法
-    public float[] screenadapter(float[] data, int w) {
-        // Log.e("jjj",Integer.valueOf(data.length).toString());
-        float[] adptertube = new float[w];//设置屏可以显示在屏幕上的数据长度
-        float[] databuf;
-        int interval = data.length / adptertube.length;
-        //  Log.e("输出间隔",Integer.toString(interval)+"    "+Integer.valueOf(data.length).toString()+"   "+Integer.valueOf(w).toString());
-        int kkk = 0;
-        if (interval <= 1) {
-            adptertube = data;
-        } else {
+        private  float[] calculateDrawPoints(float p1x, float p1y, float p2x, float p2y,
+                                                   int screenHeight, int screenWidth) {
+            float drawP1x;
+            float drawP1y;
+            float drawP2x;
+            float drawP2y;
 
-            for (int i = 0; i < (data.length / interval) * interval; i = i + interval) {//有必要将i先变成整数
-                databuf = Arrays.copyOfRange(data, i, i + interval);
-                adptertube[kkk] = max(databuf);//这里出现了空指针异常
-                kkk = kkk + 1;
-            }
-        }
+            if (p1y > screenHeight) {
+                // Intersection with the top of the screen
+                float m = (p2y - p1y) / (p2x - p1x);
+                drawP1x = (screenHeight - p1y + m * p1x) / m;
+                drawP1y = screenHeight;
 
-        return adptertube;
-    }
-
-    //对一个数组输出最大值方法
-    public float max(float[] a) {
-        float b;
-        Arrays.sort(a);
-        b = a[a.length - 1];
-        return b;
-    }
-
-    /**
-     * 屏幕点数与数据匹配函数
-     * 基本思想，利用总的数据长度除以显示控件横向像素点数得出一个整数将这个整数+1就得到了interval，interval的作用就是扩展源数据长度
-     * 使其可以整除显示控件的横向像素点数。interval*viewwidth viewwidth就是显示控件（坐标系）的横向像素点数，乘积的结果就是要扩展的
-     * 数组的长度。为了保证扩展后的数据图像的趋势与源数组的图像趋势一致，通过对源数组的插值来获得扩展数组。插值的点数就是扩展数组的长度
-     * 减去源数组的长度。插值的方法就是在interval的一半处进行插值，所插值通过相邻的两个数据计算平均值得出。并将源数组的数据插入到扩展
-     * 数组中。插值完成后，再将源数组中没有插值的最后一段数据全部拷贝到扩展数组中。
-     * @param viewwidth
-     * @param interpolatdata
-     * @return
-     */
-
-    public float[] interpolation(int viewwidth, float[] interpolatdata) {
-
-        int interval = interpolatdata.length / viewwidth + 1;//计算扩展数组的长度使用
-        int targetlength = interval * viewwidth;//扩展数据的长度
-        int interpotatenum = targetlength - interpolatdata.length;//需要在源数组中插值的个数
-        // int chazhijiange=interpolatdata.length/interpotatenum+1;
-        int chazhijiange = interval / 2;//在源数组中插值的位置
-        // Log.e("cc",Integer.valueOf(chazhijiange).toString());
-        // int mm = interpolatdata.length / chazhijiange;
-        float[] afterinterpolate = new float[targetlength];//插值后的数组
-        float[] zhongji = new float[interval];//保存从原数组拷贝的一段数据
-        int jj = 0;//插值的间隔
-        for (int i = 0; i < interpotatenum; i++) {//插值循环
-            float cha = (interpolatdata[jj + chazhijiange - 1] + interpolatdata[jj + chazhijiange]) / 2;//计算插值的数值
-            afterinterpolate[jj + chazhijiange] = cha;//将需要插得值放入新的数组中的指定插值位置
-            zhongji = Arrays.copyOfRange(interpolatdata, jj, jj + chazhijiange);//从源数组拷贝出一段数据
-            int pp = jj;
-            for (int kk = 0; kk < chazhijiange; kk++) {//将从源数组中拷贝的数据填入到新的数组中的对应位置
-                // Log.e("kk","   当kk=  "+Integer.valueOf(kk).toString()+"  zhongji=   "+Integer.valueOf(zhongji[kk]).toString());
-                afterinterpolate[pp + kk] = zhongji[kk];
+                if (drawP1x < 0) {
+                    // If Intersection is left of the screen we calculate the intersection
+                    // with the left border
+                    drawP1x = 0;
+                    drawP1y = p1y - m * p1x;
+                } else if (drawP1x > screenWidth) {
+                    // If Intersection is right of the screen we calculate the intersection
+                    // with the right border
+                    drawP1x = screenWidth;
+                    drawP1y = m * screenWidth + p1y - m * p1x;
+                }
+            } else if (p1y < 0) {
+                float m = (p2y - p1y) / (p2x - p1x);
+                drawP1x = (-p1y + m * p1x) / m;
+                drawP1y = 0;
+                if (drawP1x < 0) {
+                    drawP1x = 0;
+                    drawP1y = p1y - m * p1x;
+                } else if (drawP1x > screenWidth) {
+                    drawP1x = screenWidth;
+                    drawP1y = m * screenWidth + p1y - m * p1x;
+                }
+            } else {
+                // If the point is in the screen use it
+                drawP1x = p1x;
+                drawP1y = p1y;
             }
 
+            if (p2y > screenHeight) {
+                float m = (p2y - p1y) / (p2x - p1x);
+                drawP2x = (screenHeight - p1y + m * p1x) / m;
+                drawP2y = screenHeight;
+                if (drawP2x < 0) {
+                    drawP2x = 0;
+                    drawP2y = p1y - m * p1x;
+                } else if (drawP2x > screenWidth) {
+                    drawP2x = screenWidth;
+                    drawP2y = m * screenWidth + p1y - m * p1x;
+                }
+            } else if (p2y < 0) {
+                float m = (p2y - p1y) / (p2x - p1x);
+                drawP2x = (-p1y + m * p1x) / m;
+                drawP2y = 0;
+                if (drawP2x < 0) {
+                    drawP2x = 0;
+                    drawP2y = p1y - m * p1x;
+                } else if (drawP2x > screenWidth) {
+                    drawP2x = screenWidth;
+                    drawP2y = m * screenWidth + p1y - m * p1x;
+                }
+            } else {
+                // If the point is in the screen use it
+                drawP2x = p2x;
+                drawP2y = p2y;
+            }
 
-            //  Log.e("jj",Integer.valueOf(jj+chazhijiange).toString()+"  ii="+Integer.valueOf(i).toString());
-            jj = jj + chazhijiange + 1;
+            return new float[] { drawP1x, drawP1y, drawP2x, drawP2y };
         }
-        //插值完毕后，将剩下的没有插值的一段数据从源数组拷贝到扩展数组中
-        int sourceinterpointer = chazhijiange * interpotatenum;//源数组插值的结束位置
-        int targeinterpointer = chazhijiange * interpotatenum + interpotatenum;//扩展数组填入数据的结束位置
-        int cc = interpolatdata.length - sourceinterpointer;//没有插值的一段数据的长度
-        float[] uuu = Arrays.copyOfRange(interpolatdata, sourceinterpointer, interpolatdata.length);//从源数组拷贝出没有插值的一段数据
-        for (int yy = 0; yy < cc; yy++) {//将没有插值的一段数据拷贝到扩展数组的对应位置
-            afterinterpolate[yy + targeinterpointer] = uuu[yy];
+
+        /**
+         * The graphical representation of a path.
+         *
+         * @param canvas the canvas to paint to
+         * @param points the points that are contained in the path to paint
+         * @param paint the paint to be used for painting
+         * @param circular if the path ends with the start point
+         */
+        protected void drawPath(Canvas canvas, List<Float> points, Paint paint, boolean circular) {
+            Path path = new Path();
+            int height = showLineSurfaceViewHeught;
+            int width = showLineSurfaceViewWidth-80;
+
+            float[] tempDrawPoints;
+            if (points.size() < 4) {
+                return;
+            }
+            tempDrawPoints = calculateDrawPoints(points.get(0), points.get(1), points.get(2),
+                    points.get(3), height, width);
+            path.moveTo(tempDrawPoints[0], tempDrawPoints[1]);
+            path.lineTo(tempDrawPoints[2], tempDrawPoints[3]);
+
+            int length = points.size();
+           //  Log.e("chartpoint长度",Integer.valueOf(length).toString());
+            for (int i = 4; i < length; i += 2) {
+                if ((points.get(i - 1) < 0 && points.get(i + 1) < 0)
+                        || (points.get(i - 1) > height && points.get(i + 1) > height)) {
+                    continue;
+                }
+                tempDrawPoints = calculateDrawPoints(points.get(i - 2), points.get(i - 1), points.get(i),
+                        points.get(i + 1), height, width);
+                if (!circular) {
+                    path.moveTo(tempDrawPoints[0], tempDrawPoints[1]);
+                }
+                path.lineTo(tempDrawPoints[2], tempDrawPoints[3]);
+            }
+            if (circular) {
+                path.lineTo(points.get(0), points.get(1));
+            }
+            canvas.drawPath(path, paint);
         }
-        // for (int qq=0;qq<afterinterpolate.length;qq++){
-        // Log.e("aaa"," 当i= "+Integer.valueOf(qq).toString()+" af值为  "+Integer.valueOf(afterinterpolate[qq]).toString());}
-        return afterinterpolate;
     }
+
 }
