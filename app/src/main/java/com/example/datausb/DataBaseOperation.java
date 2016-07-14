@@ -22,16 +22,16 @@ public class DataBaseOperation {
         if (mDataBaseOperation==null){
             mDataBaseOperation=new DataBaseOperation();
             mContex=context;
-            InitialDataBase();
+            initialDataBase();
         }
         return mDataBaseOperation;
     }
-    private static void InitialDataBase(){
+    private static void initialDataBase(){
         mDatabase = SQLiteDatabase.openOrCreateDatabase(mContex.getFilesDir().toString() + "datausb.db3", null);
     }
 
     //创建或者获得表格的方法
-    public void creatOrgettable(String creattable) {
+    public void creatOrGetTable(String creattable) {
         mDatabase.execSQL(creattable);
         //Log.d("数据库操作", "数据库建立完成");
     }
@@ -51,7 +51,7 @@ public class DataBaseOperation {
     }
 
     //从数据库中读取数据
-    public float[] getfromdatabase(String tablename) {
+    public float[] getFromDataBase(String tablename) {
         Cursor cursor = mDatabase.query(tablename, null, null, null, null, null, null);
         //moveToFirst为指针指向了表格的行数
         cursor.moveToFirst();
@@ -67,7 +67,7 @@ public class DataBaseOperation {
     }
 
     //更新数据库中的数据
-    public void updatadatabase(int currenttemp, float[] tubedata, String tablenaem) {
+    public void updataDataBase(int currenttemp, float[] tubedata, String tablenaem) {
         String ss = "";
         for (int i = 0; i < tubedata.length; i++) {
             ss = ss + Float.toString(tubedata[i]) + "!!";

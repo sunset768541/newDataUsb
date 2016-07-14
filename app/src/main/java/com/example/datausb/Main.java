@@ -533,13 +533,13 @@ public class Main extends Activity {
                     data_b.putIntArray("tunnelBdata", tunnelBdata);//待传入通道B的数据
                     data_b1.putIntArray("tunnelB1data", tunnelB1data);//待传入通道B1的数据
                     if (TEM_ALERT == 1) {
-                        if (TemAlert.alertfinish == 1) {
-                            TemAlert.alertfinish = 0;
-                            TemAlert.tua1 = tunnelAdata;
-                            TemAlert.tua2 = tunnelA1data;
-                            TemAlert.tub1 = tunnelBdata;
-                            TemAlert.tub2 = tunnelB1data;
-                            TemAlert.gettempalert();
+                        if (TempreatureAlarm.alertfinish == 1) {
+                            TempreatureAlarm.alertfinish = 0;
+                            //TempreatureAlarm.tua1 = tunnelAdata;
+                            //TempreatureAlarm.tua2 = tunnelA1data;
+                            //TempreatureAlarm.tub1 = tunnelBdata;
+                            //TempreatureAlarm.tub2 = tunnelB1data;
+                            TempreatureAlarm.gettempalert();
                         }
                     }
                     /***

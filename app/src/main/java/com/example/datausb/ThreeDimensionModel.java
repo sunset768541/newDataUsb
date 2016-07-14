@@ -45,8 +45,8 @@ public class ThreeDimensionModel extends android.app.Fragment {
     }
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         try{
-            caliPSA=DataBaseOperation.mDataBaseOperation.getfromdatabase("tube1data");
-            caliPSB=DataBaseOperation.mDataBaseOperation.getfromdatabase("tube2data");
+            caliPSA=DataBaseOperation.mDataBaseOperation.getFromDataBase("tube1data");
+            caliPSB=DataBaseOperation.mDataBaseOperation.getFromDataBase("tube2data");
         }
         catch (Exception e){
             Toast.makeText(((Main) getActivity()).getApplicationContext(), "标定数据不存在，请先在标定模式下进行标定", Toast.LENGTH_SHORT).show();
@@ -237,7 +237,7 @@ public class ThreeDimensionModel extends android.app.Fragment {
         float [] adptertube=new float[w];//设置屏可以显示在屏幕上的数据长度
         float []databuf;
         int interval=data.length/w+1;
-        // Log.d("输出间隔",Integer.toString(interval)+"    "+Integer.valueOf(dataObj.length).toString()+"   "+Integer.valueOf(showLineViewWidth).toString());
+        // Log.d("输出间隔",Integer.toString(interval)+"    "+Integer.valueOf(dataObj.length).toString()+"   "+Integer.valueOf(showLineSurfaceViewWidth).toString());
         int kkk=0;
         if(interval<=1){
             adptertube=data;

@@ -106,8 +106,8 @@ public class SystemSetting extends android.app.Fragment {
             @Override
             public void onClick(View v) {
                 try {
-                    TemAlert.cla1=DataBaseOperation.mDataBaseOperation.getfromdatabase("tube1data");
-                    TemAlert.cla2=DataBaseOperation.mDataBaseOperation.getfromdatabase("tube2data");
+                    TempreatureAlarm.cla1=DataBaseOperation.mDataBaseOperation.getFromDataBase("tube1data");
+                    TempreatureAlarm.cla2=DataBaseOperation.mDataBaseOperation.getFromDataBase("tube2data");
                 } catch (Exception e) {
                     Toast.makeText(((Main) getActivity()).getApplicationContext(), "标定数据不存在，请先在标定模式下进行标定", Toast.LENGTH_SHORT).show();
 
@@ -155,8 +155,8 @@ public class SystemSetting extends android.app.Fragment {
                     }
                 }
                 try {
-                    DataWR.cla =DataBaseOperation.mDataBaseOperation.getfromdatabase("tube1data");
-                    DataWR.clb=DataBaseOperation.mDataBaseOperation.getfromdatabase("tube2data");
+                    DataWR.cla =DataBaseOperation.mDataBaseOperation.getFromDataBase("tube1data");
+                    DataWR.clb=DataBaseOperation.mDataBaseOperation.getFromDataBase("tube2data");
                 } catch (Exception e) {
                     Toast.makeText(((Main) getActivity()).getApplicationContext(), "标定数据不存在，请先在标定模式下进行标定", Toast.LENGTH_SHORT).show();
 

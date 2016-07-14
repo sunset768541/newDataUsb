@@ -6,6 +6,7 @@ import java.util.Arrays;
  * Created by sunset on 16/7/5.
  */
 public class DisplayAdapterUtil {
+
     //进行屏幕大小适配的方法
     public static float[] displyViewWidthAdapter(float[] needAdapterData, int displayViewWidth) {
         if (needAdapterData.length < displayViewWidth) {
@@ -84,5 +85,11 @@ public class DisplayAdapterUtil {
             return afterIntetpolationArray;
         }
     }
-
+   public static float[] intArray2floatArray(int[] intArray){
+       float [] int2float =new float[intArray.length];
+       for (int i=0;i<int2float.length;i++){
+           int2float[i]=(float)intArray[i];
+       }
+       return int2float;
+   }
 }

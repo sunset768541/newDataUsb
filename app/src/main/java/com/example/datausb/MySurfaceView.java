@@ -47,7 +47,7 @@ public class MySurfaceView extends GLSurfaceView
         mRender = new SceneRenderer();	//创建场景渲染器
 		setRenderer(mRender);				//设置渲染器
         setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);//设置渲染模式为主动渲染
-		//WIDTH=showLineViewWidth;
+		//WIDTH=showLineSurfaceViewWidth;
 		//HEIGHT=showLineViewHeigth;
 	}
 	
