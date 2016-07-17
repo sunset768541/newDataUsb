@@ -70,81 +70,12 @@ public class DataChart {
         int mm=0;
         for (int i=0;i<needAdapter.length;i++){
             afterAdapter[mm]=(float) (getxPixelsPerUnit()* (i - xMin));
-           // Log.e("needx",Float.valueOf((float) (marigins[0] + getxPixelsPerUnit()* (i - xMin))).toString());
             afterAdapter[mm+1]=(float) (getyPixelsPerUnit()* (needAdapter[i] - yMin));
-            //Log.e("needx",Float.valueOf((float) (marigins[3] -getyPixelsPerUnit()* (needAdapter[i] - yMin))).toString());
             mm=mm+2;
         }
         return afterAdapter;
     }
     private  float[] calculateDrawPoints(float p1x, float p1y, float p2x, float p2y) {//调用次数最多60%
-        float drawP1x;
-        float drawP1y;
-        float drawP2x;
-        float drawP2y;
-//        if (p1y > screenHeight) {
-//            // Intersection with the top of the screen
-//            float m = (p2y - p1y) / (p2x - p1x);
-//            drawP1x = (screenHeight - p1y + m * p1x) / m;
-//            drawP1y = screenHeight;
-//
-//            if (drawP1x < 0) {
-//                // If Intersection is left of the screen we calculate the intersection
-//                // with the left border
-//                drawP1x = 0;
-//                drawP1y = p1y - m * p1x;
-//            } else if (drawP1x > screenWidth) {
-//                // If Intersection is right of the screen we calculate the intersection
-//                // with the right border
-//                drawP1x = screenWidth;
-//                drawP1y = m * screenWidth + p1y - m * p1x;
-//            }
-//        } else if (p1y < 0) {
-//            float m = (p2y - p1y) / (p2x - p1x);
-//            drawP1x = (-p1y + m * p1x) / m;
-//            drawP1y = 0;
-//            if (drawP1x < 0) {
-//                drawP1x = 0;
-//                drawP1y = p1y - m * p1x;
-//            } else if (drawP1x > screenWidth) {
-//                drawP1x = screenWidth;
-//                drawP1y = m * screenWidth + p1y - m * p1x;
-//            }
-//        } else {
-//            // If the point is in the screen use it
-//            drawP1x = p1x;
-//            drawP1y = p1y;
-//        }
-//
-//        if (p2y > screenHeight) {
-//            float m = (p2y - p1y) / (p2x - p1x);
-//            drawP2x = (screenHeight - p1y + m * p1x) / m;
-//            drawP2y = screenHeight;
-//            if (drawP2x < 0) {
-//                drawP2x = 0;
-//                drawP2y = p1y - m * p1x;
-//            } else if (drawP2x > screenWidth) {
-//                drawP2x = screenWidth;
-//                drawP2y = m * screenWidth + p1y - m * p1x;
-//            }
-//        } else if (p2y < 0) {
-//            float m = (p2y - p1y) / (p2x - p1x);
-//            drawP2x = (-p1y + m * p1x) / m;
-//            drawP2y = 0;
-//            if (drawP2x < 0) {
-//                drawP2x = 0;
-//                drawP2y = p1y - m * p1x;
-//            } else if (drawP2x > screenWidth) {
-//                drawP2x = screenWidth;
-//                drawP2y = m * screenWidth + p1y - m * p1x;
-//            }
-//        } else {
-//            // If the point is in the screen use it
-//            drawP2x = p2x;
-//            drawP2y = p2y;
-//        }
-
-        // return new float[] { drawP1x, drawP1y, drawP2x, drawP2y };
         return new float[]{p1x,p1y,p2x,p2y};
     }
 
@@ -213,30 +144,21 @@ public class DataChart {
             tempDrawPoints = calculateDrawPoints(points[0], points[1], points[2], points[3]);
             path.moveTo(tempDrawPoints[0], tempDrawPoints[1]);
             path.lineTo(tempDrawPoints[2], tempDrawPoints[3]);
-//
             int length = points.length;
             for (int i = 4; i < length; i += 2) {
-//            if ((points[i - 1] < 0 && points[i + 1] < 0)
-//                    || (points[i - 1] > height && points[i + 1] > height)) {
-//                continue;
-//            }
-//                tempDrawPoints = calculateDrawPoints(points[i - 2], points[i - 1], points[i], points[i + 1],
-//                        height, width);
+
                 if (!circular) {
                     path.moveTo(points[i - 2], points[i - 1]);
                 }
                 path.lineTo(points[i], points[i + 1]);
-              //  Log.e("x"+Integer.valueOf(i).toString()+"= ",Float.valueOf(points[i]).toString());
-                //Log.e("y="+Integer.valueOf(i).toString()+"= ",Float.valueOf(points[i+1]).toString());
-               // Log.e("datalength",Integer.valueOf(i).toString());
             }
             if (circular) {
                 path.lineTo(points[0], points[1]);
-              //
+
             }
 
             canvas.drawPath(path, paint);
-            //
+
 
         }
     }
