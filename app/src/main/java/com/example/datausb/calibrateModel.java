@@ -21,7 +21,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 
-import java.util.List;
 
 /**
  * calibratemodel要实现的功能就是将tuba，tuba1的比值既P（SA）和标定温度T0储存起来，然后在surfaceview上显示出比值的图形

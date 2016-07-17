@@ -328,18 +328,7 @@ public class TempreatureModel extends android.app.Fragment {
                             drawPath(c,T1p,fiber1Paint,true);
                             drawPath(c,T2p,fiber2Paint,true);
                             Log.e("熟悉","时间");
-//                            float[]hh1=DisplayAdapterUtil.arrayInterpolation(showLineSurfaceViewWidth -80,T1);//插值
-//                            float[]hh2=DisplayAdapterUtil.arrayInterpolation(showLineSurfaceViewWidth -80,T2);
-//                            float [] adp1=DisplayAdapterUtil.displyViewWidthAdapter(hh1, showLineSurfaceViewWidth -80);//适配
-//                            float [] adp2=DisplayAdapterUtil.displyViewWidthAdapter(hh2, showLineSurfaceViewWidth -80);
-//                            fiber1Path.moveTo(0, -adp1[0]-20);
-//                            fiber2Path.moveTo(0, -adp2[0]-20);
-//                            for (int i = 1; i < adp1.length; i++) {
-//                                fiber1Path.lineTo(i, -adp1[i]-20);
-//                                fiber2Path.lineTo(i, -adp2[i]-20);
-//                            }
-//                            c.drawPath(fiber1Path, fiber1Paint);
-//                            c.drawPath(fiber2Path, fiber2Paint);
+
 
 
                             /**

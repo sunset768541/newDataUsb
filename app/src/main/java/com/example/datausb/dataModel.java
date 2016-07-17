@@ -193,7 +193,7 @@ public class DataModel extends android.app.Fragment {
 
                             ((Main) getActivity()).dataObj.flag1 = false;
                             ((Main) getActivity()).wakeUpAllMainThread();
-                           //Log.e("dataModer","一次");
+                           //Log.e("dataModer","一次");//
                         }
 
 
