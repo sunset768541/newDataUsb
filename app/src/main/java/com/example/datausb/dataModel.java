@@ -18,11 +18,8 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.datausb.achartengine.model.Point;
-
 import java.util.ArrayList;
 import java.util.List;
-
 /**
  * Created by sunset on 15/11/19.
  */
