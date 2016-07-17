@@ -3,13 +3,22 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="right">
+    android:gravity="right"><![CDATA[
+
+    =======
+
+    >>>>>>> 569e7fb0912f099ddd3f3d7d5a965b7f5e8cb59c
+
+
+
+    ]]>
 
     <SurfaceView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:id="@+id/sura"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:layout_margin="10dp" />
 
     <LinearLayout
         android:orientation="vertical"

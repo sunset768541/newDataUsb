@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.CornerPathEffect;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathEffect;
@@ -17,9 +18,22 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.example.datausb.achartengine.ChartFactory;
+import com.example.datausb.achartengine.GraphicalView;
+import com.example.datausb.achartengine.chart.PointStyle;
+import com.example.datausb.achartengine.model.XYMultipleSeriesDataset;
+import com.example.datausb.achartengine.model.XYSeries;
+import com.example.datausb.achartengine.renderer.XYMultipleSeriesRenderer;
+import com.example.datausb.achartengine.renderer.XYSeriesRenderer;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created by sunset on 15/11/19.
  */
@@ -29,12 +43,16 @@ public class DataModel extends android.app.Fragment {
      */
     private SurfaceHolder holder;
 
+
     /**
      * 这个函数的作用是使Activity可以唤醒fragment中的显示线程
      */
     public void wakeup() {
         ((Main) getActivity()).dataObj.notifyAll();
     }
+
+
+
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.datamodel, container, false);
@@ -43,9 +61,6 @@ public class DataModel extends android.app.Fragment {
 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);//
-        /**
-         * 获得布局中的surfaceview
-         */
         SurfaceView sur = (SurfaceView) getActivity().findViewById(R.id.sura);
 
         /**
@@ -61,12 +76,8 @@ public class DataModel extends android.app.Fragment {
          */
         v1.surfaceCreated(holder);
 
+
     }
-
-    /**
-     * 一个集成Surfaceview并实现了SurfaceHolder.Callback方法的的类
-     */
-
     class VV extends SurfaceView implements SurfaceHolder.Callback {
         private dataThread myThread;
         SurfaceView ss;
@@ -100,6 +111,11 @@ public class DataModel extends android.app.Fragment {
 
 
     }
+    /**
+     * 一个集成Surfaceview并实现了SurfaceHolder.Callback方法的的类
+     */
+
+
 
     /**
      * 一个绘图线程类
@@ -124,7 +140,7 @@ public class DataModel extends android.app.Fragment {
             this.holder = holder;
             sss = ss1;
             isRun = true;
-            dataChart=new DataChart();
+            dataChart = new DataChart();
 
         }
 
@@ -132,6 +148,7 @@ public class DataModel extends android.app.Fragment {
             try {//捕获线程运行中切换界面而产生的的空指针异常，防止程序崩溃。
 
                 while (!((Main) getActivity()).stopDataModelThread) {//while中的语句是保障可以正常的结束线程
+
                     synchronized (((Main) getActivity()).dataObj) {//所有的等待和唤醒的锁都是同一个，这里选用了Activity中的一个对对象
                         /**
                          * 如果当标志位为false这个线程开始等待
@@ -147,6 +164,7 @@ public class DataModel extends android.app.Fragment {
                             ((Main) getActivity()).dataObj.notifyAll();
                         }
                         //下面的语句是从Activity中获取数据
+
                         tunnelAdata = ((Main) getActivity()).get_TubeA1_data().getIntArray("tunnelAdata");
                         tunnelA1data = ((Main) getActivity()).get_TubeA1_data1().getIntArray("tunnelA1data");
                         tunnelBdata = ((Main) getActivity()).get_TubeA1_data2().getIntArray("tunnelBdata");
@@ -185,16 +203,18 @@ public class DataModel extends android.app.Fragment {
                         }
 
 
+
                     }
 
                 }
             } catch (NullPointerException e) {
-                Log.d("datamodel", "数据模式出现空指针异常");
+                Log.d("数据模式空指针异常", Log.getStackTraceString(e));
 
 
             }
 
         }
+
     }
     public float[] intArray2MinusFloat(int[] a){
      float[] b=  new float[a.length];
@@ -202,6 +222,7 @@ public class DataModel extends android.app.Fragment {
             b[i]=-(float)a[i];
         }
         return b;
+
     }
 }
 

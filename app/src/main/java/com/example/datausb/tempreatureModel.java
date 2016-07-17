@@ -129,8 +129,10 @@ public class TempreatureModel extends android.app.Fragment {
         float maxnum = 16384;
         List<Float> T1p=new ArrayList<>();
         List<Float> T2p=new ArrayList<>();
+
         float[]tp1;
         float[]tp2;
+
         /**
          * 该线程的构造函数
          *
@@ -299,6 +301,7 @@ public class TempreatureModel extends android.app.Fragment {
                             fiber2Paint.setPathEffect(pathEffect);
 
                             c.translate(40, (float) showLineSurfaceViewHeught -40);
+
                             tp1=new float[T1.length*2];
                             tp2=new float[T1.length*2];
                             int jj=0;
@@ -315,6 +318,15 @@ public class TempreatureModel extends android.app.Fragment {
                             }
                             drawPath(c,tp1,fiber1Paint,true);
                             drawPath(c,tp2,fiber2Paint,true);
+
+                            for (int kk=0;kk<T1.length;kk++){
+                                T1p.add((float)kk);
+                                T1p.add(T1[kk]);
+                                T2p.add((float)kk);
+                                T2p.add(T2[kk]);
+                            }
+                            drawPath(c,T1p,fiber1Paint,true);
+                            drawPath(c,T2p,fiber2Paint,true);
                             Log.e("熟悉","时间");
 //                            float[]hh1=DisplayAdapterUtil.arrayInterpolation(showLineSurfaceViewWidth -80,T1);//插值
 //                            float[]hh2=DisplayAdapterUtil.arrayInterpolation(showLineSurfaceViewWidth -80,T2);
@@ -471,6 +483,7 @@ public class TempreatureModel extends android.app.Fragment {
             }
             canvas.drawPath(path, paint);
         }
+
         protected void drawPath(Canvas canvas, float[] points, Paint paint, boolean circular) {
             Path path = new Path();
             int height = canvas.getHeight();
@@ -502,6 +515,7 @@ public class TempreatureModel extends android.app.Fragment {
             }
             canvas.drawPath(path, paint);
         }
+
 
     }
 

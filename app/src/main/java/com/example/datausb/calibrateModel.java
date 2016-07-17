@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+
 import java.util.List;
 
 /**
@@ -418,6 +419,21 @@ public class CalibrateModel extends android.app.Fragment {
 //                            c.translate(40, (float) showLineViewHeigth-40);
 //                            c.drawPath(p1, tube1);
 //                            c.drawPath(p2, tube2);
+
+                            float[]hh1=DisplayAdapterUtil.arrayInterpolation(showLineViewWidth -80,PSA1);
+                            float[]hh2=DisplayAdapterUtil.arrayInterpolation(showLineViewWidth -80,PSA2);
+                            float [] adp1=DisplayAdapterUtil.displyViewWidthAdapter(hh1, showLineViewWidth -80);
+                            float [] adp2=DisplayAdapterUtil.displyViewWidthAdapter(hh2, showLineViewWidth -80);
+                            p1.moveTo(0, -adp1[0]-20);
+                            p2.moveTo(0, -adp2[0]-20);
+                            for (int i = 1; i < adp1.length; i++) {
+                                p1.lineTo(i,-adp1[i]-20);
+                                p2.lineTo(i,-adp2[i]-20);
+                            }
+                            c.translate(40, (float) showLineViewHeigth-40);
+                            c.drawPath(p1, tube1);
+                            c.drawPath(p2, tube2);
+
                             /**
                              * 结束锁定画布并显示
                              */
