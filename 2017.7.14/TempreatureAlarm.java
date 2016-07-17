@@ -8,12 +8,12 @@ import android.util.Log;
  * （1）首先根据串过来的数据换算成温度，得到温度数组
  * （2）对温度数组进行遍历，发现某个位置的数组值大于设置温度值则进行报警
  */
-public class TemAlert {
+public class TempreatureAlarm {
     public static kk tt;
-    public static int[] tua1;
-    public static int[] tua2;
-    public static int[] tub1;
-    public static int[] tub2;
+    public static double[] tua1;
+    public static double[] tua2;
+    public static double[] tub1;
+    public static double[] tub2;
     public static float[] cla1;
     public static float[] cla2;
     public static int  alertfinish=1;//这个标志的作用就是对报警温度进行遍历判断时，新采集到的数据不会使正在执行的遍历发生中断
@@ -31,11 +31,11 @@ public class TemAlert {
                 if(tua1[i]==0){
                     PSA11[i]=0;
                 }
-                else PSA11[i]=(float)tua2[i]/tua1[i];
+                else PSA11[i]=(float)tua2[i]/(float) tua1[i];
                 if(tub1[i]==0){
                     PSA22[i]=0;
                 }
-                else PSA22[i]=(float)tub2[i]/tub1[i];
+                else PSA22[i]=(float)tub2[i]/(float) tub1[i];
             }
             /**
              * 由公式计算出温度，同时对温度进行监测，发生异常时开始报警
