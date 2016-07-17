@@ -22,13 +22,7 @@ import android.widget.FrameLayout;
 
 import java.util.ArrayList;
 import java.util.List;
-import com.example.datausb.achartengine.ChartFactory;
-import com.example.datausb.achartengine.GraphicalView;
-import com.example.datausb.achartengine.chart.PointStyle;
-import com.example.datausb.achartengine.model.XYMultipleSeriesDataset;
-import com.example.datausb.achartengine.model.XYSeries;
-import com.example.datausb.achartengine.renderer.XYMultipleSeriesRenderer;
-import com.example.datausb.achartengine.renderer.XYSeriesRenderer;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
