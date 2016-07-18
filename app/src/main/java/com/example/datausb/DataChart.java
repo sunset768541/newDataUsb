@@ -8,6 +8,7 @@ import android.graphics.Point;
 import android.util.Log;
 
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 /**
@@ -20,9 +21,10 @@ public class DataChart {
     private double yMin;
     private int xAxisColor;
     private int yAxisColor;
+    private int XYNumberCOlor;
     private int scale=1;
     private Point center;
-    private int [] margin;//new int[]{40,40,20,20};//左右下上
+    private float [] margin;//new float[]{40,40,20,20};//左右下上，margin必须定义为float类型，若为int类型，计算的时候回降低精度使得测算不准导致绘图不正确
     private String xLabel="x";
     private String yLabel="y";
     private int textColor;
@@ -33,16 +35,22 @@ public class DataChart {
     private int marginBackGroundColor;
     private double xPixelsPerUnit;
     private double yPixelsPerUnit;
-
+    private float xNumberUnderXAxisPan;
+    private float yNumberLeftYAxisPan;
+    private float xLabelUnderXAxisPan;
+    private float yLabelLeftYAxisPan;
+    public DecimalFormat xNumberForm = new DecimalFormat("##");
+    public DecimalFormat yNumberForm = new DecimalFormat("##0.0");
 
     public DataChart() {
         ini();
     }
     public  void  drawAll(Canvas canvas,List<float[]> data,int[] dataColors){
         canvas.drawRGB(15, 15, 15);//清空屏幕
-        drawAxis(canvas,getxAxisColor(),getMargin());
         drawGrid(canvas,getGridColor(),getMargin(),getxMax(),getxMin(),getyMax(),getyMin(),getxGridNumber(),getyGridNumber());
-        drawXYText(canvas,getTextColor(),getMargin(),getxLabel(),getyLabel());
+        drawXYNumber(canvas,getGridColor(),getMargin(),getxMax(),getxMin(),getyMax(),getyMin(),getxGridNumber(),getyGridNumber(),getxNumberUnderXAxisPan(),getyNumberLeftYAxisPan());
+        drawAxis(canvas,getxAxisColor(),getMargin());
+        drawXYText(canvas,getTextColor(),getMargin(),getxLabel(),getyLabel(),getxLabelUnderXAxisPan(),getyLabelLeftYAxisPan());
         drawPath(canvas,data,true,dataColors,getMargin());
     }
     private void ini(){
@@ -53,19 +61,24 @@ public class DataChart {
         setxAxisColor(Color.WHITE);
         setyAxisColor(Color.WHITE);
         setScale(1);
-        setMargin(new int[]{40,40,20,20});
+        setMargin(new float[]{65,40,40,20});
         setxLabel("x");
         setyLabel("y");
         setTextColor(Color.WHITE);
         setxGridNumber(20);
         setyGridNumber(20);
         setGridColor(Color.argb(255,83,83,83));
+        setXYNumberCOlor(Color.argb(255,83,83,83));
         setBackGroundColor(Color.argb(255,15,15,15));
         setMarginBackGroundColor(Color.argb(255,15,15,15));
+        setxLabelUnderXAxisPan(30);
+        setyLabelLeftYAxisPan(5);
+        setxNumberUnderXAxisPan(20);
+        setyNumberLeftYAxisPan(15);
 
     }
 
-    private float[] adapterArray(float []needAdapter,int[] marigins,double xMin,double yMin){
+    private float[] adapterArray(float []needAdapter,double xMin,double yMin){
         float []afterAdapter=new float[needAdapter.length*2];
         int mm=0;
         for (int i=0;i<needAdapter.length;i++){
@@ -82,17 +95,17 @@ public class DataChart {
     protected void drawLengend(Canvas canvas, float[] points, Paint paint, boolean circular) {
 
     }
-    protected void drawXYText(Canvas canvas,int textColor,int[] margins,String xLabelText,String yLabelText) {
+    private void drawXYText(Canvas canvas,int textColor,float[] margins,String xLabelText,String yLabelText,float xLabelUnderXAxisPan,float yLabelLeftYAxisPan) {
         Paint xyLabel=new Paint();
         xyLabel.setStrokeWidth(1);
         xyLabel.setColor(textColor);//字的颜色和xy轴的颜色一致
-        canvas.drawText(xLabelText, (canvas.getWidth()-margins[0]-margins[1])/2+margins[0], canvas.getHeight()-margins[2],xyLabel);
-        canvas.drawText(yLabelText, margins[0], (canvas.getHeight()-margins[2]-margins[3])/2+margins[3],xyLabel);
+        canvas.drawText(xLabelText, (canvas.getWidth()-margins[0]-margins[1])/2+margins[0], canvas.getHeight()-margins[2]+xLabelUnderXAxisPan,xyLabel);
+        canvas.drawText(yLabelText, yLabelLeftYAxisPan, (canvas.getHeight()-margins[2]-margins[3])/2+margins[3],xyLabel);
     }
     /**
      * 绘制横纵坐标轴
      */
-    protected void drawAxis(Canvas canvas,int axisColor,int[] margins) {
+    private void drawAxis(Canvas canvas,int axisColor,float[] margins) {
         Paint xyAxis=new Paint();
         xyAxis.setColor(axisColor);
         xyAxis.setStrokeWidth(1);
@@ -101,26 +114,42 @@ public class DataChart {
         //绘制横坐标
         canvas.drawLine(margins[0], canvas.getHeight() - margins[2], canvas.getWidth() - margins[1], canvas.getHeight() - margins[2], xyAxis);//绘制坐标轴
     }
-    protected void drawGrid(Canvas canvas,int gridColor,int[] margins,double xMax,double xMin,double yMax,double yMin,int xGridNumber,int yGridNumber) {
+
+    private void drawGrid(Canvas canvas,int gridColor,float[] margins,double xMax,double xMin,double yMax,double yMin,int xGridNumber,int yGridNumber) {
         Paint grid=new Paint();
         grid.setColor(gridColor);
         grid.setStrokeWidth(1);
         //绘制纵Grid
-        float yGridPan=(canvas.getWidth()-margins[0]-margins[1])/yGridNumber;
-        for (int i=0;i<yGridNumber;i++){
-            canvas.drawLine(margins[0]+i*yGridPan,margins[3],margins[0]+i*yGridPan,canvas.getHeight()-margins[2],grid);
-            canvas.drawText(Integer.valueOf((int) (i*((xMax-xMin)/(xGridNumber-1)))).toString(),margins[0]+i*yGridPan,canvas.getHeight()-margins[2],grid);
+        float xGridPan=(canvas.getWidth()-margins[0]-margins[1])/xGridNumber;
+        for (int i=0;i<yGridNumber+1;i++){
+            canvas.drawLine(margins[0]+i*xGridPan,margins[3],margins[0]+i*xGridPan,canvas.getHeight()-margins[2],grid);
         }
         //绘制横Grid
-        float xGridPan=(canvas.getHeight()-margins[2]-margins[3])/xGridNumber;
+        float yGridPan=(canvas.getHeight()-margins[2]-margins[3])/yGridNumber;
         for (int j=0;j<xGridNumber;j++){
-            canvas.drawLine(margins[0],margins[3]+j*xGridPan,canvas.getWidth()-margins[1],margins[3]+j*xGridPan,grid);
-            canvas.drawText(Double.valueOf(j*((yMax-yMin)/(yGridNumber-1))).toString(),margins[0],margins[3]+j*xGridPan,grid);
+            canvas.drawLine(margins[0],margins[3]+j*yGridPan,canvas.getWidth()-margins[1],margins[3]+j*yGridPan,grid);
         }
 
 
     }
-    protected void drawPath(Canvas canvas, List<float[]> data, boolean circular,int[] dataColors,int []margins) {
+    private void drawXYNumber(Canvas canvas,int gridColor,float[] margins,double xMax,double xMin,double yMax,double yMin,int xGridNumber,int yGridNumber,float xNumberUnderXAxisPan,float yNumberLeftYAxisPan) {
+        Paint grid=new Paint();
+        grid.setColor(gridColor);
+        grid.setStrokeWidth(1);
+        //绘制纵Grid
+        float xGridPan=(canvas.getWidth()-margins[0]-margins[1])/xGridNumber;
+        for (int i=0;i<yGridNumber+1;i++){
+            canvas.drawText(xNumberForm.format(i*((xMax-xMin)/(xGridNumber))),margins[0]+i*xGridPan,canvas.getHeight()-margins[2]+xNumberUnderXAxisPan,grid);
+        }
+        //绘制横Grid
+        float yGridPan=(canvas.getHeight()-margins[2]-margins[3])/yGridNumber;
+        for (int j=0;j<xGridNumber;j++){
+            canvas.drawText(yNumberForm.format(yMax-j*((yMax-yMin)/(yGridNumber))),yNumberLeftYAxisPan,margins[3]+j*yGridPan,grid);
+        }
+
+
+    }
+    private void drawPath(Canvas canvas, List<float[]> data, boolean circular,int[] dataColors,float []margins) {
 
         if (data.size()<1){
             return;
@@ -136,7 +165,7 @@ public class DataChart {
             paint.setStyle(Paint.Style.STROKE);
             paint.setColor(dataColors[datalength]);
             paint.setStrokeWidth(1);
-            float[]points=adapterArray(data.get(datalength),margins,getxMin(),getyMin());
+            float[]points=adapterArray(data.get(datalength),getxMin(),getyMin());
             float[] tempDrawPoints;
             if (points.length < 4) {
                 return;
@@ -219,11 +248,11 @@ public class DataChart {
         this.scale = scale;
     }
 
-    public int[] getMargin() {
+    public float[] getMargin() {
         return margin;
     }
 
-    public void setMargin(int[] margin) {
+    public void setMargin(float[] margin) {
         this.margin = margin;
     }
 
@@ -287,7 +316,7 @@ public class DataChart {
         return xPixelsPerUnit;
     }
 
-    private void setxPixelsPerUnit(Canvas canvas,int[]marigins) {
+    private void setxPixelsPerUnit(Canvas canvas,float[]marigins) {
         xPixelsPerUnit= (canvas.getWidth() - marigins[0]-marigins[1]) / (xMax - xMin);//maxX为横坐标的最大值，minX为横坐标最小值
 
     }
@@ -296,7 +325,7 @@ public class DataChart {
         return yPixelsPerUnit;
     }
 
-    private void setyPixelsPerUnit(Canvas canvas,int[]marigins) {
+    private void setyPixelsPerUnit(Canvas canvas,float[]marigins) {
          yPixelsPerUnit= (float) ((canvas.getHeight() - marigins[2]-marigins[3]) / (yMax - yMin));
 
     }
@@ -307,5 +336,46 @@ public class DataChart {
 
     public void setTextColor(int textColor) {
         this.textColor = textColor;
+    }
+
+
+    public float getxNumberUnderXAxisPan() {
+        return xNumberUnderXAxisPan;
+    }
+
+    public void setxNumberUnderXAxisPan(float xNumberUnderXAxisPan) {
+        this.xNumberUnderXAxisPan = xNumberUnderXAxisPan;
+    }
+
+    public float getyNumberLeftYAxisPan() {
+        return yNumberLeftYAxisPan;
+    }
+
+    public void setyNumberLeftYAxisPan(float yNumberLeftYAxisPan) {
+        this.yNumberLeftYAxisPan = yNumberLeftYAxisPan;
+    }
+
+    public float getxLabelUnderXAxisPan() {
+        return xLabelUnderXAxisPan;
+    }
+
+    public void setxLabelUnderXAxisPan(float xLabelUnderXAxisPan) {
+        this.xLabelUnderXAxisPan = xLabelUnderXAxisPan;
+    }
+
+    public float getyLabelLeftYAxisPan() {
+        return yLabelLeftYAxisPan;
+    }
+
+    public void setyLabelLeftYAxisPan(float yLabelLeftYAxisPan) {
+        this.yLabelLeftYAxisPan = yLabelLeftYAxisPan;
+    }
+
+    public int getXYNumberCOlor() {
+        return XYNumberCOlor;
+    }
+
+    public void setXYNumberCOlor(int XYNumberCOlor) {
+        this.XYNumberCOlor = XYNumberCOlor;
     }
 }

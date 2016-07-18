@@ -132,6 +132,7 @@ public class TempreatureModel extends android.app.Fragment {
 
         float[]tp1;
         float[]tp2;
+        DataChart dataChart;
 
         /**
          * 该线程的构造函数
@@ -145,7 +146,8 @@ public class TempreatureModel extends android.app.Fragment {
             isRun = true;
             showLineSurfaceViewHeught = showLineSurfaceView.getHeight();
             showLineSurfaceViewWidth = showLineSurfaceView.getWidth();
-
+            dataChart=new DataChart();
+            dataChart.setyMax(50);
         }
 
         public void run() {
@@ -193,143 +195,22 @@ public class TempreatureModel extends android.app.Fragment {
                             float tt1=(float)(Math.log(bb1)+1/caliPSA[caliPSA.length-1]);
                             float tt2=(float)(Math.log(bb2)+1/caliPSB[caliPSB.length-1]);
 
-                            T1[i]=1/tt1;
-                            T2[i]=1/tt2;
+                            T1[i]=-1/tt1;
+                            T2[i]=-1/tt2;
                         }
                         /**
                          * 定义了两支画笔
                          * paxis用来画横纵坐标轴
                          * axe用来绘制坐标轴中的坐标
                          */
-                        Paint paxis = new Paint();
-                        Paint axe = new Paint();
-                        Paint zuobioa = new Paint();
 
-                        axe.setARGB(255, 83, 83, 83);
-                        axe.setStyle(Paint.Style.STROKE);
-                        axe.setStrokeWidth(1);
-                        paxis.setARGB(255, 83, 83, 83);
-                        paxis.setStyle(Paint.Style.STROKE);
-                        paxis.setStrokeWidth(3);
-                        zuobioa.setColor(Color.WHITE);
-                        zuobioa.setStyle(Paint.Style.FILL);
-                        zuobioa.setTextAlign(Paint.Align.CENTER);
-                        zuobioa.setTextSize(10);
-                        /**
-                         * c为锁定suface时获得的一个画布，我们可以在上面画图
-                         */
                         Canvas c = holder.lockCanvas();
-                        /**
-                         * 绘制整个画布的颜色
-                         */
-                        c.drawRGB(15, 15, 15);
-                        /**
-                         * 绘制横纵坐标轴
-                         */
-                        c.drawLine(40, 20, 40, showLineSurfaceViewHeught - 40, paxis);
-                        c.drawText("n", 40, 10, zuobioa);
-                        c.drawText("m", showLineSurfaceViewWidth - 10, showLineSurfaceViewHeught - 20, zuobioa);
-                        c.drawLine(40, showLineSurfaceViewHeught - 40, showLineSurfaceViewWidth - 10, showLineSurfaceViewHeught - 40, paxis);//绘制坐标轴
-                        /**
-                         * 绘制横纵轴各画ci条线
-                         */
-                        int ci = 21;
-                        for (int i = 0; i < ci; i++) {
-                            float y = i * maxnum / (ci - 1);
-                            float x = i * fiberLength / (ci - 1);
-                            /**
-                             * (0,0)-------------------------------------->
-                             *     |
-                             *     | (40,k)----------------------(showLineSurfaceViewWidth-40,k)
-                             *     |
-                             *     | (40,k)----------------------(showLineSurfaceViewWidth-40,k)
-                             *     |
-                             *     | (40,k)----------------------(showLineSurfaceViewWidth-40,k)
-                             *     |
-                             *     | (40,k)----------------------(showLineSurfaceViewWidth-40,k)
-                             *     |
-                             *     | (40,k)----------------------(showLineSurfaceViewWidth-40,k)
-                             *     |
-                             *     | (40,k)----------------------(showLineSurfaceViewWidth-40,k)
-                             *     |
-                             *     | (40,k)----------------------(showLineSurfaceViewWidth-40,k)
-                             */
-                            float k = showLineSurfaceViewHeught - (i * (showLineSurfaceViewHeught - 40) / ci + 40);//画横轴直线需要的y坐标
+                       List<float[]> tem=new ArrayList<>();
+                        tem.add(T1);
+                        tem.add(T2);
 
-                            /**
-                             * (m,showLineViewHeigth/ci)
-                             *     |        |       |       |       |
-                             *     |        |       |       |       |
-                             *     |        |       |       |       |
-                             *     |        |       |       |       |
-                             *     |        |       |       |       |
-                             *     |        |       |       |       |
-                             *     |        |       |       |       |
-                             * (m,showLineViewHeigth-40)
-                             */
-                            float m = i * (showLineSurfaceViewWidth - 40) / ci + 40;//纵轴间距
-                            c.drawLine(40, k, showLineSurfaceViewWidth - 40, k, axe);//画横轴(40,k,showLineSurfaceViewWidth-40,k)-->(x1,y1,x2,y2)画的横轴的长度是w-80,为每个循环得到画横轴的纵坐标的值
-                            c.drawText(Integer.valueOf((int) y).toString(), (float) 18, (float) k, zuobioa);//在纵坐标上画字符
-                            c.drawText(Integer.valueOf((int) x).toString(), (float) m, (float) (showLineSurfaceViewHeught - 10), zuobioa);//在横坐标上画字符
-                            c.drawLine(m, showLineSurfaceViewHeught / (ci), m, showLineSurfaceViewHeught - 40, axe);//画纵轴m为每次画纵轴的x坐标，2h-40-showLineViewHeigth/ci为该纵轴的长度
-                        }
-
-
-                        /**
-                         * 绘制各个通道的图像
-                         * 共新建4个画笔和4个路径
-                         */
-                        synchronized (holder) {
-                            Path fiber1Path = new Path();
-                            Path fiber2Path = new Path();
-
-
-                            Paint fiber1Paint = new Paint();
-                            Paint fiber2Paint = new Paint();
-                            PathEffect pathEffect = new CornerPathEffect(10);
-
-                            fiber1Paint.setColor(Color.RED);
-                            fiber1Paint.setStyle(Paint.Style.STROKE);
-                            fiber1Paint.setAntiAlias(true);
-                            fiber1Paint.setStrokeWidth(1);
-                            fiber1Paint.setPathEffect(pathEffect);
-
-                            fiber2Paint.setColor(Color.GREEN);
-                            fiber2Paint.setStyle(Paint.Style.STROKE);
-                            fiber2Paint.setAntiAlias(true);
-                            fiber2Paint.setStrokeWidth(1);
-                            fiber2Paint.setPathEffect(pathEffect);
-
-                            c.translate(40, (float) showLineSurfaceViewHeught -40);
-
-                            tp1=new float[T1.length*2];
-                            tp2=new float[T1.length*2];
-                            int jj=0;
-                            for (int kk=0;kk<T1.length;kk++){
-                                tp1[jj]=kk;
-                                tp2[jj]=kk;
-                                tp1[jj+1]=T1[kk];
-                                tp2[jj+1]=T2[kk];
-                                jj=jj+2;
-//                                T1p.add((float)kk);
-//                                T1p.add(T1[kk]);
-//                                T2p.add((float)kk);
-//                                T2p.add(T2[kk]);
-                            }
-                            drawPath(c,tp1,fiber1Paint,true);
-                            drawPath(c,tp2,fiber2Paint,true);
-
-                            for (int kk=0;kk<T1.length;kk++){
-                                T1p.add((float)kk);
-                                T1p.add(T1[kk]);
-                                T2p.add((float)kk);
-                                T2p.add(T2[kk]);
-                            }
-                            drawPath(c,T1p,fiber1Paint,true);
-                            drawPath(c,T2p,fiber2Paint,true);
-                            Log.e("熟悉","时间");
-
-
+                        dataChart.drawAll(c,tem,new int[]{Color.RED,Color.YELLOW});
+                       // Log.e("温度模式","ok");
 
                             /**
                              * 结束锁定画布并显示
@@ -348,7 +229,7 @@ public class TempreatureModel extends android.app.Fragment {
                     }
 
 
-                }
+
                 }
             catch (NullPointerException e) {
                 Log.d("tempretureModel", Log.getStackTraceString(e));
@@ -358,152 +239,6 @@ public class TempreatureModel extends android.app.Fragment {
 
         }
 
-
-        private  float[] calculateDrawPoints(float p1x, float p1y, float p2x, float p2y,
-                                                   int screenHeight, int screenWidth) {
-            float drawP1x;
-            float drawP1y;
-            float drawP2x;
-            float drawP2y;
-
-            if (p1y > screenHeight) {
-                // Intersection with the top of the screen
-                float m = (p2y - p1y) / (p2x - p1x);
-                drawP1x = (screenHeight - p1y + m * p1x) / m;
-                drawP1y = screenHeight;
-
-                if (drawP1x < 0) {
-                    // If Intersection is left of the screen we calculate the intersection
-                    // with the left border
-                    drawP1x = 0;
-                    drawP1y = p1y - m * p1x;
-                } else if (drawP1x > screenWidth) {
-                    // If Intersection is right of the screen we calculate the intersection
-                    // with the right border
-                    drawP1x = screenWidth;
-                    drawP1y = m * screenWidth + p1y - m * p1x;
-                }
-            } else if (p1y < 0) {
-                float m = (p2y - p1y) / (p2x - p1x);
-                drawP1x = (-p1y + m * p1x) / m;
-                drawP1y = 0;
-                if (drawP1x < 0) {
-                    drawP1x = 0;
-                    drawP1y = p1y - m * p1x;
-                } else if (drawP1x > screenWidth) {
-                    drawP1x = screenWidth;
-                    drawP1y = m * screenWidth + p1y - m * p1x;
-                }
-            } else {
-                // If the point is in the screen use it
-                drawP1x = p1x;
-                drawP1y = p1y;
-            }
-
-            if (p2y > screenHeight) {
-                float m = (p2y - p1y) / (p2x - p1x);
-                drawP2x = (screenHeight - p1y + m * p1x) / m;
-                drawP2y = screenHeight;
-                if (drawP2x < 0) {
-                    drawP2x = 0;
-                    drawP2y = p1y - m * p1x;
-                } else if (drawP2x > screenWidth) {
-                    drawP2x = screenWidth;
-                    drawP2y = m * screenWidth + p1y - m * p1x;
-                }
-            } else if (p2y < 0) {
-                float m = (p2y - p1y) / (p2x - p1x);
-                drawP2x = (-p1y + m * p1x) / m;
-                drawP2y = 0;
-                if (drawP2x < 0) {
-                    drawP2x = 0;
-                    drawP2y = p1y - m * p1x;
-                } else if (drawP2x > screenWidth) {
-                    drawP2x = screenWidth;
-                    drawP2y = m * screenWidth + p1y - m * p1x;
-                }
-            } else {
-                // If the point is in the screen use it
-                drawP2x = p2x;
-                drawP2y = p2y;
-            }
-
-            return new float[] { drawP1x, drawP1y, drawP2x, drawP2y };
-        }
-
-        /**
-         * The graphical representation of a path.
-         *
-         * @param canvas the canvas to paint to
-         * @param points the points that are contained in the path to paint
-         * @param paint the paint to be used for painting
-         * @param circular if the path ends with the start point
-         */
-        protected void drawPath(Canvas canvas, List<Float> points, Paint paint, boolean circular) {
-            Path path = new Path();
-            int height = showLineSurfaceViewHeught;
-            int width = showLineSurfaceViewWidth-80;
-
-            float[] tempDrawPoints;
-            if (points.size() < 4) {
-                return;
-            }
-            tempDrawPoints = calculateDrawPoints(points.get(0), points.get(1), points.get(2),
-                    points.get(3), height, width);
-            path.moveTo(tempDrawPoints[0], tempDrawPoints[1]);
-            path.lineTo(tempDrawPoints[2], tempDrawPoints[3]);
-
-            int length = points.size();
-           //  Log.e("chartpoint长度",Integer.valueOf(length).toString());
-            for (int i = 4; i < length; i += 2) {
-                if ((points.get(i - 1) < 0 && points.get(i + 1) < 0)
-                        || (points.get(i - 1) > height && points.get(i + 1) > height)) {
-                    continue;
-                }
-                tempDrawPoints = calculateDrawPoints(points.get(i - 2), points.get(i - 1), points.get(i),
-                        points.get(i + 1), height, width);
-                if (!circular) {
-                    path.moveTo(tempDrawPoints[0], tempDrawPoints[1]);
-                }
-                path.lineTo(tempDrawPoints[2], tempDrawPoints[3]);
-            }
-            if (circular) {
-                path.lineTo(points.get(0), points.get(1));
-            }
-            canvas.drawPath(path, paint);
-        }
-
-        protected void drawPath(Canvas canvas, float[] points, Paint paint, boolean circular) {
-            Path path = new Path();
-            int height = canvas.getHeight();
-            int width = canvas.getWidth();
-
-            float[] tempDrawPoints;
-            if (points.length < 4) {
-                return;
-            }
-            tempDrawPoints = calculateDrawPoints(points[0], points[1], points[2], points[3], height, width);
-            path.moveTo(tempDrawPoints[0], tempDrawPoints[1]);
-            path.lineTo(tempDrawPoints[2], tempDrawPoints[3]);
-
-            int length = points.length;
-            for (int i = 4; i < length; i += 2) {
-                if ((points[i - 1] < 0 && points[i + 1] < 0)
-                        || (points[i - 1] > height && points[i + 1] > height)) {
-                    continue;
-                }
-                tempDrawPoints = calculateDrawPoints(points[i - 2], points[i - 1], points[i], points[i + 1],
-                        height, width);
-                if (!circular) {
-                    path.moveTo(tempDrawPoints[0], tempDrawPoints[1]);
-                }
-                path.lineTo(tempDrawPoints[2], tempDrawPoints[3]);
-            }
-            if (circular) {
-                path.lineTo(points[0], points[1]);
-            }
-            canvas.drawPath(path, paint);
-        }
 
 
     }
