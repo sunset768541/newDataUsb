@@ -35,19 +35,18 @@ public class LoadUtilLINE
     	
     	try
     	{
-    		InputStream in=r.getAssets().open(fname);
+    		InputStream in=r.getAssets().open(fname);//fname is the .obj file name
     		InputStreamReader isr=new InputStreamReader(in);
     		BufferedReader br=new BufferedReader(isr);
     		String temps=null;
     		
-    		//扫面文件，根据行类型的不同执行不同的处理逻辑
+    		//read .obj files
 		    while((temps=br.readLine())!=null) 
 		    {
-		    	//用空格分割行中的各个组成部分
+
 		    	String[] tempsa=temps.split("[ ]+");
-		      	if(tempsa[0].trim().equals("v"))
-		      	{//此行为顶点坐标
-		      	    //若为顶点坐标行则提取出此顶点的XYZ坐标添加到原始顶点坐标列表中
+		      	if(tempsa[0].trim().equals("v"))//a "v" represent a Vertex
+		      	{
 		      		alv.add(Float.parseFloat(tempsa[1]));
 		      		alv.add(Float.parseFloat(tempsa[2]));
 		      		alv.add(Float.parseFloat(tempsa[3]));
@@ -55,7 +54,7 @@ public class LoadUtilLINE
 
 		    } 
 		    
-		    //生成顶点数组
+		    //generate Vertex array
 		    int size=alv.size();
 		    float[] vXYZ=new float[size];
 		    for(int i=0;i<size;i++)

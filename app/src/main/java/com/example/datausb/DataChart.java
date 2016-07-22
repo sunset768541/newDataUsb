@@ -9,6 +9,7 @@ import android.util.Log;
 
 
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -53,6 +54,11 @@ public class DataChart {
         drawXYText(canvas,getTextColor(),getMargin(),getxLabel(),getyLabel(),getxLabelUnderXAxisPan(),getyLabelLeftYAxisPan());
         drawPath(canvas,data,true,dataColors,getMargin());
     }
+    public void setScaleAndXY(float sclae,float touchX,float touchY){
+        float xc=(float) getxMin()+touchX/(float) getxPixelsPerUnit();
+        setxMin(xc-(xc-xMin)/sclae);
+        setxMax(xc+(xMax-xc)/sclae);
+    }
     private void ini(){
         setxMax(8192);
         setxMin(0);
@@ -77,12 +83,19 @@ public class DataChart {
         setyNumberLeftYAxisPan(15);
 
     }
+    public void resetAxis(){
+        setxMax(8192);
+        setxMin(0);
+        setyMax(70000);
+        setyMin(0);
+        setScale(1);
+    }
 
     private float[] adapterArray(float []needAdapter,double xMin,double yMin){
         float []afterAdapter=new float[needAdapter.length*2];
         int mm=0;
         for (int i=0;i<needAdapter.length;i++){
-            afterAdapter[mm]=(float) (getxPixelsPerUnit()* (i - xMin));
+            afterAdapter[mm]=(float) (getxPixelsPerUnit()* (i));
             afterAdapter[mm+1]=(float) (getyPixelsPerUnit()* (needAdapter[i] - yMin));
             mm=mm+2;
         }
@@ -139,7 +152,7 @@ public class DataChart {
         //绘制纵Grid
         float xGridPan=(canvas.getWidth()-margins[0]-margins[1])/xGridNumber;
         for (int i=0;i<yGridNumber+1;i++){
-            canvas.drawText(xNumberForm.format(i*((xMax-xMin)/(xGridNumber))),margins[0]+i*xGridPan,canvas.getHeight()-margins[2]+xNumberUnderXAxisPan,grid);
+            canvas.drawText(xNumberForm.format(getxMin()+i*((xMax-xMin)/(xGridNumber))),margins[0]+i*xGridPan,canvas.getHeight()-margins[2]+xNumberUnderXAxisPan,grid);
         }
         //绘制横Grid
         float yGridPan=(canvas.getHeight()-margins[2]-margins[3])/yGridNumber;
@@ -165,7 +178,28 @@ public class DataChart {
             paint.setStyle(Paint.Style.STROKE);
             paint.setColor(dataColors[datalength]);
             paint.setStrokeWidth(1);
-            float[]points=adapterArray(data.get(datalength),getxMin(),getyMin());
+            //取出指定长度的数据进行绘制
+            int start=(int)getxMin();
+            int end=(int)getxMax();
+
+            if (start<0){
+                start=0;
+            }
+            else if (start>data.get(datalength).length){
+                start=data.get(datalength).length;
+            }
+            if (end>data.get(datalength).length){
+                end=data.get(datalength).length;
+            }
+
+            else if (end<0){
+                end=0;
+            }
+           // Log.e("start",Integer.valueOf(start).toString());
+            //Log.e("end",Integer.valueOf(end).toString());
+            float [] sclaedata=Arrays.copyOfRange(data.get(datalength),start,end);
+            //Log.e("sclaedatat",Integer.valueOf(sclaedata.length).toString());
+            float[]points=adapterArray(sclaedata,getxMin(),getyMin());
             float[] tempDrawPoints;
             if (points.length < 4) {
                 return;
@@ -317,7 +351,7 @@ public class DataChart {
     }
 
     private void setxPixelsPerUnit(Canvas canvas,float[]marigins) {
-        xPixelsPerUnit= (canvas.getWidth() - marigins[0]-marigins[1]) / (xMax - xMin);//maxX为横坐标的最大值，minX为横坐标最小值
+        xPixelsPerUnit= ((canvas.getWidth() - marigins[0]-marigins[1]) / (xMax - xMin));//maxX为横坐标的最大值，minX为横坐标最小值
 
     }
 

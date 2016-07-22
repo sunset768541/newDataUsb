@@ -13,12 +13,15 @@ import android.os.Bundle;
 //import android.atube1.Fragment;
 //import android.sutube1ort.v4.atube1.FragmentActivity;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,16 +39,40 @@ public class DataModel extends android.app.Fragment {
      * 定义一个SurfaceHolder用来管理surface
      */
     private SurfaceHolder holder;
-
-
+    private float scale=1;
+    private float touchX=0;
+    private float touchY=0;
+    private void setScale(float s){
+        scale=s;
+    }
+    private void setTouchX(float x){
+        touchX=x;
+    }
+    private void setTouchY(float y){
+        touchY=y;
+    }
+    public float getScale(){
+        return scale;
+    }
+    public float getTouchX(){
+        return touchX;
+    }
+    public float getTouchY(){
+        return touchY;
+    }
+    DataChart dataChart;
+    SurfaceView sur;
+    private GestureDetector mGesture;
+    private OnDoubleClickListener onDoubleClickListener;
+    interface OnDoubleClickListener{
+        void onDoubleClick(View view);
+    }
     /**
      * 这个函数的作用是使Activity可以唤醒fragment中的显示线程
      */
     public void wakeup() {
         ((Main) getActivity()).dataObj.notifyAll();
     }
-
-
 
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -55,11 +82,77 @@ public class DataModel extends android.app.Fragment {
 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);//
-        SurfaceView sur = (SurfaceView) getActivity().findViewById(R.id.sura);
+         sur = (SurfaceView) getActivity().findViewById(R.id.sura);
 
-        /**
-         * 将holder和surfaceview绑定
-         */
+
+        sur.setOnTouchListener(new View.OnTouchListener() {
+            int mode = 0;
+            float startDisa;
+            int Zoom = 2;
+            float middleTouchX;
+            float middleTouchY;
+
+            @Override
+
+            public boolean onTouch(View v, MotionEvent event) {
+                mGesture.onTouchEvent(event);
+                switch (event.getAction() & MotionEvent.ACTION_MASK) {
+                    case MotionEvent.ACTION_MOVE:
+                        if (mode == Zoom) {
+                            float dx = event.getX(1) - event.getX(0);
+                            float dy = event.getY(1) - event.getY(0);
+                            float endDIs = (float) Math.sqrt(dx * dx + dy * dy);
+
+                            if (endDIs > 20f) {
+                                float sclae = endDIs / startDisa;
+                                setScale(sclae);
+                                dataChart.setScaleAndXY(getScale(),getTouchX(),getTouchY());
+                                Log.e("缩放", Float.valueOf(sclae).toString());
+                            }
+
+                        }
+                        break;
+                    case MotionEvent.ACTION_POINTER_DOWN:
+                        mode = Zoom;
+                        if (event.getX(1) > event.getX(0)) {
+                            middleTouchX = event.getX(0) + Math.abs(event.getX(1) - event.getX(0)) / 2;
+                        } else {
+                            middleTouchX = event.getX(1) + Math.abs(event.getX(1) - event.getX(0)) / 2;
+                        }
+                        if (event.getY(1) > event.getY(0)) {
+                            middleTouchY = event.getY(0) + Math.abs(event.getY(1) - event.getY(0)) / 2;
+                        } else {
+                            middleTouchY = event.getY(1) + Math.abs(event.getY(1) - event.getY(0)) / 2;
+                        }
+                        setTouchX(middleTouchX);
+                        setTouchY(middleTouchY);
+                        float dx = event.getX(1) - event.getX(0);
+                        float dy = event.getY(1) - event.getY(0);
+                        startDisa = (float) Math.sqrt(dx * dx + dy * dy);
+                        break;
+                    case MotionEvent.ACTION_POINTER_UP:
+                        mode = 0;
+                        break;
+
+
+                }
+                return true;//如果返回false那么新的触控事件没有生成
+            }
+        });
+        mGesture = new GestureDetector(getActivity(),new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+                if (onDoubleClickListener != null) {
+                    onDoubleClickListener.onDoubleClick(sur);
+                }
+                dataChart.resetAxis();
+                return true;
+            }
+        });
+
+            /**
+             * 将holder和surfaceview绑定
+             */
         holder = sur.getHolder();
         /**
          * 实例化一个surfaceview
@@ -72,6 +165,7 @@ public class DataModel extends android.app.Fragment {
 
 
     }
+
     class VV extends SurfaceView implements SurfaceHolder.Callback {
         private dataThread myThread;
         SurfaceView ss;
@@ -103,12 +197,16 @@ public class DataModel extends android.app.Fragment {
 
         }
 
-
+        @Override
+        public boolean onTouchEvent(MotionEvent event) {
+            int pointCount = event.getPointerCount();
+            Log.e("point", Integer.valueOf(pointCount).toString());
+            return true;
+        }
     }
     /**
      * 一个集成Surfaceview并实现了SurfaceHolder.Callback方法的的类
      */
-
 
 
     /**
@@ -123,7 +221,8 @@ public class DataModel extends android.app.Fragment {
         int[] tunnelB1data;
         Canvas c;
         SurfaceView sss;
-        DataChart  dataChart;
+
+
         /**
          * 该线程的构造函数
          *
@@ -137,7 +236,6 @@ public class DataModel extends android.app.Fragment {
             dataChart = new DataChart();
 
         }
-
         public void run() {
             try {//捕获线程运行中切换界面而产生的的空指针异常，防止程序崩溃。
 
@@ -176,12 +274,17 @@ public class DataModel extends android.app.Fragment {
                         c = holder.lockCanvas();
 
                         synchronized (holder) {
-                            List<float[]> data=new ArrayList<>();
-                            data.add(intArray2MinusFloat(tunnelAdata));
-                            data.add(intArray2MinusFloat(tunnelA1data));
-                            data.add(intArray2MinusFloat(tunnelBdata));
-                            data.add(intArray2MinusFloat(tunnelB1data));
-                            dataChart.drawAll(c,data,new int[]{Color.CYAN,Color.BLUE,Color.RED,Color.YELLOW});
+                            List<float[]> data = new ArrayList<>();
+//                            data.add(intArray2MinusFloat(tunnelAdata));
+//                            data.add(intArray2MinusFloat(tunnelA1data));
+//                            data.add(intArray2MinusFloat(tunnelBdata));
+//                            data.add(intArray2MinusFloat(tunnelB1data));
+                                data.add(getRandom(8192,65536));
+                                data.add(getRandom(8192,65536));
+                                data.add(getRandom(8192,65536));
+                                data.add(getRandom(8192,65536));
+                            dataChart.drawAll(c, data, new int[]{Color.CYAN, Color.BLUE, Color.RED, Color.YELLOW});
+
                             /**
                              * 结束锁定画布并显示
                              */
@@ -193,9 +296,8 @@ public class DataModel extends android.app.Fragment {
 
                             ((Main) getActivity()).dataObj.flag1 = false;
                             ((Main) getActivity()).wakeUpAllMainThread();
-                           //Log.e("dataModer","一次");//
+                            //Log.e("dataModer","一次");//
                         }
-
 
 
                     }
@@ -210,10 +312,18 @@ public class DataModel extends android.app.Fragment {
         }
 
     }
-    public float[] intArray2MinusFloat(int[] a){
-     float[] b=  new float[a.length];
-        for (int i=0;i<a.length;i++){
-            b[i]=-(float)a[i];
+    public float[] getRandom(int length,float max){
+        float[] a=new float[length];
+        for (int i=0;i<length;i++)
+        {
+            a[i]=-(float) Math.random()*(max);
+        }
+        return a;
+    }
+    public float[] intArray2MinusFloat(int[] a) {
+        float[] b = new float[a.length];
+        for (int i = 0; i < a.length; i++) {
+            b[i] = -(float) a[i];
         }
         return b;
 
