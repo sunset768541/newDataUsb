@@ -103,11 +103,21 @@ public class DataModel extends android.app.Fragment {
                             float dy = event.getY(1) - event.getY(0);
                             float endDIs = (float) Math.sqrt(dx * dx + dy * dy);
 
-                            if (endDIs > 20f) {
+                            if (endDIs >30f) {
                                 float sclae = endDIs / startDisa;
                                 setScale(sclae);
-                                dataChart.setScaleAndXY(getScale(),getTouchX(),getTouchY());
-                                Log.e("缩放", Float.valueOf(sclae).toString());
+                                float degree= Math.abs(event.getX(1)-event.getX(0))/endDIs;
+                                if(0<degree&&degree<0.4){
+                                    Log.e("缩放方向","Y方向");
+                                    dataChart.zoomY(getScale(),getTouchX(),getTouchY());
+                                }
+                                else if (0.6<degree&&degree<1){
+                                    dataChart.zoomX(getScale(),getTouchX(),getTouchY());
+                                    Log.e("缩放方向","X方向");
+                                }
+                                else Log.e("缩放方向","XY方向");
+
+
                             }
 
                         }
@@ -233,7 +243,7 @@ public class DataModel extends android.app.Fragment {
             this.holder = holder;
             sss = ss1;
             isRun = true;
-            dataChart = new DataChart();
+            dataChart = new DataChart(8200,0,68000,0);
 
         }
         public void run() {
@@ -275,14 +285,14 @@ public class DataModel extends android.app.Fragment {
 
                         synchronized (holder) {
                             List<float[]> data = new ArrayList<>();
-//                            data.add(intArray2MinusFloat(tunnelAdata));
-//                            data.add(intArray2MinusFloat(tunnelA1data));
-//                            data.add(intArray2MinusFloat(tunnelBdata));
-//                            data.add(intArray2MinusFloat(tunnelB1data));
-                                data.add(getRandom(8192,65536));
-                                data.add(getRandom(8192,65536));
-                                data.add(getRandom(8192,65536));
-                                data.add(getRandom(8192,65536));
+                            data.add(intArray2MinusFloat(tunnelAdata));
+                            data.add(intArray2MinusFloat(tunnelA1data));
+                            data.add(intArray2MinusFloat(tunnelBdata));
+                            data.add(intArray2MinusFloat(tunnelB1data));
+//                                data.add(getRandom(8192,65536));
+//                                data.add(getRandom(8192,65536));
+//                                data.add(getRandom(8192,65536));
+//                                data.add(getRandom(8192,65536));
                             dataChart.drawAll(c, data, new int[]{Color.CYAN, Color.BLUE, Color.RED, Color.YELLOW});
 
                             /**

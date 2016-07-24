@@ -242,7 +242,7 @@ public class CalibrateModel extends android.app.Fragment {
             isRun = true;
             showLineViewHeigth = sss.getHeight();
             showLineViewWidth = sss.getWidth();
-            dataChart = new DataChart();
+            dataChart = new DataChart(8200,0,68000,0);
             dataChart.setyMax(10000);
         }
 

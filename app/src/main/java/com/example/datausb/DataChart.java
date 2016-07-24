@@ -40,30 +40,63 @@ public class DataChart {
     private float yNumberLeftYAxisPan;
     private float xLabelUnderXAxisPan;
     private float yLabelLeftYAxisPan;
+    private float inixMax;
+    private float inixMin;
+    private float iniyMax;
+    private float iniyMin;
     public DecimalFormat xNumberForm = new DecimalFormat("##");
     public DecimalFormat yNumberForm = new DecimalFormat("##0.0");
 
-    public DataChart() {
-        ini();
+    public DataChart(float inixMax,float inixMin,float iniyMax,float iniyMin) {
+        this.inixMin=inixMin;
+        this.inixMax=inixMax;
+        this.iniyMax=iniyMax;
+        this.iniyMin=iniyMin;
+        ini(inixMax,inixMin,iniyMax,iniyMin);
     }
     public  void  drawAll(Canvas canvas,List<float[]> data,int[] dataColors){
         canvas.drawRGB(15, 15, 15);//清空屏幕
-        drawGrid(canvas,getGridColor(),getMargin(),getxMax(),getxMin(),getyMax(),getyMin(),getxGridNumber(),getyGridNumber());
         drawXYNumber(canvas,getGridColor(),getMargin(),getxMax(),getxMin(),getyMax(),getyMin(),getxGridNumber(),getyGridNumber(),getxNumberUnderXAxisPan(),getyNumberLeftYAxisPan());
-        drawAxis(canvas,getxAxisColor(),getMargin());
         drawXYText(canvas,getTextColor(),getMargin(),getxLabel(),getyLabel(),getxLabelUnderXAxisPan(),getyLabelLeftYAxisPan());
-        drawPath(canvas,data,true,dataColors,getMargin());
+        drawGrid(canvas,getGridColor(),getMargin(),getxMax(),getxMin(),getyMax(),getyMin(),getxGridNumber(),getyGridNumber());
+        drawAxis(canvas,getxAxisColor(),getMargin());
+        drawPath(canvas,data,false,dataColors,getMargin());
     }
-    public void setScaleAndXY(float sclae,float touchX,float touchY){
-        float xc=(float) getxMin()+touchX/(float) getxPixelsPerUnit();
-        setxMin(xc-(xc-xMin)/sclae);
-        setxMax(xc+(xMax-xc)/sclae);
+    public void zoomX(float sclae,float touchX,float touchY){
+        float x=(float) getxMin()+touchX/(float) getxPixelsPerUnit();
+        if ((x-(x-xMin)/sclae)<inixMin){
+            setxMin(inixMin);
+        }
+        else setxMin(x-(x-xMin)/sclae);
+
+        if ((x+(xMax-x)/sclae)>inixMax){
+            setxMax(inixMax);
+        }
+        else setxMax(x+(xMax-x)/sclae);
+        if ((x+(xMax-x)/sclae)<(x-(x-xMin)/sclae)){
+            setxMax(inixMax);
+            setxMin(inixMax-10);
+        }
     }
-    private void ini(){
-        setxMax(8192);
-        setxMin(0);
-        setyMax(70000);
-        setyMin(0);
+    public void zoomY(float sclae,float touchX,float touchY){
+        float y=(float) getyMin()+touchY/(float) getyPixelsPerUnit();
+        if ((y-(y-yMin)/sclae)<iniyMin)
+            setyMin(iniyMin);
+        else  setyMin(y-(y-yMin)/sclae);
+        if ((y+(yMax-y)/sclae)>iniyMax)
+            setyMax(iniyMax);
+        else
+        setyMax(y+(yMax-y)/sclae);
+        if (((y+(yMax-y)/sclae)<(y-(y-yMin)/sclae))){
+            setyMax(iniyMax);
+            setyMin(iniyMax-10);
+        }
+    }
+    private void ini(float xMax,float xMin,float yMax,float yMin){
+        setxMax(xMax);
+        setxMin(xMin);
+        setyMax(yMax);
+        setyMin(yMin);
         setxAxisColor(Color.WHITE);
         setyAxisColor(Color.WHITE);
         setScale(1);
@@ -84,10 +117,10 @@ public class DataChart {
 
     }
     public void resetAxis(){
-        setxMax(8192);
-        setxMin(0);
-        setyMax(70000);
-        setyMin(0);
+        setxMax(inixMax);
+        setxMin(inixMin);
+        setyMax(iniyMax);
+        setyMin(iniyMin);
         setScale(1);
     }
 
@@ -96,7 +129,19 @@ public class DataChart {
         int mm=0;
         for (int i=0;i<needAdapter.length;i++){
             afterAdapter[mm]=(float) (getxPixelsPerUnit()* (i));
-            afterAdapter[mm+1]=(float) (getyPixelsPerUnit()* (needAdapter[i] - yMin));
+            if(-needAdapter[i]>getyMax()){
+                afterAdapter[mm+1]=-(float)(getyPixelsPerUnit()*((getyMax()-getyMin())));
+            }
+            else if (-needAdapter[i]<getyMin()){
+                afterAdapter[mm+1]=0;
+            }
+            else  if (getyMin()<-needAdapter[i]&&-needAdapter[i]<getyMax()){
+                afterAdapter[mm+1]=(float) (getyPixelsPerUnit()* (needAdapter[i]+getyMin()));
+//                Log.e("need",Float.valueOf(needAdapter[i]).toString());
+//                Log.e("min",Double.valueOf(getyMin()).toString());
+//                Log.e("am+1",Float.valueOf(afterAdapter[mm+1]).toString());
+            }
+
             mm=mm+2;
         }
         return afterAdapter;
@@ -156,7 +201,7 @@ public class DataChart {
         }
         //绘制横Grid
         float yGridPan=(canvas.getHeight()-margins[2]-margins[3])/yGridNumber;
-        for (int j=0;j<xGridNumber;j++){
+        for (int j=0;j<xGridNumber+1;j++){
             canvas.drawText(yNumberForm.format(yMax-j*((yMax-yMin)/(yGridNumber))),yNumberLeftYAxisPan,margins[3]+j*yGridPan,grid);
         }
 
@@ -178,6 +223,7 @@ public class DataChart {
             paint.setStyle(Paint.Style.STROKE);
             paint.setColor(dataColors[datalength]);
             paint.setStrokeWidth(1);
+
             //取出指定长度的数据进行绘制
             int start=(int)getxMin();
             int end=(int)getxMax();
@@ -209,7 +255,10 @@ public class DataChart {
             path.lineTo(tempDrawPoints[2], tempDrawPoints[3]);
             int length = points.length;
             for (int i = 4; i < length; i += 2) {
-
+//                if ((-points[i - 1] < 0 && -points[i + 1] < 0)
+//                        || (-points[i - 1] > canvas.getHeight()-margins[3] && -points[i + 1] > canvas.getHeight()-margins[3])) {
+//                    continue;
+//                }
                 if (!circular) {
                     path.moveTo(points[i - 2], points[i - 1]);
                 }

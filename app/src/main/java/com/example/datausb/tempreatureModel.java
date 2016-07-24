@@ -146,7 +146,7 @@ public class TempreatureModel extends android.app.Fragment {
             isRun = true;
             showLineSurfaceViewHeught = showLineSurfaceView.getHeight();
             showLineSurfaceViewWidth = showLineSurfaceView.getWidth();
-            dataChart=new DataChart();
+            dataChart=new DataChart(8200,0,68000,0);
             dataChart.setyMax(50);
         }
 
