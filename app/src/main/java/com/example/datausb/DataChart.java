@@ -219,10 +219,10 @@ public class DataChart {
         for (int datalength=0;datalength<data.size();datalength++){
             Path path = new Path();
 
-            Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG);
+            Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG);//开启抗锯齿使得图线变细
             paint.setStyle(Paint.Style.STROKE);
             paint.setColor(dataColors[datalength]);
-            paint.setStrokeWidth(1);
+            paint.setStrokeWidth(1f);
 
             //取出指定长度的数据进行绘制
             int start=(int)getxMin();

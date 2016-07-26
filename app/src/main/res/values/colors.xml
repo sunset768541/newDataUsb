@@ -6,5 +6,6 @@
     <color name="bla">#1F1F1F</color>
     <color name="df">#8F8F00</color>
     <color name="axis">#383838</color>
-
+    <color name="light_green">#af00ff81</color>
+    <color name="yellow">#afeeff00</color>
 </resources>

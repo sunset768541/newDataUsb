@@ -143,16 +143,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+
             <FrameLayout
-                android:id="@+id/contineer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp">
-
-            </FrameLayout>
-
-
+                android:id="@+id/contineer"
+                android:layout_marginRight="10dp"></FrameLayout>
         </LinearLayout>
 
     </LinearLayout>
@@ -166,45 +162,80 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/usbstate"
-                android:text="USB设备已经打开"
-                android:layout_alignParentStart="true"
-                android:layout_centerInParent="true"
-                android:layout_centerHorizontal="true"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/savestate"
-                android:layout_toRightOf="@id/usbstate"
-                android:layout_centerInParent="true"
-                android:text="                                数据存储                                " />
+            android:layout_height="match_parent"
+            android:layout_marginBottom="5dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/transmitespeed1"
-                android:layout_toRightOf="@id/savestate"
                 android:layout_centerInParent="true"
-                android:text="采样数据" />
+                android:text="采样数据"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentStart="true" />
 
             <ToggleButton
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:text="开启设备"
                 android:id="@+id/toggleButton"
                 android:textOff="开始"
                 android:textOn="暂停"
                 android:background="@drawable/buttoncolor"
                 android:checked="false"
-                android:layout_marginRight="20dp"
+                android:layout_marginRight="10dp"
                 android:layout_gravity="right|top"
                 android:layout_alignParentEnd="true" />
+
+            <ToggleButton
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:text="New ToggleButton"
+                android:id="@+id/fiber1"
+                android:layout_toLeftOf="@+id/fiber2"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/fiber1ring"
+                android:textSize="12sp"
+                android:textOn="A"
+                android:textOff="A" />
+
+            <ToggleButton
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:text="New ToggleButton"
+                android:id="@+id/fiber2"
+                android:background="@drawable/fiber2ring"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@+id/fiber3"
+                android:textOff="B"
+                android:textOn="B"
+                android:textSize="12sp" />
+
+            <ToggleButton
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:text="New ToggleButton"
+                android:id="@+id/fiber3"
+                android:layout_toLeftOf="@+id/fiber4"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/fiber3ring"
+                android:textSize="12sp"
+                android:textOn="C"
+                android:textOff="C" />
+
+            <ToggleButton
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:text="New ToggleButton"
+                android:id="@+id/fiber4"
+                android:layout_alignParentRight="false"
+                android:layout_toLeftOf="@+id/toggleButton"
+                android:background="@drawable/fiber4ring"
+                android:layout_marginRight="10dp"
+                android:textOff="D"
+                android:textOn="D"
+                android:textSize="12sp" />
+
         </RelativeLayout>
 
     </LinearLayout>

@@ -113,8 +113,8 @@ public class Main extends Activity {
          */
         startOrStopToggleButton = (ToggleButton) findViewById(R.id.toggleButton);
         startOrStopToggleButton.setOnClickListener(new StartOrStopListener(startOrStopToggleButton));
-        usbStateTextView = (TextView) findViewById(R.id.usbstate);
-        dataSaveTextView = (TextView) findViewById(R.id.savestate);
+//        usbStateTextView = (TextView) findViewById(R.id.usbstate);
+//        dataSaveTextView = (TextView) findViewById(R.id.savestate);
         fiberLengthEdiText = (EditText) findViewById(R.id.editText5);
         transmmitSpeedTextView = (TextView) findViewById(R.id.transmitespeed1);
         fiberLengthSharePre = getSharedPreferences("opl", MODE_PRIVATE);

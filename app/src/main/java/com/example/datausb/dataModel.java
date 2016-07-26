@@ -293,7 +293,7 @@ public class DataModel extends android.app.Fragment {
 //                                data.add(getRandom(8192,65536));
 //                                data.add(getRandom(8192,65536));
 //                                data.add(getRandom(8192,65536));
-                            dataChart.drawAll(c, data, new int[]{Color.CYAN, Color.BLUE, Color.RED, Color.YELLOW});
+                            dataChart.drawAll(c, data, new int[]{Color.CYAN, Color.GREEN, Color.RED, Color.YELLOW});
 
                             /**
                              * 结束锁定画布并显示
