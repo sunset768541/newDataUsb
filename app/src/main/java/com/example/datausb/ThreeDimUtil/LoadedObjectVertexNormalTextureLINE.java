@@ -1,4 +1,4 @@
-package com.example.datausb;
+package com.example.datausb.ThreeDimUtil;
 
 import android.opengl.GLES20;
 
@@ -17,14 +17,14 @@ public class LoadedObjectVertexNormalTextureLINE
     int maLightLocationHandle;//光源位置属性引用
     int maCameraHandle; //摄像机位置属性引用
     int maColor; //顶点纹理坐标属性引用
-    float [] co;
+    public float [] co;
     String mVertexShader;//顶点着色器代码脚本
     String mFragmentShader;//片元着色器代码脚本
 
 	FloatBuffer   mVertexBuffer;//顶点坐标数据缓冲
 	FloatBuffer   mNormalBuffer;//顶点法向量数据缓冲
 	FloatBuffer   mColorBuffer;//顶点纹理坐标数据缓冲
-    int vCount=0;
+    public int vCount=0;
 
     public LoadedObjectVertexNormalTextureLINE(MySurfaceView mv, float[] vertices)
     {    	
@@ -77,7 +77,7 @@ public class LoadedObjectVertexNormalTextureLINE
     public void initShader(MySurfaceView mv)
     {
     	//加载顶点着色器的脚本内容
-        mVertexShader=ShaderUtil.loadFromAssetsFile("vertexline.sh", mv.getResources());
+        mVertexShader= ShaderUtil.loadFromAssetsFile("vertexline.sh", mv.getResources());
         //加载片元着色器的脚本内容
         mFragmentShader=ShaderUtil.loadFromAssetsFile("fragline.sh", mv.getResources());
         //基于顶点着色器与片元着色器创建程序
@@ -101,7 +101,7 @@ public class LoadedObjectVertexNormalTextureLINE
     	 //制定使用某套着色器程序
     	 GLES20.glUseProgram(mProgram);
          //将最终变换矩阵传入着色器程序
-         GLES20.glUniformMatrix4fv(muMVPMatrixHandle, 1, false, MatrixState.getFinalMatrix(), 0); 
+         GLES20.glUniformMatrix4fv(muMVPMatrixHandle, 1, false, MatrixState.getFinalMatrix(), 0);
          //将位置、旋转变换矩阵传入着色器程序
          GLES20.glUniformMatrix4fv(muMMatrixHandle, 1, false, MatrixState.getMMatrix(), 0);
          // 将顶点位置数据传入渲染管线

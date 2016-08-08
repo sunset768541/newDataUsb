@@ -1,4 +1,4 @@
-package com.example.datausb;
+package com.example.datausb.DataUtil;
 
 import android.content.Context;
 import android.util.Log;
@@ -21,8 +21,8 @@ public class DataWR {
     private static SimpleDateFormat docFormatm = new SimpleDateFormat("MM");//建立文件夹月的名字
     private static SimpleDateFormat docFormatd = new SimpleDateFormat("dd");//建立文件夹日的名字
     private static Date date = new Date();
-    //public static String SDcardPath="/mnt/external_sd/";
-    public static String SDcardPath="/storage/sdcard0/";
+    public static String SDcardPath="/mnt/external_sd/";
+    //public static String SDcardPath="/storage/sdcard0/";
     private static String dir = docFormaty.format(date) + "/" + docFormatm.format(date) + "/" + docFormatd.format(date) + "/";//存储数据文件夹的目录
   //  private static  file;//file对象用来建立文件夹
     private static String preFileName = SDcardPath + dir + fileFormat.format(date) + ".dat";//存储数据文件的名字

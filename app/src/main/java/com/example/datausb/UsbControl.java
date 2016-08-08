@@ -1,6 +1,5 @@
 package com.example.datausb;
 
-import android.app.Activity;
 import android.content.Context;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
@@ -38,14 +37,14 @@ public class UsbControl{
        }
         return usbControl;
     }
-    public   boolean InitializeUsb(){
+    public   boolean initializeUsb(){
         myUsbManager = (UsbManager) mContext.getSystemService(mContext.USB_SERVICE);
         boolean isInitialization=true;
         try {
-            EnumerateDevice();
-            FindInterface();
-            OpenDevice();
-            AssignEndpoint();
+            enumerateDevice();
+            findInterface();
+            openDevice();
+            assignEndpoint();
         }
         catch (Exception e){
             Log.e("初始化USB："," -------Fail");
@@ -58,17 +57,17 @@ public class UsbControl{
     /**
      * SendDataToUsb为一个用来发送数据的函数
      */
-    public int SendDataToUsb(byte[] bytes) {//发送数据的函数
+    public int sendDataToUsb(byte[] bytes) {//发送数据的函数
         myDeviceConnection.claimInterface(myInterface, true);
         int isSend = myDeviceConnection.bulkTransfer(epOut, bytes, bytes.length, 0); //do in another thread
         return isSend;//flag标记是否发送成功，成功flag>1,不成功-1
     }
-    public byte[] ReceivceDataFromUsb(int receiveDataLength){
+    public byte[] receivceDataFromUsb(int receiveDataLength){
         if (Receivebytes==null){
            Receivebytes=new byte[receiveDataLength];
         }
         for (int i = 0; i < Receivebytes.length / Buffer.length; i++) {
-            int xxx = myDeviceConnection.bulkTransfer(epIn,Buffer, Buffer.length, 0); //do in another thread
+            int xxx = myDeviceConnection.bulkTransfer(epIn,Buffer, Buffer.length, 0); //do in another thread，Buffer最大为16384，超过数据丢失这是Linux内核决定
             for (int j = 0; j < 512; j++) {
                 Receivebytes[j + i * 512] = Buffer[j];
             }
@@ -87,7 +86,7 @@ public class UsbControl{
      #define USB_ENDPOINT_XFER_BULK 2 --块传输
      #define USB_ENDPOINT_XFER_INT 3 --中断传输
      * */
-    private void AssignEndpoint() {
+    private void assignEndpoint() {
         if (myInterface != null) {             //这一句不加的话 很容易报错  导致很多人在各大论坛问:为什么报错呀
             epIn = myInterface.getEndpoint(1);//设置输入的数据的端点
             epOut = myInterface.getEndpoint(0);//设置输出数据的端点
@@ -113,7 +112,7 @@ public class UsbControl{
     /**
      * 打开设备
      */
-    private void OpenDevice() {
+    private void openDevice() {
         if (myInterface != null) {
             UsbDeviceConnection usbDeviceConnection = null;
             // 在open前判断是否有连接权限；对于连接权限可以静态分配，也可以动态分配权限，可以查阅相关资料
@@ -138,7 +137,7 @@ public class UsbControl{
     /**
      * 找设备接口
      */
-    private void FindInterface() {
+    private void findInterface() {
         if (myUsbDevice != null) {
             //info1.setText(Integer.toString(myUsbDevice.getInterfaceCount()));//获得当前设备的接口数目
             myInterface = myUsbDevice.getInterface(0);
@@ -161,7 +160,7 @@ public class UsbControl{
     /**
      * 枚举设备
      */
-    private void EnumerateDevice() {
+    private void enumerateDevice() {
         if (myUsbManager == null){
             Log.d("枚举USB设备 ","---------- Fail");
             return;

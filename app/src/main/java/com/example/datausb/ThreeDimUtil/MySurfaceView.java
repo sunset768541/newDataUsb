@@ -1,4 +1,4 @@
-package com.example.datausb;
+package com.example.datausb.ThreeDimUtil;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -9,14 +9,16 @@ import android.opengl.GLUtils;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import com.example.datausb.R;
+
 import java.io.IOException;
 import java.io.InputStream;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import static com.example.datausb.Constant.loadLandforms;
-import static  com.example.datausb.Constant.yArray;
+import static com.example.datausb.ThreeDimUtil.Constant.loadLandforms;
+import static  com.example.datausb.ThreeDimUtil.Constant.yArray;
 import static com.example.datausb.ThreeDimensionModel.*;
 //import static uuuuuuu.com.example.gamesky.Sample11_6Activity.HEIGHT;
 //import static uuuuuuu.com.example.gamesky.Sample11_6Activity.WIDTH;
@@ -36,7 +38,7 @@ public class MySurfaceView extends GLSurfaceView
     float x;
     float y;
     float Offset=20;
-	SceneRenderer mRender;
+	public SceneRenderer mRender;
 	float preX;
 	float preY;
 
@@ -190,7 +192,7 @@ public class MySurfaceView extends GLSurfaceView
 //			rthread.start();
 		}
 		public void setlov(){
-			lovo1=LoadUtilLINE.loadFromFile("line.obj", MySurfaceView.this.getResources(), MySurfaceView.this);
+			lovo1= LoadUtilLINE.loadFromFile("line.obj", MySurfaceView.this.getResources(), MySurfaceView.this);
 		}
 		public int getcont(){
 			int l=0;

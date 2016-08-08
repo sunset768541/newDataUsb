@@ -6,11 +6,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
+
+import com.example.datausb.DataUtil.DataBaseOperation;
+import com.example.datausb.DataUtil.DataWR;
+import com.example.datausb.Fiber.FiberA;
 
 import java.io.File;
 
@@ -21,7 +27,7 @@ public class SystemSetting extends android.app.Fragment {
     private EditText data;
     private Button sentdata;
     private TextView showbyte;
-    private EditText oplong;
+   // private EditText oplong;
     private Button setopl;
     private Switch sw;
     private Switch sw2;
@@ -29,7 +35,22 @@ public class SystemSetting extends android.app.Fragment {
     private EditText temalerttube2;
     private Spinner datasavetrr;
     private Spinner threscence;
-
+    private EditText fiberAlength;
+    private EditText fiberA1450Code;
+    private EditText fiberA1663Code;
+    private ToggleButton fiberAOpen;
+    private EditText fiberBlength;
+    private EditText fiberB1450Code;
+    private EditText fiberB1663Code;
+    private ToggleButton fiberBOpen;
+    private EditText fiberClength;
+    private EditText fiberC1450Code;
+    private EditText fiberC1663Code;
+    private ToggleButton fiberCOpen;
+    private EditText fiberDlength;
+    private EditText fiberD1450Code;
+    private EditText fiberD1663Code;
+    private ToggleButton fiberDOpen;
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.systemseting, container, false);
 
@@ -106,7 +127,7 @@ public class SystemSetting extends android.app.Fragment {
             @Override
             public void onClick(View v) {
                 try {
-                    TempreatureAlarm.cla1=DataBaseOperation.mDataBaseOperation.getFromDataBase("tube1data");
+                    TempreatureAlarm.cla1= DataBaseOperation.mDataBaseOperation.getFromDataBase("tube1data");
                     TempreatureAlarm.cla2=DataBaseOperation.mDataBaseOperation.getFromDataBase("tube2data");
                 } catch (Exception e) {
                     Toast.makeText(((Main) getActivity()).getApplicationContext(), "标定数据不存在，请先在标定模式下进行标定", Toast.LENGTH_SHORT).show();
@@ -133,8 +154,8 @@ public class SystemSetting extends android.app.Fragment {
         sw.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                File file = new File(DataWR.SDcardPath+"360");//用来检测是否插入了sd卡，因为只要插入sd卡，系统就会在这个sd卡下建立LOST.DIR文件夹
-                //File file = new File(DataWR.SDcardPath+"LOST.DIR");//用来检测是否插入了sd卡，因为只要插入sd卡，系统就会在这个sd卡下建立LOST.DIR文件夹
+               // File file = new File(DataWR.SDcardPath+"360");//用来检测是否插入了sd卡，因为只要插入sd卡，系统就会在这个sd卡下建立LOST.DIR文件夹
+                File file = new File(DataWR.SDcardPath+"LOST.DIR");//用来检测是否插入了sd卡，因为只要插入sd卡，系统就会在这个sd卡下建立LOST.DIR文件夹
                 //  Environment.getExternalStorageState();
                 // Log.e("ee",Boolean.valueOf(file.exists()).toString());
                 //Log.e("ee",Boolean.valueOf(sw.isChecked()).toString());
@@ -193,25 +214,25 @@ public class SystemSetting extends android.app.Fragment {
             }
         });
 
-        oplong = (EditText) getActivity().findViewById(R.id.editText5);
-        oplong.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-
-                } else {
-                    int ol = Integer.valueOf(oplong.getText().toString());
-                    ((Main) getActivity()).setFiberLength(ol);
-                    SystemParameter.FIBER_LENGTH = ol;
-                    Log.e("光线的长度", Integer.valueOf(ol).toString());
-                }
-            }
-        });
-        int ll = ((Main) getActivity()).fiberLengthSharePre.getInt("long", 0);
-        if (ll != 0) {
-
-            oplong.setText(Integer.toString(ll));
-        }
+//      //  oplong = (EditText) getActivity().findViewById(R.id.editText5);
+//      //  oplong.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View v, boolean hasFocus) {
+//                if (hasFocus) {
+//
+//                } else {
+//                    int ol = Integer.valueOf(oplong.getText().toString());
+//                    ((Main) getActivity()).setFiberLength(ol);
+//                    SystemParameter.FIBER_LENGTH = ol;
+//                    Log.e("光线的长度", Integer.valueOf(ol).toString());
+//                }
+//            }
+//        });
+//        int ll = ((Main) getActivity()).fiberLengthSharePre.getInt("long", 0);
+//        if (ll != 0) {
+//
+//            oplong.setText(Integer.toString(ll));
+//        }
 
         View sysseting = getActivity().findViewById(R.id.sysset);
         /**
@@ -221,8 +242,50 @@ public class SystemSetting extends android.app.Fragment {
             @Override
             public void onClick(View v) {
                 temalerttube2.clearFocus();
-                oplong.clearFocus();
+              //  oplong.clearFocus();
                 temalerttube1.clearFocus();
+            }
+        });
+
+
+        fiberAOpen=(ToggleButton) getActivity().findViewById(R.id.toggleButton2);
+        fiberBOpen=(ToggleButton) getActivity().findViewById(R.id.toggleButton3);
+        fiberCOpen=(ToggleButton) getActivity().findViewById(R.id.toggleButton4);
+        fiberDOpen=(ToggleButton) getActivity().findViewById(R.id.toggleButton5);
+        fiberA1450Code=(EditText)getActivity().findViewById(R.id.editText7);
+        fiberB1450Code=(EditText)getActivity().findViewById(R.id.editText10);
+        fiberC1450Code=(EditText)getActivity().findViewById(R.id.editText13);
+        fiberD1450Code=(EditText)getActivity().findViewById(R.id.editText16);
+        fiberA1663Code=(EditText)getActivity().findViewById(R.id.editText8);
+        fiberB1663Code=(EditText)getActivity().findViewById(R.id.editText11);
+        fiberC1663Code=(EditText)getActivity().findViewById(R.id.editText14);
+        fiberD1663Code=(EditText)getActivity().findViewById(R.id.editText17);
+        fiberBlength=(EditText)getActivity().findViewById(R.id.editText9);
+        fiberClength=(EditText)getActivity().findViewById(R.id.editText12);
+        fiberDlength=(EditText)getActivity().findViewById(R.id.editText15);
+        fiberAlength=(EditText) getActivity().findViewById(R.id.editText5);
+        fiberAOpen.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                   if ((fiberA1663Code.getText().toString().length()!=0)&&(fiberA1450Code.getText().toString().length()!=0)&&(fiberAlength.getText().toString().length()!=0)){
+                       FiberA fiberA=FiberA.createFiberA();
+                       fiberA.setFiberLength(Integer.parseInt(fiberAlength.getText().toString()));
+                       fiberA.setOptical1450Head(Integer.parseInt(fiberA1450Code.getText().toString()));
+                       fiberA.setOptical1663Head(Integer.parseInt(fiberA1663Code.getText().toString()));
+                       //将Fiber加入到FiberManager中
+                       ((Main)getActivity()).fiberManager.addFiber('A');
+                       ((Main) getActivity()).setTunnelAOn();
+                   }//判断长度和识别码都输入了吗e{
+                    else{
+                       Toast.makeText(getActivity().getApplicationContext(), "请输入正确参数", Toast.LENGTH_SHORT).show();
+                       fiberAOpen.setChecked(false);}
+                }
+                else {
+
+                    //从FiberManager中删除这个光纤
+                }
+
             }
         });
     }

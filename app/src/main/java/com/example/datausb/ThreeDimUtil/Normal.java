@@ -1,4 +1,4 @@
-package com.example.datausb;
+package com.example.datausb.ThreeDimUtil;
 
 //表示法向量的类，此类的一个对象表示一个法向量
 public class Normal 

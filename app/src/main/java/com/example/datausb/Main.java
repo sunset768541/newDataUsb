@@ -18,6 +18,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.example.datausb.DataUtil.DataBaseOperation;
+import com.example.datausb.DataUtil.DataWR;
+import com.example.datausb.Fiber.FiberA;
+import com.example.datausb.Fiber.FiberManager;
+
 import java.io.FileOutputStream;
 import java.util.Arrays;
 
@@ -26,11 +31,10 @@ import java.util.Arrays;
  */
 
 public class Main extends Activity {
+
     /**
      * 屏幕下方显示相关信息的部分
      */
-    private TextView usbStateTextView;
-    private TextView dataSaveTextView;
     private TextView transmmitSpeedTextView;
     /**
      * 实例化3个用于显示不同界面的Fragment
@@ -44,7 +48,11 @@ public class Main extends Activity {
     SystemSetting systemSetting = new SystemSetting();
     ThreeDimensionModel threeDimensionModel = new ThreeDimensionModel();
     HistoryRecord historyRecord = new HistoryRecord();
-
+    ToggleButton tunnelA;
+    ToggleButton tunnelB;
+    ToggleButton tunnelC;
+    ToggleButton tunnelD;
+    FiberManager fiberManager=new FiberManager();
     /**
      * 定义用于携带数据的Bundle
      */
@@ -80,7 +88,7 @@ public class Main extends Activity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setContentView(R.layout.mainactivity);
         usbControl=UsbControl.create(this);
-        UsbIsInitialize=usbControl.InitializeUsb();
+        UsbIsInitialize=usbControl.initializeUsb();
         DataBaseOperation.getDataBase(this);
         /**
          * 实例化6个按钮用来切换不同的Fragment
@@ -91,20 +99,16 @@ public class Main extends Activity {
          */
         ImageButton changeToDataModelButton = (ImageButton) findViewById(R.id.imageButton);
 
-       // changeToDataModelButton.setOnClickListener(new ChangeToDataModelListener());
         changeToDataModelButton.setOnClickListener(new ChnageTDML());
         ImageButton changeToCalibrateModelButton = (ImageButton) findViewById(R.id.imageButton2);
-       // changeToCalibrateModelButton.setOnClickListener(new ChangeToCalibrationModelListener());
         changeToCalibrateModelButton.setOnClickListener(new ChangeTCla());
         ImageButton changeToTemperatureModelButton = (ImageButton) findViewById(R.id.imageButton3);
 
         changeToTemperatureModelButton.setOnClickListener(new ChangeTem());
-        //changeToTemperatureModelButton.setOnClickListener(new ChangeToTemperatureModelListener());
 
         ImageButton systemSetingButton = (ImageButton) findViewById(R.id.imageButton5);
         systemSetingButton.setOnClickListener(new SystemSettingListener());
         ImageButton changeToThreeDimensionModelButton = (ImageButton) findViewById(R.id.imageButton4);
-       // changeToThreeDimensionModelButton.setOnClickListener(new ChangetoThreeDimensionModelListener());
         changeToThreeDimensionModelButton.setOnClickListener(new ChangeTThdim());
         ImageButton historyRecordingButton = (ImageButton) findViewById(R.id.imageButton6);
         historyRecordingButton.setOnClickListener(new HistoryRecordListener());
@@ -113,8 +117,6 @@ public class Main extends Activity {
          */
         startOrStopToggleButton = (ToggleButton) findViewById(R.id.toggleButton);
         startOrStopToggleButton.setOnClickListener(new StartOrStopListener(startOrStopToggleButton));
-//        usbStateTextView = (TextView) findViewById(R.id.usbstate);
-//        dataSaveTextView = (TextView) findViewById(R.id.savestate);
         fiberLengthEdiText = (EditText) findViewById(R.id.editText5);
         transmmitSpeedTextView = (TextView) findViewById(R.id.transmitespeed1);
         fiberLengthSharePre = getSharedPreferences("opl", MODE_PRIVATE);
@@ -124,7 +126,37 @@ public class Main extends Activity {
             Toast.makeText(getApplicationContext(), "还没有设置光纤的长度，请先到系统设置中设置", Toast.LENGTH_SHORT).show();
         }
 
+        tunnelA=(ToggleButton)findViewById(R.id.fiberA);
+        tunnelB=(ToggleButton)findViewById(R.id.fiberB);
+        tunnelC=(ToggleButton)findViewById(R.id.fiberC);
+        tunnelD=(ToggleButton)findViewById(R.id.fiberD);
     }
+    public void setTunnelAOn(){
+        tunnelA.setChecked(true);
+    }
+    public void setTunnelAOff(){
+        tunnelA.setChecked(false);
+    }
+    public void setTunnelBOn(){
+        tunnelA.setChecked(true);
+    }
+    public void setTunnelBOff(){
+        tunnelA.setChecked(false);
+    }
+    public void setTunnelCOn(){
+        tunnelA.setChecked(true);
+    }
+    public void setTunnelCOff(){
+        tunnelA.setChecked(false);
+    }
+
+    public void setTunnelDOn(){
+        tunnelA.setChecked(true);
+    }
+    public void setTunnelDOff(){
+        tunnelA.setChecked(false);
+    }
+
 
     /**
      * 更新UI数据
@@ -293,8 +325,6 @@ public class Main extends Activity {
      */
     class StartOrStopListener implements View.OnClickListener {
         ToggleButton tgg;
-        //byte [] contrlo={127,3,127,63,0,14,0,15};
-
         public StartOrStopListener(ToggleButton tgg) {
             this.tgg = tgg;
 
@@ -303,13 +333,9 @@ public class Main extends Activity {
         public void onClick(View v) {
             TOGGLE_BUTTON = 1;
             if (tgg.isChecked()) {
-              //  enumerateDevice();//枚举设备，当按下该togglbutton时才打开USB
                  if (!UsbIsInitialize)
-                 UsbIsInitialize=usbControl.InitializeUsb();
+                 UsbIsInitialize=usbControl.initializeUsb();
                  if (UsbIsInitialize) {
-                    //findInterface();//找到设备接口
-                    //openDevice();//打开设备
-                    //assignEndpoint();//指派端点
                     if (dataReceiveThread.isAlive()) {
                         dataReceiveThread.setSuspend(false);
                         dataProcessThread.setSuspend(false);
@@ -395,7 +421,7 @@ public class Main extends Activity {
 
                         }
                     }
-                    byte[] Receivebytes = usbControl.ReceivceDataFromUsb(65536);//接收的数据
+                    byte[] Receivebytes = usbControl.receivceDataFromUsb(65536);//接收的数据
                     if (STOREDATA == 1) {
                         try {
                             DataWR.saveData(Receivebytes);//将接收到的数据直接存储为2进制文件
@@ -403,7 +429,6 @@ public class Main extends Activity {
                         }
                     }
                     r.data = Receivebytes;//拼接好的数据传递出去
-                    //resourceObj.speed = t;
                     r.flag = true;
                     r.notify();
                     // Log.d("接收", "数据接收线程完成");
@@ -418,9 +443,8 @@ public class Main extends Activity {
      * dataProcess线程是将从USB接收的8bit数据合成16bit信息并显示,//分类数据传输到各自的通道
      *****************************************************************************************/
     public class DataProcess extends Thread {//接收数据的线程
-        // private  final int COMPLETED = 0;
         Resource r;
-        Data dd;
+        public Data dd;
 
         DataProcess(Resource r, Data dd) {
             this.dd = dd;
@@ -464,14 +488,10 @@ public class Main extends Activity {
                         } catch (InterruptedException ex) {
                         }
 
-                    long startTime = System.nanoTime();             // 纳秒级
-                   /* String st = "0";//数据转化为字符串的中间变量
-                    String st1 = "0";//储存接收数据转化后的字符串*/
                     int p;
                     int p1;
                     int i1 = 0;
                     int[] combination = new int[r.data.length / 2];//combination用于储存合并后的16bit数据
-                    // for (int i = 0; i < resourceObj.dataObj.length; i++) {//报出空指针异常的原因是接收数据还没有处理完，线程就跳转到了这里
                     for (int i = 0; i < r.data.length; i = i + 2) {//数据组合
 
                         if (r.data[i] < 0) {
@@ -491,43 +511,14 @@ public class Main extends Activity {
                    //     Log.e("combination "+Integer.valueOf(i1).toString()," ="+Integer.valueOf(p+p1).toString());
                         i1 = i1 + 1;
                     }
-
-
-
-                   // int[] dadd = new int[2048];
-                    // = new int[2048];
-                    //int[] dadd2 = new int[2048];
-                    //int[] dadd3 = new int[2048];
-                    //Log.e("da",Integer.valueOf(dadd3.length).toString());
-//我们在实际区分4个通道的数据的时候可以用for遍历combination数组寻找表头然后放入指定的容器
-//                    for (int i=0;i<combination.length;i++)//可以用foreach
-//                    {
-//
-//                        if(combination[i]==0){
+                   // fiberManager.decodeData(combination);//每次整合完都把数据送到FiberManager中进行解析，将数据分配到特定的光纤中
                    int[] tunnelAdata = Arrays.copyOfRange(combination, 0, combination.length/4);//copyOfRange(resourceObj,inclusive,exclusive),不包含exclusive那个
 
-                    // Log.e("com",Integer.valueOf(combination.length).toString()+"   "+Integer.valueOf(dadd.length).toString());
-//                        }
-//                        else{
-//
-//                        }
-//                        if (combination[i]==512){
                     int[] tunnelA1data = Arrays.copyOfRange(combination, combination.length / 4, combination.length / 2);
-//
-//                        }
-//                        if (combination[i]==1024){
+
                     int[] tunnelBdata = Arrays.copyOfRange(combination, combination.length / 2, combination.length - combination.length / 4);
 
-//
-//                        }
-//                        if(combination[i]==1536){
                     int[] tunnelB1data = Arrays.copyOfRange(combination, combination.length - combination.length / 4, combination.length);
-                    //     Log.e("dadd3",Integer.valueOf(dadd3[dadd3.length-1]).toString());
-                    //   Log.e("dadd33",Integer.valueOf(dadd3.length).toString());
-
-                    // }
-
-                    //}
                     data_a.putIntArray("tunnelAdata", tunnelAdata);//待传入通道A的数据
                     data_a1.putIntArray("tunnelA1data", tunnelA1data);//待传入通道A1的数据
                     data_b.putIntArray("tunnelBdata", tunnelBdata);//待传入通道B的数据
@@ -565,12 +556,10 @@ public class Main extends Activity {
                                     TempreatureModel fragment3 = (TempreatureModel) getFragmentManager().findFragmentByTag("tempreturemodel");
                                     fragment3.wakeup();//调用fragment中的唤醒方法
                                 case 4:
-                                    com.example.datausb.ThreeDimensionModel fragment4 = (ThreeDimensionModel) getFragmentManager().findFragmentByTag("threedimmodel");
+                                    ThreeDimensionModel fragment4 = (ThreeDimensionModel) getFragmentManager().findFragmentByTag("threedimmodel");
                                     fragment4.wakeup();//调用fragment中的唤醒方法
                             }
 
-                            //DataModel frgment1 = (DataModel) getFragmentManager().findFragmentByTag("datamodel");//获取当前的fragment
-                            //frgment1.wakeUp();//调用fragment中的唤醒方法
                             /**
                              * 先实现数据处理线程的等待，直到该fragment中显示线程显示数据完成后由显示线程对当前的数据处理线程进行唤醒继续运行
                              */
@@ -586,15 +575,10 @@ public class Main extends Activity {
                         } catch (NullPointerException ee) {
                         }
                     }
-                    long estimatedTime = System.nanoTime() - startTime;
-                    //set_TubeA1_data(tunnelAdata, tunnelA1data, tunnelBdata, tunnelB1data);//调用传入通道A数据函数
                     Message msg1 = new Message();
                     msg1.what = COMPLETED;
                     msg1.obj = tunnelAdata[2] + "+" + tunnelA1data[2];
-                    //msg1.obj =combination[0]+"+"+combination[20480]+"+"+combination[30720]+"+"+combination[40959];//要显示的数据，测试使用
-                    //msg1.obj =resourceObj.dataObj[0]+"+"+resourceObj.dataObj[40960]+"+"+resourceObj.dataObj[61440]+"+"+resourceObj.dataObj[81919];//要显示的数据，测试使用
                     msg1.arg1 = r.speed;//数据的传输速度
-                    msg1.arg2 = (int) estimatedTime;//arg2表示携带的处理速度信息
                     handler.sendMessage(msg1);
                     r.flag = false;
                     r.notify();
@@ -694,21 +678,21 @@ public class Main extends Activity {
 
     class Data {
         Bundle[] DD;
-        boolean flag1 = false;
+        public boolean flag1 = false;
     }
 
     /**
      * 该语句为实例化一个数据接收的类，re为数据接收线程
      */
     Resource resourceObj = new Resource();
-    Data dataObj = new Data();
+    public Data dataObj = new Data();
     public DataReceiveThread dataReceiveThread = new DataReceiveThread(resourceObj);
     public DataProcess dataProcessThread = new DataProcess(resourceObj, dataObj);
     public void UsbSendData(byte[] bytes){
-        usbControl.SendDataToUsb(bytes);
+        usbControl.sendDataToUsb(bytes);
     }
 
-   abstract class ButtonClickListener implements View.OnClickListener{
+   abstract class ButtonClickListener implements View.OnClickListener{//模板设计模式
         public void onClick(View v) {
             if (TOGGLE_BUTTON == 1) {
                 startOrStopToggleButton.setChecked(true);
@@ -735,5 +719,6 @@ public class Main extends Activity {
         abstract  void setFragmentnumber();
 
    }
+
 
 }

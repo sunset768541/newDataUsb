@@ -148,7 +148,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/contineer"
-                android:layout_marginRight="10dp"></FrameLayout>
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginBottom="5dp"></FrameLayout>
         </LinearLayout>
 
     </LinearLayout>
@@ -191,8 +193,8 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:text="New ToggleButton"
-                android:id="@+id/fiber1"
-                android:layout_toLeftOf="@+id/fiber2"
+                android:id="@+id/fiberA"
+                android:layout_toLeftOf="@+id/fiberB"
                 android:layout_marginRight="10dp"
                 android:background="@drawable/fiber1ring"
                 android:textSize="12sp"
@@ -203,10 +205,10 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:text="New ToggleButton"
-                android:id="@+id/fiber2"
+                android:id="@+id/fiberB"
                 android:background="@drawable/fiber2ring"
                 android:layout_marginRight="10dp"
-                android:layout_toLeftOf="@+id/fiber3"
+                android:layout_toLeftOf="@+id/fiberC"
                 android:textOff="B"
                 android:textOn="B"
                 android:textSize="12sp" />
@@ -215,8 +217,8 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:text="New ToggleButton"
-                android:id="@+id/fiber3"
-                android:layout_toLeftOf="@+id/fiber4"
+                android:id="@+id/fiberC"
+                android:layout_toLeftOf="@+id/fiberD"
                 android:layout_marginRight="10dp"
                 android:background="@drawable/fiber3ring"
                 android:textSize="12sp"
@@ -227,7 +229,7 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:text="New ToggleButton"
-                android:id="@+id/fiber4"
+                android:id="@+id/fiberD"
                 android:layout_alignParentRight="false"
                 android:layout_toLeftOf="@+id/toggleButton"
                 android:background="@drawable/fiber4ring"

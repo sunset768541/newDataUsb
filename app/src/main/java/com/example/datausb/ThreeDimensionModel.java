@@ -8,6 +8,9 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.example.datausb.DataUtil.DataBaseOperation;
+import com.example.datausb.ThreeDimUtil.MySurfaceView;
+
 import java.util.Arrays;
 
 /**
@@ -15,8 +18,8 @@ import java.util.Arrays;
  */
 public class ThreeDimensionModel extends android.app.Fragment {
     public MySurfaceView mv;
-    static float WIDTH;
-    static float HEIGHT;
+    public static float WIDTH;
+    public static float HEIGHT;
     float [] caliPSA;
     float[] caliPSB;
     private threedimThread myThread;
@@ -45,7 +48,7 @@ public class ThreeDimensionModel extends android.app.Fragment {
     }
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         try{
-            caliPSA=DataBaseOperation.mDataBaseOperation.getFromDataBase("tube1data");
+            caliPSA= DataBaseOperation.mDataBaseOperation.getFromDataBase("tube1data");
             caliPSB=DataBaseOperation.mDataBaseOperation.getFromDataBase("tube2data");
         }
         catch (Exception e){

@@ -1,6 +1,5 @@
 package com.example.datausb;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -11,7 +10,9 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.example.datausb.DataUtil.DataRD;
+import com.example.datausb.ThreeDimUtil.MySurfaceView;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -84,7 +85,7 @@ public class HistoryThreeDimensionModel extends android.app.Fragment {
             if (msg1.what == COMPLETED) {
                 try {
                     Log.e("UI更新线程","-----之心");
-                    seeekbar.incrementProgressBy((int)DataRD.dataBuffer.length);
+                    seeekbar.incrementProgressBy((int) DataRD.dataBuffer.length);
                     showTime.setText(decimalFormat.format((float)msg1.arg2/(float)msg1.arg1*100)+"%");
                 } catch (NullPointerException e) {
                 }

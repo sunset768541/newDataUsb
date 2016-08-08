@@ -1,4 +1,4 @@
-package com.example.datausb;
+package com.example.datausb.ThreeDimUtil;
 
 import android.opengl.GLES20;
 
@@ -102,7 +102,7 @@ public class Sky
 	//初始化Shader程序的方法
 	public void initShader(MySurfaceView mv)
 	{
-		String mVertexHandle=ShaderUtil.loadFromAssetsFile("vertex.sh", mv.getResources());
+		String mVertexHandle= ShaderUtil.loadFromAssetsFile("vertex.sh", mv.getResources());
 		String mTexCoorHandle=ShaderUtil.loadFromAssetsFile("frag.sh", mv.getResources());
 		mProgram=ShaderUtil.createProgram(mVertexHandle, mTexCoorHandle);
 		//获得顶点坐标数据的引用

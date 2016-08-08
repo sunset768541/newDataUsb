@@ -3,10 +3,6 @@ package com.example.datausb;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.CornerPathEffect;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.PathEffect;
 //import android.sutube1ort.v4.atube1.Fragment;
 import android.os.Bundle;
 //import android.atube1.Fragment;
@@ -18,6 +14,8 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import com.example.datausb.DataUtil.DataBaseOperation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +49,7 @@ public class TempreatureModel extends android.app.Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);//
         try{
-            caliPSA=DataBaseOperation.mDataBaseOperation.getFromDataBase("tube1data");
+            caliPSA= DataBaseOperation.mDataBaseOperation.getFromDataBase("tube1data");
             caliPSB=DataBaseOperation.mDataBaseOperation.getFromDataBase("tube2data");
         }
         catch (Exception e){

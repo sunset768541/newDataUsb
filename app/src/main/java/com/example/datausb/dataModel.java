@@ -1,5 +1,6 @@
 package com.example.datausb;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -23,6 +24,11 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.example.datausb.DataChart;
+import com.example.datausb.Fiber.Fiber;
+import com.example.datausb.Main;
+import com.example.datausb.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +36,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by sunset on 15/11/19.
@@ -285,6 +292,15 @@ public class DataModel extends android.app.Fragment {
 
                         synchronized (holder) {
                             List<float[]> data = new ArrayList<>();
+                            List<float[]> dataLine = new ArrayList<>();//存数据
+                            List<Paint> liner=new ArrayList<>();//存画笔
+                            for (Map.Entry<String,Fiber>item: ((Main)getActivity()).fiberManager.getFiberMap().entrySet()) {//遍历HashMap获得其中光纤的引用
+                                dataLine.add(intArray2MinusFloat(item.getValue().getOptical1450Data()));//加入1450数据
+                                dataLine.add(intArray2MinusFloat(item.getValue().getOptical1663Data()));//加入1663数据
+                                liner.add(item.getValue().getLine1440());//加入1450画笔
+                                liner.add(item.getValue().getLine1663());//加入1663画笔
+                            }
+
                             data.add(intArray2MinusFloat(tunnelAdata));
                             data.add(intArray2MinusFloat(tunnelA1data));
                             data.add(intArray2MinusFloat(tunnelBdata));
@@ -322,8 +338,9 @@ public class DataModel extends android.app.Fragment {
         }
 
     }
-    public float[] getRandom(int length,float max){
+    public float[] getRandom(int length, float max){
         float[] a=new float[length];
+
         for (int i=0;i<length;i++)
         {
             a[i]=-(float) Math.random()*(max);
@@ -338,5 +355,7 @@ public class DataModel extends android.app.Fragment {
         return b;
 
     }
+
+
 }
 

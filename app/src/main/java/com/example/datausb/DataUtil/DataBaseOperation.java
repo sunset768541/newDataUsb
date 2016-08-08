@@ -1,4 +1,4 @@
-package com.example.datausb;
+package com.example.datausb.DataUtil;
 
 import android.content.ContentValues;
 import android.content.Context;

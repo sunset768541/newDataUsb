@@ -1,4 +1,4 @@
-package com.example.datausb;
+package com.example.datausb.ThreeDimUtil;
 
 import android.content.res.Resources;
 import android.opengl.GLES20;

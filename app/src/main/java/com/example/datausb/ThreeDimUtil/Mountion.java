@@ -1,4 +1,4 @@
-package com.example.datausb;
+package com.example.datausb.ThreeDimUtil;
 
 import android.opengl.GLES20;
 
@@ -35,7 +35,7 @@ public class Mountion
 	//顶点数量
 	int vCount=0;
 	
-	public Mountion(MySurfaceView mv,float[][] yArray,int rows,int cols)
+	public Mountion(MySurfaceView mv, float[][] yArray, int rows, int cols)
 	{
 		initVertexData(yArray,rows,cols);
 		initShader(mv);
@@ -101,7 +101,7 @@ public class Mountion
 	//初始化Shader的方法
 	public void initShader(MySurfaceView mv) 
 	{
-		String mVertexShader=ShaderUtil.loadFromAssetsFile("vertex_mountion.sh", mv.getResources());
+		String mVertexShader= ShaderUtil.loadFromAssetsFile("vertex_mountion.sh", mv.getResources());
 		String mFragmentShader=ShaderUtil.loadFromAssetsFile("frag_mountion.sh", mv.getResources());
 		//基于顶点着色器与片元着色器创建程序
         mProgram = ShaderUtil.createProgram(mVertexShader, mFragmentShader);
@@ -129,7 +129,7 @@ public class Mountion
 		//指定使用某套shader程序
    	 	GLES20.glUseProgram(mProgram); 
         //将最终变换矩阵传入shader程序
-        GLES20.glUniformMatrix4fv(muMVPMatrixHandle, 1, false, MatrixState.getFinalMatrix(), 0); 
+        GLES20.glUniformMatrix4fv(muMVPMatrixHandle, 1, false, MatrixState.getFinalMatrix(), 0);
         //传送顶点位置数据
 		GLES20.glVertexAttribPointer
 		(
