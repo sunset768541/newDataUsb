@@ -1,14 +1,8 @@
 package com.example.datausb;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.CornerPathEffect;
-import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.PathEffect;
 //import android.sutube1ort.v4.atube1.Fragment;
 import android.os.Bundle;
 //import android.atube1.Fragment;
@@ -21,21 +15,13 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.Toast;
 
-import com.example.datausb.DataChart;
 import com.example.datausb.Fiber.Fiber;
-import com.example.datausb.Main;
-import com.example.datausb.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -250,7 +236,7 @@ public class DataModel extends android.app.Fragment {
             this.holder = holder;
             sss = ss1;
             isRun = true;
-            dataChart = new DataChart(8200,0,68000,0);
+            dataChart = new DataChart(820,0,2000,0);
 
         }
         public void run() {
@@ -291,25 +277,26 @@ public class DataModel extends android.app.Fragment {
                         c = holder.lockCanvas();
 
                         synchronized (holder) {
-                            List<float[]> data = new ArrayList<>();
                             List<float[]> dataLine = new ArrayList<>();//存数据
-                            List<Paint> liner=new ArrayList<>();//存画笔
+                            List<Paint> linePaint=new ArrayList<>();//存画笔
                             for (Map.Entry<String,Fiber>item: ((Main)getActivity()).fiberManager.getFiberMap().entrySet()) {//遍历HashMap获得其中光纤的引用
-                                dataLine.add(intArray2MinusFloat(item.getValue().getOptical1450Data()));//加入1450数据
+                                dataLine.add(intArray2MinusFloat(item.getValue().getOptical1440Data()));//加入1450数据
+                                //for (int i=0;i<item.getValue().getOptical1440Data().length;i++)
+                                   // Log.e(item.getValue().getFiberName()+"1450第 "+Integer.valueOf(i).toString(),"个= "+Integer.valueOf(item.getValue().getOptical1440Data()[i]).toString());
                                 dataLine.add(intArray2MinusFloat(item.getValue().getOptical1663Data()));//加入1663数据
-                                liner.add(item.getValue().getLine1440());//加入1450画笔
-                                liner.add(item.getValue().getLine1663());//加入1663画笔
+                                linePaint.add(item.getValue().getLine1440());//加入1450画笔
+                                linePaint.add(item.getValue().getLine1663());//加入1663画笔
                             }
 
-                            data.add(intArray2MinusFloat(tunnelAdata));
-                            data.add(intArray2MinusFloat(tunnelA1data));
-                            data.add(intArray2MinusFloat(tunnelBdata));
-                            data.add(intArray2MinusFloat(tunnelB1data));
+                            //data.add(intArray2MinusFloat(tunnelAdata));
+                            //data.add(intArray2MinusFloat(tunnelA1data));
+                            //data.add(intArray2MinusFloat(tunnelBdata));
+                            //data.add(intArray2MinusFloat(tunnelB1data));
 //                                data.add(getRandom(8192,65536));
 //                                data.add(getRandom(8192,65536));
 //                                data.add(getRandom(8192,65536));
 //                                data.add(getRandom(8192,65536));
-                            dataChart.drawAll(c, data, new int[]{Color.CYAN, Color.GREEN, Color.RED, Color.YELLOW});
+                            dataChart.drawAll(c, dataLine,linePaint );
 
                             /**
                              * 结束锁定画布并显示

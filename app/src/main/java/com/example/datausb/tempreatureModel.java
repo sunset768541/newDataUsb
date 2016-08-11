@@ -207,7 +207,7 @@ public class TempreatureModel extends android.app.Fragment {
                         tem.add(T1);
                         tem.add(T2);
 
-                        dataChart.drawAll(c,tem,new int[]{Color.RED,Color.YELLOW});
+                       // dataChart.drawAll(c,tem,new int[]{Color.RED,Color.YELLOW});
                        // Log.e("温度模式","ok");
 
                             /**

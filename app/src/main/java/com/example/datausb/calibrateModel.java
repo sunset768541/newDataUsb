@@ -288,7 +288,7 @@ public class CalibrateModel extends android.app.Fragment {
                             cliadta.add(PSA1);
                             cliadta.add(PSA2);
                             c = holder.lockCanvas();
-                            dataChart.drawAll(c, cliadta, new int[]{Color.RED, Color.YELLOW});
+                           // dataChart.drawAll(c, cliadta, new int[]{Color.RED, Color.YELLOW});
                             Log.e("标定熟悉", "时间");
                             /**
                              * 结束锁定画布并显示

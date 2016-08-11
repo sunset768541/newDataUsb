@@ -17,6 +17,9 @@ import android.widget.ToggleButton;
 import com.example.datausb.DataUtil.DataBaseOperation;
 import com.example.datausb.DataUtil.DataWR;
 import com.example.datausb.Fiber.FiberA;
+import com.example.datausb.Fiber.FiberB;
+import com.example.datausb.Fiber.FiberC;
+import com.example.datausb.Fiber.FiberD;
 
 import java.io.File;
 
@@ -52,9 +55,7 @@ public class SystemSetting extends android.app.Fragment {
     private EditText fiberD1663Code;
     private ToggleButton fiberDOpen;
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.systemseting, container, false);
-
-        return view;
+        return inflater.inflate(R.layout.systemseting, container, false);
     }
 
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -271,18 +272,106 @@ public class SystemSetting extends android.app.Fragment {
                    if ((fiberA1663Code.getText().toString().length()!=0)&&(fiberA1450Code.getText().toString().length()!=0)&&(fiberAlength.getText().toString().length()!=0)){
                        FiberA fiberA=FiberA.createFiberA();
                        fiberA.setFiberLength(Integer.parseInt(fiberAlength.getText().toString()));
-                       fiberA.setOptical1450Head(Integer.parseInt(fiberA1450Code.getText().toString()));
+                       fiberA.setOptical1440Head(Integer.parseInt(fiberA1450Code.getText().toString()));
                        fiberA.setOptical1663Head(Integer.parseInt(fiberA1663Code.getText().toString()));
                        //将Fiber加入到FiberManager中
+                       fiberA.setFiberName("A");
                        ((Main)getActivity()).fiberManager.addFiber('A');
                        ((Main) getActivity()).setTunnelAOn();
-                   }//判断长度和识别码都输入了吗e{
+                   }
                     else{
                        Toast.makeText(getActivity().getApplicationContext(), "请输入正确参数", Toast.LENGTH_SHORT).show();
-                       fiberAOpen.setChecked(false);}
+                       fiberAOpen.setChecked(false);
+                   }
                 }
                 else {
+                    ((Main)getActivity()).fiberManager.removeFiber("A");
+                    ((Main) getActivity()).setTunnelAOff();
 
+                    //从FiberManager中删除这个光纤
+                }
+
+            }
+        });
+        fiberBOpen.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    if ((fiberB1663Code.getText().toString().length()!=0)&&(fiberB1450Code.getText().toString().length()!=0)&&(fiberBlength.getText().toString().length()!=0)){
+                        FiberB fiberB=FiberB.createFiberB();
+                        fiberB.setFiberLength(Integer.parseInt(fiberBlength.getText().toString()));
+                        fiberB.setOptical1440Head(Integer.parseInt(fiberB1450Code.getText().toString()));
+                        fiberB.setOptical1663Head(Integer.parseInt(fiberB1663Code.getText().toString()));
+                        //将Fiber加入到FiberManager中
+                        fiberB.setFiberName("B");
+
+                        ((Main)getActivity()).fiberManager.addFiber('B');
+                        ((Main) getActivity()).setTunnelBOn();
+                    }
+                    else{
+                        Toast.makeText(getActivity().getApplicationContext(), "请输入正确参数", Toast.LENGTH_SHORT).show();
+                        fiberBOpen.setChecked(false);
+                    }
+                }
+                else {
+                    ((Main)getActivity()).fiberManager.removeFiber("B");
+                    ((Main) getActivity()).setTunnelBOff();
+                    //从FiberManager中删除这个光纤
+                }
+
+            }
+        });
+        fiberCOpen.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    if ((fiberC1663Code.getText().toString().length()!=0)&&(fiberC1450Code.getText().toString().length()!=0)&&(fiberClength.getText().toString().length()!=0)){
+                        FiberC fiberC= FiberC.createFiberC();
+                        fiberC.setFiberLength(Integer.parseInt(fiberClength.getText().toString()));
+                        fiberC.setOptical1440Head(Integer.parseInt(fiberC1450Code.getText().toString()));
+                        fiberC.setOptical1663Head(Integer.parseInt(fiberC1663Code.getText().toString()));
+                        //将Fiber加入到FiberManager中
+                        fiberC.setFiberName("C");
+
+                        ((Main)getActivity()).fiberManager.addFiber('C');
+                        ((Main) getActivity()).setTunnelCOn();
+                    }
+                    else{
+                        Toast.makeText(getActivity().getApplicationContext(), "请输入正确参数", Toast.LENGTH_SHORT).show();
+                        fiberCOpen.setChecked(false);
+                    }
+                }
+                else {
+                    ((Main)getActivity()).fiberManager.removeFiber("C");
+                    ((Main) getActivity()).setTunnelCOff();
+
+                    //从FiberManager中删除这个光纤
+                }
+
+            }
+        });
+        fiberDOpen.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    if ((fiberD1663Code.getText().toString().length()!=0)&&(fiberD1450Code.getText().toString().length()!=0)&&(fiberDlength.getText().toString().length()!=0)){
+                        FiberD fiberD=FiberD.createFiberD();
+                        fiberD.setFiberLength(Integer.parseInt(fiberDlength.getText().toString()));
+                        fiberD.setOptical1440Head(Integer.parseInt(fiberD1450Code.getText().toString()));
+                        fiberD.setOptical1663Head(Integer.parseInt(fiberD1663Code.getText().toString()));
+                        fiberD.setFiberName("D");
+                        //将Fiber加入到FiberManager中
+                        ((Main)getActivity()).fiberManager.addFiber('D');
+                        ((Main) getActivity()).setTunnelDOn();
+                    }
+                    else{
+                        Toast.makeText(getActivity().getApplicationContext(), "请输入正确参数", Toast.LENGTH_SHORT).show();
+                        fiberDOpen.setChecked(false);
+                    }
+                }
+                else {
+                    ((Main)getActivity()).fiberManager.removeFiber("D");
+                    ((Main) getActivity()).setTunnelDOff();
                     //从FiberManager中删除这个光纤
                 }
 

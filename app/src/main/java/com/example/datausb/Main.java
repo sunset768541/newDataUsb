@@ -138,23 +138,23 @@ public class Main extends Activity {
         tunnelA.setChecked(false);
     }
     public void setTunnelBOn(){
-        tunnelA.setChecked(true);
+        tunnelB.setChecked(true);
     }
     public void setTunnelBOff(){
-        tunnelA.setChecked(false);
+        tunnelB.setChecked(false);
     }
     public void setTunnelCOn(){
-        tunnelA.setChecked(true);
+        tunnelC.setChecked(true);
     }
     public void setTunnelCOff(){
-        tunnelA.setChecked(false);
+        tunnelC.setChecked(false);
     }
 
     public void setTunnelDOn(){
-        tunnelA.setChecked(true);
+        tunnelD.setChecked(true);
     }
     public void setTunnelDOff(){
-        tunnelA.setChecked(false);
+        tunnelD.setChecked(false);
     }
 
 
@@ -511,7 +511,7 @@ public class Main extends Activity {
                    //     Log.e("combination "+Integer.valueOf(i1).toString()," ="+Integer.valueOf(p+p1).toString());
                         i1 = i1 + 1;
                     }
-                   // fiberManager.decodeData(combination);//每次整合完都把数据送到FiberManager中进行解析，将数据分配到特定的光纤中
+                   fiberManager.decodeData(combination);//每次整合完都把数据送到FiberManager中进行解析，将数据分配到特定的光纤中
                    int[] tunnelAdata = Arrays.copyOfRange(combination, 0, combination.length/4);//copyOfRange(resourceObj,inclusive,exclusive),不包含exclusive那个
 
                     int[] tunnelA1data = Arrays.copyOfRange(combination, combination.length / 4, combination.length / 2);

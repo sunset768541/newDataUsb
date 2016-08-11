@@ -54,13 +54,13 @@ public class DataChart {
         this.iniyMin=iniyMin;
         ini(inixMax,inixMin,iniyMax,iniyMin);
     }
-    public  void  drawAll(Canvas canvas,List<float[]> data,int[] dataColors){
+    public  void  drawAll(Canvas canvas,List<float[]> data,List<Paint> dataPaint){
         canvas.drawRGB(15, 15, 15);//清空屏幕
         drawXYNumber(canvas,getGridColor(),getMargin(),getxMax(),getxMin(),getyMax(),getyMin(),getxGridNumber(),getyGridNumber(),getxNumberUnderXAxisPan(),getyNumberLeftYAxisPan());
         drawXYText(canvas,getTextColor(),getMargin(),getxLabel(),getyLabel(),getxLabelUnderXAxisPan(),getyLabelLeftYAxisPan());
         drawGrid(canvas,getGridColor(),getMargin(),getxMax(),getxMin(),getyMax(),getyMin(),getxGridNumber(),getyGridNumber());
         drawAxis(canvas,getxAxisColor(),getMargin());
-        drawPath(canvas,data,false,dataColors,getMargin());
+        drawPath(canvas,data,false,dataPaint,getMargin());
     }
     public void zoomX(float sclae,float touchX,float touchY){
         float x=(float) getxMin()+touchX/(float) getxPixelsPerUnit();
@@ -207,7 +207,7 @@ public class DataChart {
 
 
     }
-    private void drawPath(Canvas canvas, List<float[]> data, boolean circular,int[] dataColors,float []margins) {
+    private void drawPath(Canvas canvas, List<float[]> data, boolean circular,List<Paint> dataPaint,float []margins) {
 
         if (data.size()<1){
             return;
@@ -219,10 +219,10 @@ public class DataChart {
         for (int datalength=0;datalength<data.size();datalength++){
             Path path = new Path();
 
-            Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG);//开启抗锯齿使得图线变细
-            paint.setStyle(Paint.Style.STROKE);
-            paint.setColor(dataColors[datalength]);
-            paint.setStrokeWidth(1f);
+//            Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG);//开启抗锯齿使得图线变细
+//            paint.setStyle(Paint.Style.STROKE);
+//            paint.setColor(dataColors[datalength]);
+//            paint.setStrokeWidth(1f);
 
             //取出指定长度的数据进行绘制
             int start=(int)getxMin();
@@ -269,7 +269,7 @@ public class DataChart {
 
             }
 
-            canvas.drawPath(path, paint);
+            canvas.drawPath(path, dataPaint.get(datalength));
 
 
         }
