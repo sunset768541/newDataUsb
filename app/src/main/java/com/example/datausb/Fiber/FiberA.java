@@ -18,6 +18,7 @@ public class FiberA extends Fiber {
     public static FiberA createFiberA(){
         if (fiberA==null){
             fiberA=new FiberA();
+            fiberA.setFiberName("FiberA");
         }
         return fiberA;
     }
@@ -26,4 +27,6 @@ public class FiberA extends Fiber {
     public void setFiberColor() {
         fiberColor=Color.CYAN;
     }
+
+
 }

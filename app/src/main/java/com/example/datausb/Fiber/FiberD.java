@@ -6,8 +6,6 @@ import android.graphics.Color;
  * Created by sunset on 16/7/28.
  */
 public class FiberD extends Fiber {
-    public final char tunnelCode='D';
-    public int lineColor= Color.YELLOW;
     private  static FiberD fiberD;
     private  FiberD(){
 
@@ -15,6 +13,7 @@ public class FiberD extends Fiber {
     public static FiberD createFiberD(){
         if (fiberD==null){
             fiberD=new FiberD();
+            fiberD.setFiberName("FiberD");
         }
         return fiberD;
     }

@@ -275,7 +275,7 @@ public class SystemSetting extends android.app.Fragment {
                        fiberA.setOptical1440Head(Integer.parseInt(fiberA1450Code.getText().toString()));
                        fiberA.setOptical1663Head(Integer.parseInt(fiberA1663Code.getText().toString()));
                        //将Fiber加入到FiberManager中
-                       fiberA.setFiberName("A");
+
                        ((Main)getActivity()).fiberManager.addFiber('A');
                        ((Main) getActivity()).setTunnelAOn();
                    }
@@ -303,7 +303,7 @@ public class SystemSetting extends android.app.Fragment {
                         fiberB.setOptical1440Head(Integer.parseInt(fiberB1450Code.getText().toString()));
                         fiberB.setOptical1663Head(Integer.parseInt(fiberB1663Code.getText().toString()));
                         //将Fiber加入到FiberManager中
-                        fiberB.setFiberName("B");
+
 
                         ((Main)getActivity()).fiberManager.addFiber('B');
                         ((Main) getActivity()).setTunnelBOn();
@@ -331,7 +331,7 @@ public class SystemSetting extends android.app.Fragment {
                         fiberC.setOptical1440Head(Integer.parseInt(fiberC1450Code.getText().toString()));
                         fiberC.setOptical1663Head(Integer.parseInt(fiberC1663Code.getText().toString()));
                         //将Fiber加入到FiberManager中
-                        fiberC.setFiberName("C");
+
 
                         ((Main)getActivity()).fiberManager.addFiber('C');
                         ((Main) getActivity()).setTunnelCOn();
@@ -359,7 +359,6 @@ public class SystemSetting extends android.app.Fragment {
                         fiberD.setFiberLength(Integer.parseInt(fiberDlength.getText().toString()));
                         fiberD.setOptical1440Head(Integer.parseInt(fiberD1450Code.getText().toString()));
                         fiberD.setOptical1663Head(Integer.parseInt(fiberD1663Code.getText().toString()));
-                        fiberD.setFiberName("D");
                         //将Fiber加入到FiberManager中
                         ((Main)getActivity()).fiberManager.addFiber('D');
                         ((Main) getActivity()).setTunnelDOn();

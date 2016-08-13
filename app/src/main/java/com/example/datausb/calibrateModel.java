@@ -3,6 +3,7 @@ package com.example.datausb;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Looper;
 import android.text.TextUtils;
@@ -17,9 +18,15 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.datausb.DataUtil.DataBaseOperation;
+import com.example.datausb.Fiber.Fiber;
+import com.example.datausb.Fiber.FiberA;
+import com.example.datausb.Fiber.FiberB;
+import com.example.datausb.Fiber.FiberC;
+import com.example.datausb.Fiber.FiberD;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -33,8 +40,12 @@ public class CalibrateModel extends android.app.Fragment {
     private SurfaceHolder holder;
     EditText fiberAclabricateTemperature;
     EditText fiberBclabricateTemperature;
+    EditText fiberCclabricateTemperature;
+    EditText fiberDclabricateTemperature;
     Button fiberAstartCalibrate;
     Button fiberBstartCalibrate;
+    Button fiberCstartCalibrate;
+    Button fiberDstartCalibrate;
     /**
      * 这个函数的作用是使Activity可以唤醒fragment中的显示线程
      */
@@ -51,111 +62,16 @@ public class CalibrateModel extends android.app.Fragment {
         super.onActivityCreated(savedInstanceState);//
         fiberAclabricateTemperature = (EditText) getActivity().findViewById(R.id.editText);
         fiberBclabricateTemperature = (EditText) getActivity().findViewById(R.id.editText2);
+        fiberCclabricateTemperature = (EditText) getActivity().findViewById(R.id.editText20);
+        fiberDclabricateTemperature = (EditText) getActivity().findViewById(R.id.editText21);
         fiberAstartCalibrate = (Button) getActivity().findViewById(R.id.button8);
         fiberBstartCalibrate = (Button) getActivity().findViewById(R.id.button9);
-        fiberAstartCalibrate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int[] tuba;
-                int[] tuba1;
-                String tem= fiberAclabricateTemperature.getText().toString().trim();
-                if(TextUtils.isEmpty(tem)){
-                    Toast.makeText(getActivity().getApplicationContext(), "请输入当前的标定温度", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    Log.e("tt", fiberAclabricateTemperature.getText().toString());
-                    final  String tablename="tube1data";//要建立表格的命字
-                    //建立表格的sql命令，存在就不建立，不存在就建立
-                    String stu_table = "create table if not exists tube1data(_id integer primary key autoincrement,calibtem INTEGER,tubedata text)";
-                    DataBaseOperation.mDataBaseOperation.creatOrGetTable(stu_table);
-                    try {
-                        tuba = ((Main) getActivity()).get_TubeA1_data().getIntArray("tunnelAdata");
-                        tuba1 = ((Main) getActivity()).get_TubeA1_data1().getIntArray("tunnelA1data");
-                        final float [] PSA=new float[tuba.length];
-                        for (int i=0;i<tuba.length;i++){
-                            if(tuba[i]==0){
-                                PSA[i]=0;
-                            }
-
-                            else {
-
-                                PSA[i]=(float)tuba1[i]/tuba[i];
-                                // Log.e("PAS",Float.valueOf(PSA[i]).toString());
-                            }
-
-                        }
-                        new Thread(){
-                            public void run(){
-                                DataBaseOperation.mDataBaseOperation.updataDataBase(Integer.valueOf(fiberAclabricateTemperature.getText().toString()),PSA,tablename);
-                                Looper.prepare();
-
-                                Toast.makeText(getActivity().getApplicationContext(), "传感通道1标定完成", Toast.LENGTH_SHORT).show();
-                                Looper.loop();
-
-                            }
-                        }.start();
-
-
-                    }
-                    catch (NullPointerException e){
-                        Toast.makeText( getActivity().getApplicationContext(), "通道1无数据输入", Toast.LENGTH_SHORT).show();
-
-                    }
-                }
-
-            }
-
-
-
-        });
-        fiberBstartCalibrate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int[] tubeb;
-                int[] tubeb1;
-                String tem= fiberBclabricateTemperature.getText().toString().trim();
-                if(TextUtils.isEmpty(tem)){
-                    Toast.makeText(getActivity().getApplicationContext(), "请输入当前的标定温度", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    final  String tablename = "tube2data";
-                    String stu_table = "create table if not exists tube2data(_id integer primary key autoincrement,calibtem INTEGER,tubedata text)";
-                    DataBaseOperation.mDataBaseOperation.creatOrGetTable(stu_table);
-                    try{
-                        tubeb = ((Main) getActivity()).get_TubeA1_data2().getIntArray("tunnelBdata");
-                        tubeb1 = ((Main) getActivity()).get_TubeA1_data3().getIntArray("tunnelB1data");
-                        final     float [] PSA1=new float[tubeb.length];
-                        for (int i=0;i<tubeb.length;i++){
-                            if(tubeb[i]==0){
-                                PSA1[i]=0;
-                            }
-                            else PSA1[i]=(float)tubeb1[i]/tubeb[i];
-                        }
-
-                        //标定直接计算出P（SA）储存。
-                        new Thread(){
-                            public void run(){
-                                DataBaseOperation.mDataBaseOperation.updataDataBase(Integer.valueOf(fiberAclabricateTemperature.getText().toString()),PSA1,tablename);
-                                Looper.prepare();
-
-                                Toast.makeText(getActivity().getApplicationContext(), "传感通道2标定完成", Toast.LENGTH_SHORT).show();
-                                Looper.loop();
-
-                            }
-                        }.start();
-
-                    }
-
-                    catch (NullPointerException e){
-                        Toast.makeText(getActivity().getApplicationContext(), "通道2无数据输入", Toast.LENGTH_SHORT).show();
-
-                    }
-
-
-                }
-
-            }
-        });
+        fiberCstartCalibrate = (Button) getActivity().findViewById(R.id.button5);
+        fiberDstartCalibrate = (Button) getActivity().findViewById(R.id.button4);
+        fiberAstartCalibrate.setOnClickListener(new ClabriateButtonOnClickListener(FiberA.createFiberA(),fiberAclabricateTemperature));
+        fiberBstartCalibrate.setOnClickListener(new ClabriateButtonOnClickListener(FiberB.createFiberB(),fiberBclabricateTemperature));
+        fiberCstartCalibrate.setOnClickListener(new ClabriateButtonOnClickListener(FiberC.createFiberC(),fiberCclabricateTemperature));
+        fiberDstartCalibrate.setOnClickListener(new ClabriateButtonOnClickListener(FiberD.createFiberD(),fiberDclabricateTemperature));
         /**
          * 获得布局中的surfaceview
          */
@@ -240,8 +156,8 @@ public class CalibrateModel extends android.app.Fragment {
             isRun = true;
             showLineViewHeigth = sss.getHeight();
             showLineViewWidth = sss.getWidth();
-            dataChart = new DataChart(8200,0,68000,0);
-            dataChart.setyMax(10000);
+            dataChart = new DataChart(820,0,68,0);
+            dataChart.setyMax(1);
         }
 
         public void run() {
@@ -261,35 +177,17 @@ public class CalibrateModel extends android.app.Fragment {
                         else {
                             ((Main) getActivity()).dataObj.notifyAll();
                         }
-                        //下面的语句是从Activity中获取数据
-                        int[] tuba = ((Main) getActivity()).get_TubeA1_data().getIntArray("tunnelAdata");
-                        int[] tuba1 = ((Main) getActivity()).get_TubeA1_data1().getIntArray("tunnelA1data");
-                        int[] tubeb = ((Main) getActivity()).get_TubeA1_data2().getIntArray("tunnelBdata");
-                        int[] tubeb1 = ((Main) getActivity()).get_TubeA1_data3().getIntArray("tunnelB1data");
-                        /**
-                         * 下面是根据通道1234的数据计算标定光功率的PSA
-                         */
-                        float[] PSA1 = new float[tuba.length];
-                        float[] PSA2 = new float[tuba.length];
-                        for (int i = 0; i < tuba.length; i++) {
-                            if (tuba[i] == 0) {
-                                PSA1[i] = 0;
-                            } else {
-                                PSA1[i] = -(float) tuba1[i] / tuba[i];
-                            }
-                            if (tubeb[i] == 0) {
-                                PSA2[i] = 0;
-                            } else PSA2[i] = -(float) tubeb1[i] / tubeb[i];
-                        }
-
 
                         synchronized (holder) {
-                            List<float[]> cliadta = new ArrayList<>();
-                            cliadta.add(PSA1);
-                            cliadta.add(PSA2);
+                            List<float[]> dataLine = new ArrayList<>();//存数据
+                            List<Paint> linePaint=new ArrayList<>();//存画笔
+                            for (Map.Entry<String,Fiber>item: ((Main)getActivity()).fiberManager.getFiberMap().entrySet()) {//遍历HashMap获得其中光纤的引用
+                                dataLine.add(item.getValue().showcCalculateCalibrate());//加入标定数据
+                                linePaint.add(item.getValue().getCalibrate());//加入1663画笔绘制图线
+                            }
                             c = holder.lockCanvas();
-                           // dataChart.drawAll(c, cliadta, new int[]{Color.RED, Color.YELLOW});
-                            Log.e("标定熟悉", "时间");
+                            dataChart.drawAll(c, dataLine, linePaint);
+                            //Log.e("标定熟悉", "时间");
                             /**
                              * 结束锁定画布并显示
                              */
@@ -315,6 +213,50 @@ public class CalibrateModel extends android.app.Fragment {
             }
 
         }
+    }
+    class ClabriateButtonOnClickListener implements View.OnClickListener{//执行标定按钮的监听函数
+        String calibrateTempreture;
+        Fiber fiber;
+        String fiberName;
+        EditText editText;
+        public ClabriateButtonOnClickListener(Fiber fiber,EditText editText){
+            this.fiber=fiber;
+            fiberName=fiber.getFiberName();
+            this.editText=editText;
+        }
+        @Override
+        public void onClick(View v) {
+            calibrateTempreture=editText.getText().toString().trim();
+            if(TextUtils.isEmpty(calibrateTempreture)){
+                Toast.makeText(getActivity().getApplicationContext(), "请输入当前的标定温度", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                //建立表格的sql命令，存在就不建立，不存在就建立
+                String stu_table = "create table if not exists "+fiberName+"(_id integer primary key autoincrement,calibriateTempreture INTEGER,calibriateData text)";
+                DataBaseOperation.mDataBaseOperation.creatOrGetTable(stu_table);
+                try {
+                    new Thread(){
+                        public void run(){
+                            DataBaseOperation.mDataBaseOperation.updataDataBase(Integer.parseInt(calibrateTempreture),fiber.calculateCalibrate(),fiberName);
+                            Looper.prepare();
+                            Toast.makeText(getActivity().getApplicationContext(), fiberName+"标定完成", Toast.LENGTH_SHORT).show();
+                            Looper.loop();
+
+                        }
+                    }.start();
+
+
+                }
+                catch (NullPointerException e){
+                    Toast.makeText( getActivity().getApplicationContext(), fiberName+"通道1无数据输入", Toast.LENGTH_SHORT).show();
+
+                }
+            }
+
+
+        }
+
+
     }
 }
 

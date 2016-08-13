@@ -32,7 +32,7 @@ public class TempreatureModel extends android.app.Fragment {
      * 定义一个SurfaceHolder用来管理surface
      */
     private SurfaceHolder holder;
-   float [] caliPSA;
+    float [] caliPSA;
     float[] caliPSB;
     /**
      * 这个函数的作用是使Activity可以唤醒fragment中的显示线程

@@ -3,12 +3,16 @@ package com.example.datausb.Fiber;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.PathEffect;
+import android.util.Log;
 
 /**
  * Created by sunset on 16/7/28.
+ * 1663 Anti-stoke scatting
+ * 1440 Stoke scatting
+ * Psa=Ps/Pa=1440/1663;
  */
  public abstract class Fiber {
-    private String fiberName;
+    protected String fiberName;
     protected int fiberColor;
     PathEffect line1440Effect = new DashPathEffect(new float[] {0.1f, 0.1f}, 0.0f);
     //PathEffect line1440Effect = new DiscretePathEffect(2.0f,3.0f);
@@ -16,17 +20,21 @@ import android.graphics.PathEffect;
 
     protected Paint line1440;
     protected Paint line1663;
+    protected Paint calibrate;
     protected int optical1663Head;
     protected int optical1440Head;
     protected int length;
     protected int[] optical1663Data;
     protected int[] optical1440Data;
     private boolean isShow;
+    private float[] clibrateData;
+    private float[] tempreture;
 
     public Fiber() {
         setFiberColor();
         setLine1440();
         setLine1663();
+        setCalibrate();
     }
 
     public int getOptical1663Head() {
@@ -84,7 +92,6 @@ import android.graphics.PathEffect;
     }
 
     public  void setLine1440(){
-
         line1440=new Paint();//开启抗锯齿使得图线变细
         line1440.setStyle(Paint.Style.STROKE);
         line1440.setColor(fiberColor);
@@ -113,7 +120,39 @@ import android.graphics.PathEffect;
         return fiberName;
     }
 
-    public void setFiberName(String fiberName) {
-        this.fiberName = fiberName;
+    protected   void setFiberName(String name){
+        fiberName=name;
+    };
+    public Paint getCalibrate() {
+        return calibrate;
+    }
+
+    public  void setCalibrate(){
+        calibrate=new Paint(Paint.ANTI_ALIAS_FLAG);
+        calibrate.setStyle(Paint.Style.STROKE);
+        calibrate.setColor(fiberColor);
+        calibrate.setStrokeWidth(1f);
+    }
+    public float[] calculateCalibrate(){
+        float []tem =new float[getFiberLength()];
+        for (int i=0;i<getFiberLength();i++){
+           // Log.e("第"+Integer.valueOf(i).toString()," ="+Integer.valueOf(optical1663Data[i]).toString());
+            if (optical1663Data[i]==0)
+                tem[i]=0;
+            else
+            tem[i]=(float)optical1440Data[i]/optical1663Data[i];
+        }
+        return tem;
+    }
+    public float[] showcCalculateCalibrate(){
+        float []tem =new float[getFiberLength()];
+        for (int i=0;i<getFiberLength();i++){
+            // Log.e("第"+Integer.valueOf(i).toString()," ="+Integer.valueOf(optical1663Data[i]).toString());
+            if (optical1663Data[i]==0)
+                tem[i]=0;
+            else
+                tem[i]=-(float)optical1440Data[i]/optical1663Data[i];
+        }
+        return tem;
     }
 }
