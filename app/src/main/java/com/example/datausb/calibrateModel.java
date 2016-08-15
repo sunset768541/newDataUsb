@@ -2,7 +2,6 @@ package com.example.datausb;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Looper;
@@ -183,7 +182,7 @@ public class CalibrateModel extends android.app.Fragment {
                             List<Paint> linePaint=new ArrayList<>();//存画笔
                             for (Map.Entry<String,Fiber>item: ((Main)getActivity()).fiberManager.getFiberMap().entrySet()) {//遍历HashMap获得其中光纤的引用
                                 dataLine.add(item.getValue().showcCalculateCalibrate());//加入标定数据
-                                linePaint.add(item.getValue().getCalibrate());//加入1663画笔绘制图线
+                                linePaint.add(item.getValue().getCalibratePaint());//加入1663画笔绘制图线
                             }
                             c = holder.lockCanvas();
                             dataChart.drawAll(c, dataLine, linePaint);
@@ -238,6 +237,7 @@ public class CalibrateModel extends android.app.Fragment {
                     new Thread(){
                         public void run(){
                             DataBaseOperation.mDataBaseOperation.updataDataBase(Integer.parseInt(calibrateTempreture),fiber.calculateCalibrate(),fiberName);
+                            fiber.setCalibrate();
                             Looper.prepare();
                             Toast.makeText(getActivity().getApplicationContext(), fiberName+"标定完成", Toast.LENGTH_SHORT).show();
                             Looper.loop();

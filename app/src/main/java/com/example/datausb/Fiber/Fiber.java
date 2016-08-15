@@ -1,9 +1,13 @@
 package com.example.datausb.Fiber;
 
+import android.content.Context;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.PathEffect;
 import android.util.Log;
+import android.widget.Toast;
+
+import com.example.datausb.DataUtil.DataBaseOperation;
 
 /**
  * Created by sunset on 16/7/28.
@@ -15,9 +19,7 @@ import android.util.Log;
     protected String fiberName;
     protected int fiberColor;
     PathEffect line1440Effect = new DashPathEffect(new float[] {0.1f, 0.1f}, 0.0f);
-    //PathEffect line1440Effect = new DiscretePathEffect(2.0f,3.0f);
-
-
+    public float[] caliPSA;
     protected Paint line1440;
     protected Paint line1663;
     protected Paint calibrate;
@@ -27,16 +29,33 @@ import android.util.Log;
     protected int[] optical1663Data;
     protected int[] optical1440Data;
     private boolean isShow;
-    private float[] clibrateData;
-    private float[] tempreture;
-
+    private Context context;
     public Fiber() {
         setFiberColor();
         setLine1440();
         setLine1663();
-        setCalibrate();
+        setCalibratePaint();
     }
 
+    public boolean setCalibrate(){
+        try {
+            caliPSA= DataBaseOperation.mDataBaseOperation.getFromDataBase(fiberName);
+            Log.e(fiberName+"从数据库获得标定数据","-----ok");
+            Log.e(fiberName+"标定温度为",Float.valueOf(caliPSA[caliPSA.length-1]).toString());
+            Log.e(fiberName+"标定光纤长度为",Integer.valueOf(caliPSA.length-1).toString());
+            if (getFiberLength()!=(caliPSA.length-1)){
+                Toast.makeText(context, fiberName+"光纤长度已经改变，需重新标定", Toast.LENGTH_SHORT).show();
+                Log.e("不等于","光纤长度");
+                return false;
+            }
+        }
+        catch (Exception e){
+            Log.e("标定数据",Log.getStackTraceString(e));
+            Toast.makeText(context, "标定数据不存在，请先在标定模式下进行标定", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
     public int getOptical1663Head() {
         return optical1663Head;
     }
@@ -123,11 +142,11 @@ import android.util.Log;
     protected   void setFiberName(String name){
         fiberName=name;
     };
-    public Paint getCalibrate() {
+    public Paint getCalibratePaint() {
         return calibrate;
     }
 
-    public  void setCalibrate(){
+    public  void setCalibratePaint(){
         calibrate=new Paint(Paint.ANTI_ALIAS_FLAG);
         calibrate.setStyle(Paint.Style.STROKE);
         calibrate.setColor(fiberColor);
@@ -136,23 +155,42 @@ import android.util.Log;
     public float[] calculateCalibrate(){
         float []tem =new float[getFiberLength()];
         for (int i=0;i<getFiberLength();i++){
-           // Log.e("第"+Integer.valueOf(i).toString()," ="+Integer.valueOf(optical1663Data[i]).toString());
             if (optical1663Data[i]==0)
                 tem[i]=0;
             else
             tem[i]=(float)optical1440Data[i]/optical1663Data[i];
         }
+
         return tem;
     }
     public float[] showcCalculateCalibrate(){
         float []tem =new float[getFiberLength()];
         for (int i=0;i<getFiberLength();i++){
-            // Log.e("第"+Integer.valueOf(i).toString()," ="+Integer.valueOf(optical1663Data[i]).toString());
             if (optical1663Data[i]==0)
                 tem[i]=0;
             else
                 tem[i]=-(float)optical1440Data[i]/optical1663Data[i];
         }
         return tem;
+    }
+    public float[] calculateTempreture(){
+        float []psa=calculateCalibrate();
+        float [] tem=new float[getFiberLength()];
+        if (getFiberLength()==caliPSA.length-1){
+        for (int i=0;i<getFiberLength();i++){
+            double bb1=(double)psa[i]/caliPSA[i];
+            float tt2=(float)(Math.log(bb1)+1/caliPSA[caliPSA.length-1]);
+            tem[i]=-1/tt2;
+        }
+        }
+        return tem;
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
     }
 }

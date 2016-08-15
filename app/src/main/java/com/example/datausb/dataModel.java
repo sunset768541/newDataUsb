@@ -187,7 +187,7 @@ public class DataModel extends android.app.Fragment {
 
         public void surfaceChanged(SurfaceHolder holder1, int a, int b, int c) {
             holder1.addCallback(this);
-            //boolean datareceive = ((Main) getActivity()).GetByteDataProcessComlete();
+            //boolean datareceive = ((Main) getActivity()).getByteDataProcessComlete();
             myThread = new dataThread(holder1, ss);//创建一个绘图线程
             myThread.start();
         }
@@ -218,14 +218,8 @@ public class DataModel extends android.app.Fragment {
     class dataThread extends Thread {
         private SurfaceHolder holder;
         public boolean isRun;
-        int[] tunnelAdata;
-        int[] tunnelA1data;
-        int[] tunnelBdata;
-        int[] tunnelB1data;
         Canvas c;
         SurfaceView sss;
-
-
         /**
          * 该线程的构造函数
          *
@@ -258,44 +252,17 @@ public class DataModel extends android.app.Fragment {
                         else {
                             ((Main) getActivity()).dataObj.notifyAll();
                         }
-                        //下面的语句是从Activity中获取数据
-
-                        tunnelAdata = ((Main) getActivity()).get_TubeA1_data().getIntArray("tunnelAdata");
-                        tunnelA1data = ((Main) getActivity()).get_TubeA1_data1().getIntArray("tunnelA1data");
-                        tunnelBdata = ((Main) getActivity()).get_TubeA1_data2().getIntArray("tunnelBdata");
-                        tunnelB1data = ((Main) getActivity()).get_TubeA1_data3().getIntArray("tunnelB1data");
-                        /**
-                         * 1通道：8191  2通道: 16383
-                         * 1通道：40959  2通道: 49151
-                         * 因为FPGA上传的数据为0--65535，FPGA上传是将16位的数据拆分成2个byte
-                         * 而我们一次接收的为65536个byte，也就是收到了一半的数据，要2次可以将65536个数全部收回
-                         * 所以可以发现，每个通道的某个点的数据是有2个可能的。因为数据的跳跃很大，过渡不是平滑的，所以也造成了图像剧烈的抖动。
-                         */
-
-//                         * c为锁定suface时获得的一个画布，我们可以在上面画图
-
-                        c = holder.lockCanvas();
+                       c = holder.lockCanvas();
 
                         synchronized (holder) {
                             List<float[]> dataLine = new ArrayList<>();//存数据
                             List<Paint> linePaint=new ArrayList<>();//存画笔
                             for (Map.Entry<String,Fiber>item: ((Main)getActivity()).fiberManager.getFiberMap().entrySet()) {//遍历HashMap获得其中光纤的引用
                                 dataLine.add(intArray2MinusFloat(item.getValue().getOptical1440Data()));//加入1450数据
-                                //for (int i=0;i<item.getValue().getOptical1440Data().length;i++)
-                                   // Log.e(item.getValue().getFiberName()+"1450第 "+Integer.valueOf(i).toString(),"个= "+Integer.valueOf(item.getValue().getOptical1440Data()[i]).toString());
                                 dataLine.add(intArray2MinusFloat(item.getValue().getOptical1663Data()));//加入1663数据
-                                linePaint.add(item.getValue().getLine1440());//加入1450画笔
+                                linePaint.add(item.getValue().getLine1440());//加入1440画笔
                                 linePaint.add(item.getValue().getLine1663());//加入1663画笔
                             }
-
-                            //data.add(intArray2MinusFloat(tunnelAdata));
-                            //data.add(intArray2MinusFloat(tunnelA1data));
-                            //data.add(intArray2MinusFloat(tunnelBdata));
-                            //data.add(intArray2MinusFloat(tunnelB1data));
-//                                data.add(getRandom(8192,65536));
-//                                data.add(getRandom(8192,65536));
-//                                data.add(getRandom(8192,65536));
-//                                data.add(getRandom(8192,65536));
                             dataChart.drawAll(c, dataLine,linePaint );
 
                             /**
@@ -311,21 +278,16 @@ public class DataModel extends android.app.Fragment {
                             ((Main) getActivity()).wakeUpAllMainThread();
                             //Log.e("dataModer","一次");//
                         }
-
-
                     }
-
                 }
             } catch (NullPointerException e) {
                 Log.d("数据模式空指针异常", Log.getStackTraceString(e));
-
-
             }
 
         }
 
     }
-    public float[] getRandom(int length, float max){
+    public float[] getRandom(int length, float max){//产生随机数
         float[] a=new float[length];
 
         for (int i=0;i<length;i++)

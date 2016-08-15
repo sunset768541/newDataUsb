@@ -131,7 +131,7 @@ public class SystemSetting extends android.app.Fragment {
                     TempreatureAlarm.cla1= DataBaseOperation.mDataBaseOperation.getFromDataBase("tube1data");
                     TempreatureAlarm.cla2=DataBaseOperation.mDataBaseOperation.getFromDataBase("tube2data");
                 } catch (Exception e) {
-                    Toast.makeText(((Main) getActivity()).getApplicationContext(), "标定数据不存在，请先在标定模式下进行标定", Toast.LENGTH_SHORT).show();
+                    Toast.makeText( getActivity().getApplicationContext(), "标定数据不存在，请先在标定模式下进行标定", Toast.LENGTH_SHORT).show();
 
                 }
                 if (sw2.isChecked()) {
@@ -274,10 +274,12 @@ public class SystemSetting extends android.app.Fragment {
                        fiberA.setFiberLength(Integer.parseInt(fiberAlength.getText().toString()));
                        fiberA.setOptical1440Head(Integer.parseInt(fiberA1450Code.getText().toString()));
                        fiberA.setOptical1663Head(Integer.parseInt(fiberA1663Code.getText().toString()));
+                       fiberA.setContext(getActivity().getApplicationContext());
                        //将Fiber加入到FiberManager中
-
-                       ((Main)getActivity()).fiberManager.addFiber('A');
-                       ((Main) getActivity()).setTunnelAOn();
+                       //if (fiberA.setCalibrate()) {
+                           ((Main)getActivity()).fiberManager.addFiber('A');
+                           ((Main) getActivity()).setTunnelAOn();
+                   //}
                    }
                     else{
                        Toast.makeText(getActivity().getApplicationContext(), "请输入正确参数", Toast.LENGTH_SHORT).show();
@@ -302,11 +304,14 @@ public class SystemSetting extends android.app.Fragment {
                         fiberB.setFiberLength(Integer.parseInt(fiberBlength.getText().toString()));
                         fiberB.setOptical1440Head(Integer.parseInt(fiberB1450Code.getText().toString()));
                         fiberB.setOptical1663Head(Integer.parseInt(fiberB1663Code.getText().toString()));
+                        fiberB.setContext(getActivity().getApplicationContext());
+                       // if (fiberB.setCalibrate()){
                         //将Fiber加入到FiberManager中
 
 
                         ((Main)getActivity()).fiberManager.addFiber('B');
                         ((Main) getActivity()).setTunnelBOn();
+                    //}
                     }
                     else{
                         Toast.makeText(getActivity().getApplicationContext(), "请输入正确参数", Toast.LENGTH_SHORT).show();
@@ -330,11 +335,14 @@ public class SystemSetting extends android.app.Fragment {
                         fiberC.setFiberLength(Integer.parseInt(fiberClength.getText().toString()));
                         fiberC.setOptical1440Head(Integer.parseInt(fiberC1450Code.getText().toString()));
                         fiberC.setOptical1663Head(Integer.parseInt(fiberC1663Code.getText().toString()));
+                        fiberC.setContext(getActivity().getApplicationContext());
+                        //if (fiberC.setCalibrate()){
                         //将Fiber加入到FiberManager中
 
 
                         ((Main)getActivity()).fiberManager.addFiber('C');
                         ((Main) getActivity()).setTunnelCOn();
+                    //}
                     }
                     else{
                         Toast.makeText(getActivity().getApplicationContext(), "请输入正确参数", Toast.LENGTH_SHORT).show();
@@ -359,9 +367,13 @@ public class SystemSetting extends android.app.Fragment {
                         fiberD.setFiberLength(Integer.parseInt(fiberDlength.getText().toString()));
                         fiberD.setOptical1440Head(Integer.parseInt(fiberD1450Code.getText().toString()));
                         fiberD.setOptical1663Head(Integer.parseInt(fiberD1663Code.getText().toString()));
-                        //将Fiber加入到FiberManager中
-                        ((Main)getActivity()).fiberManager.addFiber('D');
-                        ((Main) getActivity()).setTunnelDOn();
+                        fiberD.setContext(getActivity().getApplicationContext());
+//                       if(fiberD.setCalibrate()) {
+                           //从数据库中读取标定数据
+                           //将Fiber加入到FiberManager中
+                           ((Main) getActivity()).fiberManager.addFiber('D');
+                           ((Main) getActivity()).setTunnelDOn();
+                      // }
                     }
                     else{
                         Toast.makeText(getActivity().getApplicationContext(), "请输入正确参数", Toast.LENGTH_SHORT).show();

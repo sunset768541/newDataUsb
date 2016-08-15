@@ -68,21 +68,13 @@ public class DataBaseOperation {
 
     //更新数据库中的数据
     public void updataDataBase(int currenttemp, float[] tubedata, String tablenaem) {
-        StringBuilder stringBuffer=new StringBuilder();
-
-        //String ss = "";
+        StringBuilder stringBuilder=new StringBuilder();
         for (float i:tubedata) {
-            stringBuffer.append(i);
-            stringBuffer.append("!!");}
-
-// for(int i = 0; i < tubedata.length; i++) {
-//           // ss = ss + Float.toString(tubedata[i]) + "!!";
-//            stringBuffer.append(tubedata[i]);
-//            stringBuffer.append("!!");
-//        }
+            stringBuilder.append(i);
+            stringBuilder.append("!!");}
         ContentValues cValue = new ContentValues();
         cValue.put("calibriateTempreture", currenttemp);//
-        cValue.put("calibriateData", stringBuffer.toString());
+        cValue.put("calibriateData", stringBuilder.toString());
         int affet = mDatabase.update(tablenaem, cValue, "_id=?", new String[]{Integer.toString(1)});//修改主健值为1的一行中的数据
         if (affet == 0) {//这样就用updata储存数据而不必用insert了，因为如果每次都标定都用insert那会使数据库一直在递增数据，这样就保证了数据库中的表格中只包含一行标定数据
             insert(mDatabase, currenttemp, tubedata, tablenaem);

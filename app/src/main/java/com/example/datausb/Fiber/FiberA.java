@@ -11,7 +11,6 @@ import android.graphics.PathEffect;
  * Created by sunset on 16/7/28.
  */
 public class FiberA extends Fiber {
-    public final char tunnelCode='A';
     private  static FiberA fiberA;
     private  FiberA(){
     }

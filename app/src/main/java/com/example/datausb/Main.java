@@ -20,7 +20,6 @@ import android.widget.ToggleButton;
 
 import com.example.datausb.DataUtil.DataBaseOperation;
 import com.example.datausb.DataUtil.DataWR;
-import com.example.datausb.Fiber.FiberA;
 import com.example.datausb.Fiber.FiberManager;
 
 import java.io.FileOutputStream;
@@ -53,13 +52,7 @@ public class Main extends Activity {
     ToggleButton tunnelC;
     ToggleButton tunnelD;
     FiberManager fiberManager=new FiberManager();
-    /**
-     * 定义用于携带数据的Bundle
-     */
-    Bundle data_a = new Bundle();//携带通道A的数据Bundle
-    Bundle data_a1 = new Bundle();//携带通道A1的数据的Bundle
-    Bundle data_b = new Bundle();//携带通道B的数据Bundle
-    Bundle data_b1 = new Bundle();//携带通道B1的数据Bundl
+
     /**
      * 定义静态变量TOGGLE_BUTTON，用来标识togglebutton是否是第一次按下，0表示没有按过togglebutton，当按下togglebutton后该值永远为1.
      * 在切换显示模式时，由于会使数据接收线程和处理线程自动启动，那打开关闭设备按键的状态也要切换到正确的状态。
@@ -67,6 +60,7 @@ public class Main extends Activity {
     public static int TOGGLE_BUTTON = 0;
     public static int STOREDATA = 0;//数据存储标志
     public static int TEM_ALERT = 0;//温度报警标志
+
     /**
      * preferences为读取参数的SharePreference的实例
      * editor为修改参数的Shareferecxes.Editor的实例
@@ -130,6 +124,7 @@ public class Main extends Activity {
         tunnelB=(ToggleButton)findViewById(R.id.fiberB);
         tunnelC=(ToggleButton)findViewById(R.id.fiberC);
         tunnelD=(ToggleButton)findViewById(R.id.fiberD);
+        fiberManager.setContext(getApplicationContext());
     }
     public void setTunnelAOn(){
         tunnelA.setChecked(true);
@@ -149,7 +144,6 @@ public class Main extends Activity {
     public void setTunnelCOff(){
         tunnelC.setChecked(false);
     }
-
     public void setTunnelDOn(){
         tunnelD.setChecked(true);
     }
@@ -177,11 +171,11 @@ public class Main extends Activity {
 
     boolean isByteDataProcessComplete = false;
 
-    public boolean GetByteDataProcessComlete() {
+    public boolean getByteDataProcessComlete() {
         return isByteDataProcessComplete;
     }
 
-    public void SetByteDataProcessComplete(boolean isComplete) {
+    public void setByteDataProcessComplete(boolean isComplete) {
         isByteDataProcessComplete = isComplete;
     }
 
@@ -344,6 +338,7 @@ public class Main extends Activity {
                         dataProcessThread.start();//先不进行数据的处理
                     }
                 } else {
+
                     Toast.makeText(getApplicationContext(), "无法打开设备，USB设备非数据采集卡，请确认后重试",
                             Toast.LENGTH_SHORT).show();
                 }
@@ -508,21 +503,9 @@ public class Main extends Activity {
                             p1 = r.data[i + 1] << 8;
                         }
                         combination[i1] = p + p1;
-                   //     Log.e("combination "+Integer.valueOf(i1).toString()," ="+Integer.valueOf(p+p1).toString());
                         i1 = i1 + 1;
                     }
                    fiberManager.decodeData(combination);//每次整合完都把数据送到FiberManager中进行解析，将数据分配到特定的光纤中
-                   int[] tunnelAdata = Arrays.copyOfRange(combination, 0, combination.length/4);//copyOfRange(resourceObj,inclusive,exclusive),不包含exclusive那个
-
-                    int[] tunnelA1data = Arrays.copyOfRange(combination, combination.length / 4, combination.length / 2);
-
-                    int[] tunnelBdata = Arrays.copyOfRange(combination, combination.length / 2, combination.length - combination.length / 4);
-
-                    int[] tunnelB1data = Arrays.copyOfRange(combination, combination.length - combination.length / 4, combination.length);
-                    data_a.putIntArray("tunnelAdata", tunnelAdata);//待传入通道A的数据
-                    data_a1.putIntArray("tunnelA1data", tunnelA1data);//待传入通道A1的数据
-                    data_b.putIntArray("tunnelBdata", tunnelBdata);//待传入通道B的数据
-                    data_b1.putIntArray("tunnelB1data", tunnelB1data);//待传入通道B1的数据
                     if (TEM_ALERT == 1) {
                         if (TempreatureAlarm.alertfinish == 1) {
                             TempreatureAlarm.alertfinish = 0;
@@ -539,10 +522,6 @@ public class Main extends Activity {
                     synchronized (dd) {
                         try {
 
-                            set_TubeA1_data(data_a);//将分好类的数据放入Bundle中以供fragment访问
-                            set_TubeA1_data1(data_a1);
-                            set_TubeA1_data2(data_b);
-                            set_TubeA1_data3(data_b1);
                             dd.flag1 = true;//与fragment中的绘图线程进行生产者与消费者
 
                             switch (fragmentnumber) {
@@ -577,12 +556,12 @@ public class Main extends Activity {
                     }
                     Message msg1 = new Message();
                     msg1.what = COMPLETED;
-                    msg1.obj = tunnelAdata[2] + "+" + tunnelA1data[2];
+                    msg1.obj = combination[0] + "+" + combination[combination.length-1];
                     msg1.arg1 = r.speed;//数据的传输速度
                     handler.sendMessage(msg1);
                     r.flag = false;
                     r.notify();
-                    SetByteDataProcessComplete(true);
+                    setByteDataProcessComplete(true);
 
                     // Log.d("数据处理", "数据处理线程完成");
                 }
@@ -592,59 +571,7 @@ public class Main extends Activity {
         }
     }
 
-    /**
-     * 创建四个Bundle数组用来携带每个通道的数据信息以便传递到各个Fragment
-     */
-    Bundle tubeAdata;
-    Bundle tubeA1data;
-    Bundle tubeBdata;
-    Bundle tubeB1data;
 
-    /**
-     * set_TubeA1_data(Bundle a)函数是数据处理线程调用的函数，存放数据
-     *
-     * @param a
-     */
-    public void set_TubeA1_data(Bundle a) {
-
-        tubeAdata = a;
-    }
-
-    public void set_TubeA1_data1(Bundle a) {
-
-        tubeA1data = a;
-    }
-
-    public void set_TubeA1_data2(Bundle a) {
-
-        tubeBdata = a;
-    }
-
-    public void set_TubeA1_data3(Bundle a) {
-
-        tubeB1data = a;
-    }
-
-    /**
-     * 在Frafment中利用 Bundle bb= ((main1) getActivity()).get_TubeA1_data()来从该Avtivity中获取数据
-     *
-     * @return返回通道的数据Bundle
-     */
-    public Bundle get_TubeA1_data() {
-        return tubeAdata;
-    }
-
-    public Bundle get_TubeA1_data1() {
-        return tubeA1data;
-    }
-
-    public Bundle get_TubeA1_data2() {
-        return tubeBdata;
-    }
-
-    public Bundle get_TubeA1_data3() {
-        return tubeB1data;
-    }
 
     /**
      * 数据的存储，储存的路径为/mnt/external_sd，文件名为data.txt

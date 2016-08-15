@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 //import android.sutube1ort.v4.atube1.Fragment;
+import android.graphics.Paint;
 import android.os.Bundle;
 //import android.atube1.Fragment;
 //import android.sutube1ort.v4.atube1.FragmentActivity;
@@ -16,9 +17,11 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.datausb.DataUtil.DataBaseOperation;
+import com.example.datausb.Fiber.Fiber;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by sunset on 15/11/19.
@@ -32,8 +35,7 @@ public class TempreatureModel extends android.app.Fragment {
      * 定义一个SurfaceHolder用来管理surface
      */
     private SurfaceHolder holder;
-    float [] caliPSA;
-    float[] caliPSB;
+
     /**
      * 这个函数的作用是使Activity可以唤醒fragment中的显示线程
      */
@@ -48,11 +50,11 @@ public class TempreatureModel extends android.app.Fragment {
 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);//
-        try{
-            caliPSA= DataBaseOperation.mDataBaseOperation.getFromDataBase("tube1data");
-            caliPSB=DataBaseOperation.mDataBaseOperation.getFromDataBase("tube2data");
-        }
-        catch (Exception e){
+        try {
+            for (Map.Entry<String, Fiber> item : ((Main) getActivity()).fiberManager.getFiberMap().entrySet()) {//遍历HashMap获得其中光纤的引用
+                item.getValue().setCalibrate();
+            }
+        } catch (Exception e) {
             Toast.makeText(getActivity().getApplicationContext(), "标定数据不存在，请先在标定模式下进行标定", Toast.LENGTH_SHORT).show();
 
         }
@@ -123,13 +125,6 @@ public class TempreatureModel extends android.app.Fragment {
         int showLineSurfaceViewHeught;
         int showLineSurfaceViewWidth;
         SurfaceView showLineSurfaceView;
-        float fiberLength = 2048;
-        float maxnum = 16384;
-        List<Float> T1p=new ArrayList<>();
-        List<Float> T2p=new ArrayList<>();
-
-        float[]tp1;
-        float[]tp2;
         DataChart dataChart;
 
         /**
@@ -144,13 +139,13 @@ public class TempreatureModel extends android.app.Fragment {
             isRun = true;
             showLineSurfaceViewHeught = showLineSurfaceView.getHeight();
             showLineSurfaceViewWidth = showLineSurfaceView.getWidth();
-            dataChart=new DataChart(8200,0,68000,0);
+            dataChart = new DataChart(820, 0, 50, 0);
             dataChart.setyMax(50);
         }
 
         public void run() {
             try {//捕获线程运行中切换界面而产生的的空指针异常，防止程序崩溃。
-            while (!((Main) getActivity()).stopTemperatureModelThread) {
+                while (!((Main) getActivity()).stopTemperatureModelThread) {
                     synchronized (((Main) getActivity()).dataObj) {//所有的等待和唤醒的锁都是同一个，这里选用了Activity中的一个对象
                         /**
                          * 如果当标志位为false这个线程开始等待
@@ -165,78 +160,44 @@ public class TempreatureModel extends android.app.Fragment {
                         else {
                             ((Main) getActivity()).dataObj.notifyAll();
                         }
-                        //下面的语句是从Activity中获取数据
-                        int[] tuba = ((Main) getActivity()).get_TubeA1_data().getIntArray("tunnelAdata");
-                        int[] tuba1 = ((Main) getActivity()).get_TubeA1_data1().getIntArray("tunnelA1data");
-                        int[] tubeb = ((Main) getActivity()).get_TubeA1_data2().getIntArray("tunnelBdata");
-                        int[] tubeb1 = ((Main) getActivity()).get_TubeA1_data3().getIntArray("tunnelB1data");
-                        float[] T1=new float[tuba.length];
-                        float[] T2=new float[tuba.length];
-                        float [] PSA1=new float[tuba.length];
-                        float [] PSA2=new float[tuba.length];
-                        for (int i=0;i<tuba.length;i++){
-                            if(tuba[i]==0){
-                                PSA1[i]=0;
-                            }
-                            else PSA1[i]=(float)tuba1[i]/tuba[i];
-                            if(tubeb[i]==0){
-                                PSA2[i]=0;
-                            }
-                            else PSA2[i]=(float)tubeb1[i]/tubeb[i];
-                        }
-                        /**
-                         * 由公式计算出温度
-                         */
-                        for (int i=0;i<tuba.length;i++){
-                            double bb1=(double)PSA1[i]/caliPSA[i];
-                            double bb2=(double)PSA2[i]/caliPSB[i];
-                            float tt1=(float)(Math.log(bb1)+1/caliPSA[caliPSA.length-1]);
-                            float tt2=(float)(Math.log(bb2)+1/caliPSB[caliPSB.length-1]);
+                        List<float[]> dataLine = new ArrayList<>();//存数据
+                        List<Paint> linePaint = new ArrayList<>();//存画笔
 
-                            T1[i]=-1/tt1;
-                            T2[i]=-1/tt2;
+                        for (Map.Entry<String, Fiber> item : ((Main) getActivity()).fiberManager.getFiberMap().entrySet()) {//遍历HashMap获得其中光纤的引用
+                            dataLine.add(item.getValue().calculateTempreture());//加入标定数据
+                            linePaint.add(item.getValue().getCalibratePaint());//加入1663画笔绘制图线
                         }
-                        /**
-                         * 定义了两支画笔
-                         * paxis用来画横纵坐标轴
-                         * axe用来绘制坐标轴中的坐标
-                         */
 
                         Canvas c = holder.lockCanvas();
-                       List<float[]> tem=new ArrayList<>();
-                        tem.add(T1);
-                        tem.add(T2);
-
-                       // dataChart.drawAll(c,tem,new int[]{Color.RED,Color.YELLOW});
-                       // Log.e("温度模式","ok");
-
-                            /**
-                             * 结束锁定画布并显示
-                             */
-                            holder.unlockCanvasAndPost(c);//结束锁定画图，并提交改变。// ;
-                            /**
-                             * 把标识位置为false
-                             * 同时唤醒数据处理线程
-                             */
-
-                            ((Main) getActivity()).dataObj.flag1 = false;
-                            ((Main) getActivity()).wakeUpAllMainThread();
-                        }
 
 
+                        dataChart.drawAll(c, dataLine, linePaint);
+                        // Log.e("温度模式","ok");
+
+                        /**
+                         * 结束锁定画布并显示
+                         */
+                        holder.unlockCanvasAndPost(c);//结束锁定画图，并提交改变。// ;
+                        /**
+                         * 把标识位置为false
+                         * 同时唤醒数据处理线程
+                         */
+
+                        ((Main) getActivity()).dataObj.flag1 = false;
+                        ((Main) getActivity()).wakeUpAllMainThread();
                     }
 
 
-
                 }
-            catch (NullPointerException e) {
+
+
+            } catch (NullPointerException e) {
                 Log.d("tempretureModel", Log.getStackTraceString(e));
 
 
             }
 
         }
-
 
 
     }
