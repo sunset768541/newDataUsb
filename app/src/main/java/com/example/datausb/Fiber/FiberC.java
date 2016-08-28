@@ -14,6 +14,9 @@ public class FiberC extends Fiber {
         if (fiberC==null){
             fiberC=new FiberC();
             fiberC.setFiberName("FiberC");
+            fiberC.setFiberId('C');
+            fiberC.setOptical1440Head(36);
+            fiberC.setOptical1663Head(10);
         }
         return fiberC;
     }

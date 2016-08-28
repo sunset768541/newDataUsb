@@ -26,12 +26,13 @@ import java.util.Map;
 
 /**
  * Created by sunset on 15/11/19.
+ * 数据模式Fragment
  */
 public class DataModel extends android.app.Fragment {
     /**
      * 定义一个SurfaceHolder用来管理surface
      */
-    private SurfaceHolder holder;
+
     private float scale=1;
     private float touchX=0;
     private float touchY=0;
@@ -56,7 +57,7 @@ public class DataModel extends android.app.Fragment {
     DataChart dataChart;
     SurfaceView sur;
     private GestureDetector mGesture;
-    private OnDoubleClickListener onDoubleClickListener;
+    public OnDoubleClickListener onDoubleClickListener;
     interface OnDoubleClickListener{
         void onDoubleClick(View view);
     }
@@ -69,8 +70,8 @@ public class DataModel extends android.app.Fragment {
 
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.datamodel, container, false);
-        return view;
+        return inflater.inflate(R.layout.datamodel, container, false);
+
     }
 
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -156,11 +157,12 @@ public class DataModel extends android.app.Fragment {
             /**
              * 将holder和surfaceview绑定
              */
-        holder = sur.getHolder();
+
+        SurfaceHolder holder = sur.getHolder();
         /**
          * 实例化一个surfaceview
          */
-        VV v1 = new VV(getActivity(), holder, sur);
+        VV v1 = new VV(getActivity(), sur);
         /**
          * 调用这个surfaceview的surfaceCreated方法
          */
@@ -176,18 +178,16 @@ public class DataModel extends android.app.Fragment {
         /**
          * 该类的构造函数
          *
-         * @param context
-         * @param holder1，传入holder，给绘图线程使用
+         * @param context 系统上下文
          * @param sur，传入sur使绘图线程获得当前surfaceview的大小
          */
-        public VV(Context context, SurfaceHolder holder1, SurfaceView sur) {
+        public VV(Context context, SurfaceView sur) {
             super(context);
             ss = sur;
         }
 
         public void surfaceChanged(SurfaceHolder holder1, int a, int b, int c) {
             holder1.addCallback(this);
-            //boolean datareceive = ((Main) getActivity()).getByteDataProcessComlete();
             myThread = new dataThread(holder1, ss);//创建一个绘图线程
             myThread.start();
         }
@@ -230,7 +230,7 @@ public class DataModel extends android.app.Fragment {
             this.holder = holder;
             sss = ss1;
             isRun = true;
-            dataChart = new DataChart(820,0,2000,0);
+            dataChart = new DataChart(10240,0,2000,0);
 
         }
         public void run() {
@@ -247,7 +247,7 @@ public class DataModel extends android.app.Fragment {
                                 ((Main) getActivity()).dataObj.wait();
 
                             } catch (InterruptedException ex) {
-
+                                Log.e("数据模式",Log.getStackTraceString(ex));
                             }
                         else {
                             ((Main) getActivity()).dataObj.notifyAll();

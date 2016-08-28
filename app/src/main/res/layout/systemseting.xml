@@ -19,7 +19,7 @@
 
         <LinearLayout
             android:orientation="vertical"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/togglebuttoncolor"
             android:layout_weight="1">
@@ -97,7 +97,7 @@
 
         <LinearLayout
             android:orientation="vertical"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/togglebuttoncolor"
             android:layout_weight="1">
@@ -227,10 +227,11 @@
 
         <RelativeLayout
             android:orientation="vertical"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:backgroundTintMode="src_in"
-            android:background="@drawable/togglebuttoncolor">
+            android:background="@drawable/togglebuttoncolor"
+            android:layout_weight="1">
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -252,57 +253,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:id="@+id/title"
-                android:layout_below="@+id/name"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="10dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="通道"
-                    android:id="@+id/textView19"
-                    android:textIsSelectable="false"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="  光纤长度"
-                    android:id="@+id/textView24" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:id="@+id/textView23"
-                    android:text="  1450识别码" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="  1663识别码"
-                    android:id="@+id/textView39" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="  开关"
-                    android:id="@+id/textView41" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
                 android:id="@+id/A"
-                android:layout_below="@+id/title"
-                android:layout_marginRight="10dp">
+                android:layout_marginRight="10dp"
+                android:layout_below="@+id/name">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -310,29 +263,6 @@
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="  A"
                     android:id="@+id/textView42" />
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"
-                    android:ems="10"
-                    android:id="@+id/editText5"
-                    android:width="80dp"
-                    android:layout_marginLeft="20dp" />
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/editText7"
-                    android:layout_marginLeft="10dp"
-                    android:width="80dp" />
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/editText8"
-                    android:layout_marginLeft="15dp"
-                    android:width="80dp" />
 
                 <ToggleButton
                     android:layout_width="wrap_content"
@@ -348,7 +278,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:id="@+id/B"
-                android:layout_below="@+id/A">
+                android:layout_toRightOf="@+id/A"
+                android:layout_alignTop="@+id/A">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -356,29 +287,6 @@
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="  B"
                     android:id="@+id/textView43" />
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"
-                    android:ems="10"
-                    android:id="@+id/editText9"
-                    android:width="80dp"
-                    android:layout_marginLeft="20dp" />
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/editText10"
-                    android:layout_marginLeft="10dp"
-                    android:width="80dp" />
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/editText11"
-                    android:layout_marginLeft="15dp"
-                    android:width="80dp" />
 
                 <ToggleButton
                     android:layout_width="wrap_content"
@@ -394,7 +302,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:id="@+id/C"
-                android:layout_below="@+id/B">
+                android:layout_below="@+id/B"
+                android:layout_marginRight="10dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -402,29 +311,6 @@
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="  C"
                     android:id="@+id/textView44" />
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"
-                    android:ems="10"
-                    android:id="@+id/editText12"
-                    android:width="80dp"
-                    android:layout_marginLeft="20dp" />
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/editText13"
-                    android:layout_marginLeft="10dp"
-                    android:width="80dp" />
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/editText14"
-                    android:layout_marginLeft="15dp"
-                    android:width="80dp" />
 
                 <ToggleButton
                     android:layout_width="wrap_content"
@@ -440,7 +326,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:id="@+id/D"
-                android:layout_below="@+id/C">
+                android:layout_alignTop="@+id/C"
+                android:layout_toRightOf="@+id/C">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -448,29 +335,6 @@
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="  D"
                     android:id="@+id/textView45" />
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"
-                    android:ems="10"
-                    android:id="@+id/editText15"
-                    android:width="80dp"
-                    android:layout_marginLeft="20dp" />
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/editText16"
-                    android:layout_marginLeft="10dp"
-                    android:width="80dp" />
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/editText17"
-                    android:layout_marginLeft="15dp"
-                    android:width="80dp" />
 
                 <ToggleButton
                     android:layout_width="wrap_content"
@@ -506,7 +370,7 @@
 
         <LinearLayout
             android:orientation="vertical"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/togglebuttoncolor"
             android:layout_weight="1">
@@ -535,7 +399,24 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/editText3"
                     android:layout_weight="1"
-                    android:hint="输入要发送的USB内容"
+                    android:hint="光纤长度"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_marginRight="5dp"
+                    android:numeric="integer" />
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/editText22"
+                    android:hint="平均次数"
+                    android:numeric="integer" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="发送数据"
+                    android:id="@+id/button10"
+                    android:layout_weight="1"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
             </LinearLayout>
 
@@ -553,13 +434,6 @@
                     android:layout_weight="1"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="发送"
-                    android:id="@+id/button10"
-                    android:layout_weight="1"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
             </LinearLayout>
 
         </LinearLayout>

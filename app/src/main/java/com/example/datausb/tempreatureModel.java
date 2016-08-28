@@ -2,12 +2,10 @@ package com.example.datausb;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
-//import android.sutube1ort.v4.atube1.Fragment;
+
 import android.graphics.Paint;
 import android.os.Bundle;
-//import android.atube1.Fragment;
-//import android.sutube1ort.v4.atube1.FragmentActivity;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
@@ -16,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.example.datausb.DataUtil.DataBaseOperation;
 import com.example.datausb.Fiber.Fiber;
 
 import java.util.ArrayList;
@@ -34,7 +31,6 @@ public class TempreatureModel extends android.app.Fragment {
     /**
      * 定义一个SurfaceHolder用来管理surface
      */
-    private SurfaceHolder holder;
 
     /**
      * 这个函数的作用是使Activity可以唤醒fragment中的显示线程
@@ -44,8 +40,8 @@ public class TempreatureModel extends android.app.Fragment {
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.tempreaturemodel, container, false);
-        return view;
+        return inflater.inflate(R.layout.tempreaturemodel, container, false);
+
     }
 
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -66,11 +62,12 @@ public class TempreatureModel extends android.app.Fragment {
         /**
          * 将holder和surfaceview绑定
          */
-        holder = sur.getHolder();
+
+        SurfaceHolder holder = sur.getHolder();
         /**
          * 实例化一个surfaceview
          */
-        drawLineSurface v1 = new drawLineSurface(getActivity(), holder, sur);
+        drawLineSurface v1 = new drawLineSurface(getActivity(), sur);
         /**
          * 调用这个surfaceview的surfaceCreated方法
          */
@@ -89,11 +86,10 @@ public class TempreatureModel extends android.app.Fragment {
         /**
          * 该类的构造函数
          *
-         * @param context
-         * @param holder1，传入holder，给绘图线程使用
+         * @param context 系统上问
          * @param surfaceView，传入sur使绘图线程获得当前surfaceview的大小
          */
-        public drawLineSurface(Context context, SurfaceHolder holder1, SurfaceView surfaceView) {
+        public drawLineSurface(Context context, SurfaceView surfaceView) {
             super(context);
             this.surfaceView = surfaceView;
         }
@@ -139,7 +135,7 @@ public class TempreatureModel extends android.app.Fragment {
             isRun = true;
             showLineSurfaceViewHeught = showLineSurfaceView.getHeight();
             showLineSurfaceViewWidth = showLineSurfaceView.getWidth();
-            dataChart = new DataChart(820, 0, 50, 0);
+            dataChart = new DataChart(10240, 0, 50, 0);
             dataChart.setyMax(50);
         }
 
@@ -155,7 +151,7 @@ public class TempreatureModel extends android.app.Fragment {
                                 ((Main) getActivity()).dataObj.wait();
 
                             } catch (InterruptedException ex) {
-
+                                Log.e("温度模式",Log.getStackTraceString(ex));
                             }
                         else {
                             ((Main) getActivity()).dataObj.notifyAll();

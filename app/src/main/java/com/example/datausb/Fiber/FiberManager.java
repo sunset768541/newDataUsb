@@ -13,6 +13,7 @@ import java.util.Map;
 
 public class FiberManager {
     private Map<String,Fiber> fiberMap= new HashMap<>();
+    public static int fiberLength;
     private Context context;
     public void addFiber(char tunnelCode){
         switch (tunnelCode){
@@ -71,8 +72,9 @@ public class FiberManager {
     public Map<String, Fiber> getFiberMap() {
         return fiberMap;
     }
-
-
+    public  int getFibeNumber(){
+        return fiberMap.size();
+    }
     public Context getContext() {
         return context;
     }

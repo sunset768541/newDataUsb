@@ -3,11 +3,17 @@ package com.example.datausb.DataUtil;
 import android.content.Context;
 import android.util.Log;
 
+import com.example.datausb.Fiber.Fiber;
+import com.example.datausb.Fiber.FiberManager;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by sunset on 16/5/6.
@@ -21,13 +27,12 @@ public class DataWR {
     private static SimpleDateFormat docFormatm = new SimpleDateFormat("MM");//建立文件夹月的名字
     private static SimpleDateFormat docFormatd = new SimpleDateFormat("dd");//建立文件夹日的名字
     private static Date date = new Date();
-    public static String SDcardPath="/mnt/external_sd/";
-    //public static String SDcardPath="/storage/sdcard0/";
+    //public static String SDcardPath="/mnt/external_sd/";//Firefly开发板
+    public static String SDcardPath="/storage/sdcard0/";//华为手机
     private static String dir = docFormaty.format(date) + "/" + docFormatm.format(date) + "/" + docFormatd.format(date) + "/";//存储数据文件夹的目录
   //  private static  file;//file对象用来建立文件夹
     private static String preFileName = SDcardPath + dir + fileFormat.format(date) + ".dat";//存储数据文件的名字
     private static BufferedOutputStream d;//定义具有缓冲功能的输出流
-   // private static  dataname;
     public static float[] cla;
     public static float[] clb;
     private static boolean isExist = false;
@@ -61,7 +66,7 @@ public class DataWR {
     /**
      * 储存数据的静态方法
      */
-    public static void saveData(byte[] data) {
+    public static void saveData(byte[] data, FiberManager fiberManager) {
         date = new Date();
       //  Log.e("dir",dir);
         String dir1 = docFormaty.format(date) + "/" + docFormatm.format(date) + "/" + docFormatd.format(date) + "/";//存储数据文件夹的目录
@@ -84,32 +89,47 @@ public class DataWR {
             preFileName = currentFileName;
             try {
                 //在数据文件的最后写时间数据之前要判断是d是否执行了d.write()，以确定是在上一个文档中写入数据
-
                 //在建立新的文件之前对上一个文件写入文件尾，内容为结束的时间,时间为毫秒 dataObj.getTime()来获取一个Long型的时间数据，为从1970.1.1到现在的毫秒数
                 if (isExist) {//如果存在上一个输出流
-                    d.write(long2byte(date.getTime()));
+                    d.write(long2byte(date.getTime()));//写入文件结束时间
                     d.write(paraIndicator);//在文件写入结束之前写入一个标志位，通过读取这个标志位来确定文件的完整性
+                    Log.e("一个文件储存结束", "---ok");
+
                     d.close();
                 }
                 d = new BufferedOutputStream(new FileOutputStream(preFileName,true));
                 isExist = true;
-                byte[] ca = new byte[cla.length * 4];
-                byte[] cb = new byte[cla.length * 4];
-                int jj = 0;
-                d.write(getBytesint(8192));//数据的长度
-                for (int mm=0;mm<cla.length;mm++){//注意cla里有8193个数据,将标定数据转化为byte数组
-                    byte []clai=getBytes(cla[mm]);
-                    byte []clao=getBytes(clb[mm]);
-                    for (int kk=0;kk<4;kk++){
-                        ca[jj]=clai[kk];
-                        cb[jj]=clao[kk];
-                        jj++;
-                    }
+                /**
+                 * 遍历FiberManager的HashMap,查找加入其中的光纤，获得其中的标定数据并转换为byte，同时存储光纤的编号
+                 */
+
+                List<Character> fiberId=new ArrayList<>();
+                List<float[]>   clabrate=new ArrayList<>();
+                int fiberLength=0;
+
+                for (Map.Entry<String,Fiber>item: fiberManager.getFiberMap().entrySet()) {//遍历HashMap获得其中光纤的引用
+                          clabrate.add(item.getValue().caliPSA);
+                          fiberId.add(item.getValue().getFiberId());
+                          fiberLength=item.getValue().getFiberLength();
                 }
-                d.write(getBytesint(fiberNum));//写入通道的个数
+                /**在文件创建的时候为文件添加头，头的内容为
+                 * 光纤长度-----用于读取时确定读取指针移到的步长
+                 * 通道个数-----用于读取时确定读取几次光纤id
+                 * 光纤Id-------用于确定标定温度的属于哪个个通道的光纤
+                 * 标定数据------用于保存当前用于计算温度值的标定数据，读取的时候通过这个标定温度计算出温度
+                 * 文件创建时间---在文件的尾部会保存文件保存结束的时间，作用1 文件名结合可粗粒确定某个时刻的温度，
+                 *               作用2 因为储存速度远小于读取速度，所以利用这个时间确定平均读取每帧数据应该使用的时间
+                 */
+                d.write(getBytesint(fiberLength));//数据的长度
+                d.write(getBytesint(fiberId.size()));//写入通道的个数
+                for (char id:fiberId){
+                    d.write(charToByte(id));//写入通道Id
+                }
+                for (float [] clabriate:clabrate){
+                    d.write(floatArray2byteArray(clabriate));//写入对应通道的标定数据
+                    //d.write(new byte[]{0,1,0,1,0,1,0,1});//测试点方便找到标定温度
+                }
                 d.write(long2byte(date.getTime()));//写入文件的创建时间
-                d.write(ca);//写入光纤A的标定数据
-                d.write(cb);//写入光纤B的标定数据
 
 /******************************************************************************************
  * 该部分用来验证java的基本数据类型转换为byte数组的正确性，经过验证，这些算法都是正确的
@@ -140,9 +160,9 @@ public class DataWR {
 //                printHexString(long2byte(date.getTime()));
 //                Log.e("byt2long", Long.valueOf(getLong(long2byte(date.getTime()))).toString());*/
 
-                Log.e("creation", "创建一个新数据文件成功" + "time " + Integer.valueOf(jj).toString());
+                Log.e("creation", "创建一个新数据文件成功");
                 doSave =true;
-                //在文件创建的时候为文件添加头，头的内容为数据长度()，标定数据（标定数据的末尾是标定温度）开始时间，时间为毫秒 ,头的长度是固定的
+
             } catch (Exception e) {
                 Log.e("创建数据文件失败", Log.getStackTraceString(e));
             }
@@ -223,5 +243,27 @@ public class DataWR {
         }
 
     }
+    public static byte[] charToByte(char c) {
+        byte[] b = new byte[2];
+        b[0] = (byte) ((c & 0xFF00) >> 8);
+        b[1] = (byte) (c & 0xFF);
+        return b;
+    }
+    public static char byteToChar(byte[] b) {
+        char c = (char) (((b[0] & 0xFF) << 8) | (b[1] & 0xFF));
+        return c;
+    }
 
+    public static byte[] floatArray2byteArray(float[] data){
+        byte[] result=new byte[data.length*4];
+        int j=0;
+        for (int i=0;i<data.length;i++){
+            byte []clai=getBytes(data[i]);
+            for (int k=0;k<4;k++){
+                result[j]=clai[k];
+                j++;
+            }
+        }
+        return result;
+    }
 }

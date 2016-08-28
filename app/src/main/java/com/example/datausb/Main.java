@@ -23,10 +23,10 @@ import com.example.datausb.DataUtil.DataWR;
 import com.example.datausb.Fiber.FiberManager;
 
 import java.io.FileOutputStream;
-import java.util.Arrays;
 
 /**
  * Created by sunset on 15/12/11.
+ * 主Activity
  */
 
 public class Main extends Activity {
@@ -64,8 +64,6 @@ public class Main extends Activity {
     /**
      * preferences为读取参数的SharePreference的实例
      * editor为修改参数的Shareferecxes.Editor的实例
-     *
-     * @param savedInstanceState
      */
     SharedPreferences fiberLengthSharePre;
     SharedPreferences.Editor fiberLengthSharePreEdi;
@@ -111,14 +109,12 @@ public class Main extends Activity {
          */
         startOrStopToggleButton = (ToggleButton) findViewById(R.id.toggleButton);
         startOrStopToggleButton.setOnClickListener(new StartOrStopListener(startOrStopToggleButton));
-        fiberLengthEdiText = (EditText) findViewById(R.id.editText5);
+        //fiberLengthEdiText = (EditText) findViewById(R.id.editText5);
         transmmitSpeedTextView = (TextView) findViewById(R.id.transmitespeed1);
         fiberLengthSharePre = getSharedPreferences("opl", MODE_PRIVATE);
         fiberLengthSharePreEdi = fiberLengthSharePre.edit();
         int oplong = fiberLengthSharePre.getInt("fiberlength", 0);
-        if (oplong == 0) {
-            Toast.makeText(getApplicationContext(), "还没有设置光纤的长度，请先到系统设置中设置", Toast.LENGTH_SHORT).show();
-        }
+
 
         tunnelA=(ToggleButton)findViewById(R.id.fiberA);
         tunnelB=(ToggleButton)findViewById(R.id.fiberB);
@@ -156,13 +152,14 @@ public class Main extends Activity {
      * 更新UI数据
      */
     private final int COMPLETED = 0;
-    private Handler handler = new Handler() {//多线程中用于UI的更新
+    private  Handler handler = new Handler() {//多线程中用于UI的更新
         @Override
         public void handleMessage(Message msg1) {
             if (msg1.what == COMPLETED) {
                 try {
                     transmmitSpeedTextView.setText("采样数据：" + msg1.obj);
                 } catch (NullPointerException e) {
+                    Log.e("Main",Log.getStackTraceString(e));
                 }
             }
         }
@@ -368,13 +365,13 @@ public class Main extends Activity {
      ******************************************************************************************/
     public class DataReceiveThread extends Thread {//接收数据的线程
         private boolean suspend = false;
-        Resource r;
+        final Resource r;
 
         DataReceiveThread(Resource r) {
             this.r = r;
         }
 
-        private String control = ""; // 只是需要一个对象而已，这个对象没有实际意义
+        private final String control = ""; // 只是需要一个对象而已，这个对象没有实际意义
 
         public void setSuspend(boolean suspend) {
             if (!suspend) {
@@ -413,14 +410,15 @@ public class Main extends Activity {
                             r.wait();
 
                         } catch (InterruptedException ex) {
-
+                            Log.e("Main",Log.getStackTraceString(ex));
                         }
                     }
-                    byte[] Receivebytes = usbControl.receivceDataFromUsb(65536);//接收的数据
+                    byte[] Receivebytes = usbControl.receivceDataFromUsb(fiberManager.getFibeNumber()*FiberManager.fiberLength);//接收的数据
                     if (STOREDATA == 1) {
                         try {
-                            DataWR.saveData(Receivebytes);//将接收到的数据直接存储为2进制文件
+                            DataWR.saveData(Receivebytes,fiberManager);//将接收到的数据直接存储为2进制文件
                         } catch (Exception e) {
+                            Log.e("Main",Log.getStackTraceString(e));
                         }
                     }
                     r.data = Receivebytes;//拼接好的数据传递出去
@@ -438,8 +436,8 @@ public class Main extends Activity {
      * dataProcess线程是将从USB接收的8bit数据合成16bit信息并显示,//分类数据传输到各自的通道
      *****************************************************************************************/
     public class DataProcess extends Thread {//接收数据的线程
-        Resource r;
-        public Data dd;
+        final Resource r;
+        public final Data dd;
 
         DataProcess(Resource r, Data dd) {
             this.dd = dd;
@@ -448,7 +446,7 @@ public class Main extends Activity {
 
         private boolean suspend = false;
 
-        private String control = ""; // 只是需要一个对象而已，这个对象没有实际意义
+        private final String control = ""; // 只是需要一个对象而已，这个对象没有实际意义
 
         public void setSuspend(boolean suspend) {
             if (!suspend) {
@@ -481,6 +479,7 @@ public class Main extends Activity {
                         try {
                             r.wait();
                         } catch (InterruptedException ex) {
+                            Log.e("Main",Log.getStackTraceString(ex));
                         }
 
                     int p;
@@ -528,15 +527,19 @@ public class Main extends Activity {
                                 case 0:
                                     DataModel frgment1 = (DataModel) getFragmentManager().findFragmentByTag("datamodel");//获取当前的fragment
                                     frgment1.wakeup();//调用fragment中的唤醒方法
+                                    break;
                                 case 1:
                                     CalibrateModel frgment2 = (CalibrateModel) getFragmentManager().findFragmentByTag("calibratemodel");//获取当前的fragment
                                     frgment2.wakeUp();//调用fragment中的唤醒方法
+                                    break;
                                 case 2:
                                     TempreatureModel fragment3 = (TempreatureModel) getFragmentManager().findFragmentByTag("tempreturemodel");
                                     fragment3.wakeup();//调用fragment中的唤醒方法
+                                    break;
                                 case 4:
                                     ThreeDimensionModel fragment4 = (ThreeDimensionModel) getFragmentManager().findFragmentByTag("threedimmodel");
                                     fragment4.wakeup();//调用fragment中的唤醒方法
+                                    break;
                             }
 
                             /**
@@ -546,12 +549,14 @@ public class Main extends Activity {
                                 try {
                                     dd.wait();
                                 } catch (InterruptedException ex) {
+                                    Log.e("Main",Log.getStackTraceString(ex));
                                 }
                             } else {
                                 dd.notifyAll();
                             }
 
                         } catch (NullPointerException ee) {
+                            Log.e("Main",Log.getStackTraceString(ee));
                         }
                     }
                     Message msg1 = new Message();
@@ -604,7 +609,6 @@ public class Main extends Activity {
     }
 
     class Data {
-        Bundle[] DD;
         public boolean flag1 = false;
     }
 
@@ -625,9 +629,8 @@ public class Main extends Activity {
                 startOrStopToggleButton.setChecked(true);
             }
             fiberLength = fiberLengthSharePre.getInt("fiberlength", 0);
-            if (fiberLength == 0) {
-                Toast.makeText(getApplicationContext(), "还没有设置光纤的长度，请先到系统设置中设置", Toast.LENGTH_SHORT).show();
-            } else {
+
+
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 dataReceiveThread.setSuspend(true);
                 dataProcessThread.setSuspend(true);
@@ -638,7 +641,7 @@ public class Main extends Activity {
                 setFragmentnumber();
                 dataReceiveThread.setSuspend(false);
                 dataProcessThread.setSuspend(false);
-            }
+
         }
         abstract  void preThreadPrecess();
         abstract  void fragmentTransaction(FragmentTransaction transaction);

@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
-import com.example.datausb.DataUtil.DataBaseOperation;
 import com.example.datausb.Fiber.Fiber;
 import com.example.datausb.Fiber.FiberB;
 import com.example.datausb.ThreeDimUtil.MySurfaceView;
@@ -18,12 +17,13 @@ import java.util.Map;
 
 /**
  * Created by sunset on 16/3/3.
+ * 三维模式Fragment
  */
 public class ThreeDimensionModel extends android.app.Fragment {
     public MySurfaceView mv;
     public static float WIDTH;
     public static float HEIGHT;
-    private threedimThread myThread;
+
 
     public void wakeup() {
         ((Main) getActivity()).dataObj.notifyAll();
@@ -31,7 +31,7 @@ public class ThreeDimensionModel extends android.app.Fragment {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FrameLayout ff = (FrameLayout) ((Main) getActivity()).findViewById(R.id.contineer);
+        FrameLayout ff = (FrameLayout) ( getActivity().findViewById(R.id.contineer));
         float x = ff.getWidth();
         float y = ff.getHeight();
         if (x > y) {
@@ -41,7 +41,7 @@ public class ThreeDimensionModel extends android.app.Fragment {
             WIDTH = y;
             HEIGHT = x;
         }
-        mv = new MySurfaceView((Main) getActivity());
+        mv = new MySurfaceView(getActivity());
         mv.requestFocus();//获取焦点
         mv.setFocusableInTouchMode(true);//设置为可触控
     }
@@ -52,18 +52,18 @@ public class ThreeDimensionModel extends android.app.Fragment {
                 item.getValue().setCalibrate();
             }
         } catch (Exception e) {
-            Toast.makeText(((Main) getActivity()).getApplicationContext(), "标定数据不存在，请先在标定模式下进行标定", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity().getApplicationContext(), "标定数据不存在，请先在标定模式下进行标定", Toast.LENGTH_SHORT).show();
 
         }
-        View view = mv;
+
         // Log.e("onCreat", Integer.valueOf(mv.getcont()).toString());
-        return view;
+        return mv;
     }
 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);//
         boolean datareceive = ((Main) getActivity()).getByteDataProcessComlete();
-        myThread = new threedimThread(datareceive);//创建一个绘图线程
+        RenderThread myThread = new RenderThread(datareceive);//创建一个绘图线程
         myThread.start();
     }
 
@@ -77,10 +77,10 @@ public class ThreeDimensionModel extends android.app.Fragment {
         super.onPause();
     }
 
-    class threedimThread extends Thread {
+    class RenderThread extends Thread {
         boolean dd;
 
-        public threedimThread(boolean dd) {
+        public RenderThread(boolean dd) {
             this.dd = dd;
         }
 
@@ -91,10 +91,9 @@ public class ThreeDimensionModel extends android.app.Fragment {
              * 就可以被该线程访问了
              */
             try {
-                this.sleep(800);
-
+                sleep(800);
             } catch (InterruptedException e) {
-
+                Log.e("三维模式",Log.getStackTraceString(e));
             }
             try {//捕获线程运行中切换界面而产生的的空指针异常，防止程序崩溃。
                 while (!((Main) getActivity()).stopThreeDimenModelThread) {
@@ -109,15 +108,15 @@ public class ThreeDimensionModel extends android.app.Fragment {
                                 ((Main) getActivity()).dataObj.wait();
 
                             } catch (InterruptedException ex) {
-
+                                Log.e("三维模式",Log.getStackTraceString(ex));
                             }
                         else {
                             ((Main) getActivity()).dataObj.notifyAll();
                         }
 
-                        float[] TR = screenadapter(FiberB.createFiberB().calculateTempreture(), mv.mRender.getcont() / 4);//选择T1通道的温度进行显示
+                        float[] TR = screenAdapter(FiberB.createFiberB().calculateTempreture(), mv.mRender.getcont() / 4);//选择T1通道的温度进行显示
                         float[] colors = new float[mv.mRender.getcont()];//创建用于给光纤模型颜色渲染的数据
-                        float[] cc = colorprocess(TR);
+                        float[] cc = colorProcess(TR);
                         colors = Arrays.copyOfRange(cc, 0, colors.length);
                         mv.mRender.setcolor(colors);
                         ((Main) getActivity()).dataObj.flag1 = false;
@@ -136,8 +135,8 @@ public class ThreeDimensionModel extends android.app.Fragment {
     /**
      * 求数组最大
      *
-     * @param a
-     * @return
+     * @param a 查找最大值的数组
+     * @return 返回一个数组中的最大值
      */
     public float max(float[] a) {
         float b;
@@ -149,8 +148,8 @@ public class ThreeDimensionModel extends android.app.Fragment {
     /**
      * 求数组的最小
      *
-     * @param a
-     * @return
+     * @param a 查找最小值的数组
+     * @return 返回一个最小值
      */
     public float min(float[] a) {
         float b;
@@ -163,10 +162,10 @@ public class ThreeDimensionModel extends android.app.Fragment {
      * 利用伪颜色增强算法把温度数据转换成RGB的形式，温度的变化图请参考drawable中的tempchangecolor.jpg图片
      * 目前这个算法算出的温度颜色与当前的数据有关系，由当前数据的最大值和最小值决定，以后要改为由传感器的测量温度范围决定
      *
-     * @param data
-     * @return
+     * @param data 根据传入的数据计算颜色值
+     * @return 返回三维空间的顶点颜色
      */
-    public float[] colorprocess(float[] data) {
+    public float[] colorProcess(float[] data) {
         float min = min(data);//获得温度数组中最小的数值，数组中每个数组都减去这个最小值，那么这个数组就没有存在负数的可能
         for (int i = 0; i < data.length; i++) {//该for循环就是将数组中的数据全部变成正数
             data[i] = data[i] - min;
@@ -174,25 +173,25 @@ public class ThreeDimensionModel extends android.app.Fragment {
         float max = max(data);//获得数组中的最大值，根据这个数值将温度数据分成四个颜色范围
         float[] color = new float[data.length * 4];//用于存储生成的颜色值
         int j = 0;
-        for (int i = 0; i < data.length; i++) {
-            if (0 <= data[i] && data[i] < max / 4) {//这个范围为蓝色到浅蓝色范围，最小值为纯蓝色【0，0，1】。数值越大越偏向浅蓝色，可以通过增加绿色分量实现
+        for (float i:data){
+            if (0 <= i && i < max / 4) {
                 color[j] = 0;//红色分量为0
-                color[j + 1] = data[i] / max;//根据温度数据增加绿色分量，
+                color[j + 1] = i / max;//根据温度数据增加绿色分量，
                 color[j + 2] = 1;//纯蓝色
                 color[j + 3] = 1;//透明度为1
-            } else if (max / 4 <= data[i] && data[i] < max / 2) {//这个范围为浅蓝色到绿色，【0，1，1】-->[0,1,0],这个过程当数据越大就越少的蓝色分量，这样就向绿色过渡
+            } else if (max / 4 <= i && i < max / 2) {//这个范围为浅蓝色到绿色，【0，1，1】-->[0,1,0],这个过程当数据越大就越少的蓝色分量，这样就向绿色过渡
                 color[j] = 0;//红色分量为0
                 color[j + 1] = 1;//绿色分量为1
-                color[j + 2] = 1 - data[i] / max;//根据温度数值的大小，去除相应的绿色
+                color[j + 2] = 1 - i / max;//根据温度数值的大小，去除相应的绿色
                 color[j + 3] = 1;
-            } else if (max / 2 <= data[i] && data[i] < max * 3 / 4) {//这个范围为绿色到黄色，【0，1，0】-->[1，1，0],这个过程通过增加红色的分量可以实现绿色到黄色的过渡
-                color[j] = data[i] / max;
+            } else if (max / 2 <= i &&i < max * 3 / 4) {//这个范围为绿色到黄色，【0，1，0】-->[1，1，0],这个过程通过增加红色的分量可以实现绿色到黄色的过渡
+                color[j] = i / max;
                 color[j + 1] = 1;
                 color[j + 2] = 0;
                 color[j + 3] = 1;
             } else {//这个范围为黄色到红色的过渡，【1，1，0】-->【1，0，0】,这个过程通过减少绿色的分量就可以达到黄色到红色的颜色过渡
                 color[j] = 1;
-                color[j + 1] = 1 - data[i] / max;
+                color[j + 1] = 1 - i / max;
                 color[j + 2] = 0;
                 color[j + 3] = 1;
             }
@@ -204,11 +203,11 @@ public class ThreeDimensionModel extends android.app.Fragment {
     /**
      * 将光纤的长度与采集温度数据点的个数进行适配
      *
-     * @param data
-     * @param w
-     * @return
+     * @param data 待适配的数据
+     * @param w 三维中的
+     * @return 适配后的数据，返回的数据长度与三维场景中的光纤的长度是一样的
      */
-    public float[] screenadapter(float[] data, int w) {
+    public float[] screenAdapter(float[] data, int w) {
         float[] adptertube = new float[w];//设置屏可以显示在屏幕上的数据长度
         float[] databuf;
         int interval = data.length / w + 1;

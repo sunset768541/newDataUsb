@@ -65,8 +65,8 @@ public class CalibrateModel extends android.app.Fragment {
         fiberDclabricateTemperature = (EditText) getActivity().findViewById(R.id.editText21);
         fiberAstartCalibrate = (Button) getActivity().findViewById(R.id.button8);
         fiberBstartCalibrate = (Button) getActivity().findViewById(R.id.button9);
-        fiberCstartCalibrate = (Button) getActivity().findViewById(R.id.button5);
-        fiberDstartCalibrate = (Button) getActivity().findViewById(R.id.button4);
+        fiberCstartCalibrate = (Button) getActivity().findViewById(R.id.button4);
+        fiberDstartCalibrate = (Button) getActivity().findViewById(R.id.button5);
         fiberAstartCalibrate.setOnClickListener(new ClabriateButtonOnClickListener(FiberA.createFiberA(),fiberAclabricateTemperature));
         fiberBstartCalibrate.setOnClickListener(new ClabriateButtonOnClickListener(FiberB.createFiberB(),fiberBclabricateTemperature));
         fiberCstartCalibrate.setOnClickListener(new ClabriateButtonOnClickListener(FiberC.createFiberC(),fiberCclabricateTemperature));
@@ -155,7 +155,7 @@ public class CalibrateModel extends android.app.Fragment {
             isRun = true;
             showLineViewHeigth = sss.getHeight();
             showLineViewWidth = sss.getWidth();
-            dataChart = new DataChart(820,0,68,0);
+            dataChart = new DataChart(10240,0,68,0);
             dataChart.setyMax(1);
         }
 

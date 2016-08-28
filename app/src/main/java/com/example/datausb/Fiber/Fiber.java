@@ -28,6 +28,7 @@ import com.example.datausb.DataUtil.DataBaseOperation;
     protected int length;
     protected int[] optical1663Data;
     protected int[] optical1440Data;
+    private char fiberId;
     private boolean isShow;
     private Context context;
     public Fiber() {
@@ -192,5 +193,13 @@ import com.example.datausb.DataUtil.DataBaseOperation;
 
     public void setContext(Context context) {
         this.context = context;
+    }
+
+    public char getFiberId() {
+        return fiberId;
+    }
+
+    public void setFiberId(char fiberId) {
+        this.fiberId = fiberId;
     }
 }
