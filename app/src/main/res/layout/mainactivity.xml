@@ -54,14 +54,13 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="数据模式"
                 android:id="@+id/textView25"
-                android:layout_marginBottom="1dp"
+                android:layout_marginBottom="5dp"
                 android:textSize="10sp" />
 
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/imageButton2"
-                android:src="@drawable/cla"
                 android:background="@drawable/clabutton" />
 
             <TextView
@@ -70,14 +69,13 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="标定模式"
                 android:id="@+id/textView26"
-                android:layout_marginBottom="1dp"
+                android:layout_marginBottom="5dp"
                 android:textSize="10sp" />
 
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/imageButton3"
-                android:src="@drawable/te"
                 android:background="@drawable/tembutton" />
 
             <TextView
@@ -86,14 +84,13 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="温度模式"
                 android:id="@+id/textView27"
-                android:layout_marginBottom="1dp"
+                android:layout_marginBottom="5dp"
                 android:textSize="10sp" />
 
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/imageButton4"
-                android:src="@drawable/thr"
                 android:background="@drawable/thrbutton" />
 
             <TextView
@@ -102,14 +99,13 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="三维模式"
                 android:id="@+id/textView28"
-                android:layout_marginBottom="1dp"
+                android:layout_marginBottom="5dp"
                 android:textSize="10sp" />
 
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/imageButton5"
-                android:src="@drawable/set"
                 android:background="@drawable/setbutton" />
 
             <TextView
@@ -118,14 +114,13 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="系统设置"
                 android:id="@+id/textView29"
-                android:layout_marginBottom="1dp"
+                android:layout_marginBottom="5dp"
                 android:textSize="10sp" />
 
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/imageButton6"
-                android:src="@drawable/his"
                 android:background="@drawable/hisbutton" />
 
             <TextView
@@ -134,7 +129,8 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="查看数据"
                 android:id="@+id/textView30"
-                android:textSize="10sp" />
+                android:textSize="10sp"
+                android:layout_marginBottom="5dp" />
 
         </LinearLayout>
 

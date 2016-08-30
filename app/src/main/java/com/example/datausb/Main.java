@@ -413,7 +413,11 @@ public class Main extends Activity {
                             Log.e("Main",Log.getStackTraceString(ex));
                         }
                     }
-                    byte[] Receivebytes = usbControl.receivceDataFromUsb(fiberManager.getFibeNumber()*FiberManager.fiberLength);//接收的数据
+                    byte[] Receivebytes = usbControl.receivceDataFromUsb(4*fiberManager.getFibeNumber()*FiberManager.fiberLength);//接收的数据每个通道2根光纤，每个光纤每米2byte
+
+                    //Log.e("COM",Integer.valueOf(Receivebytes.length).toString());
+                    //Log.e("CM",Integer.valueOf(fiberManager.getFibeNumber()).toString());
+                    //Log.e("CM",Integer.valueOf(FiberManager.fiberLength).toString());
                     if (STOREDATA == 1) {
                         try {
                             DataWR.saveData(Receivebytes,fiberManager);//将接收到的数据直接存储为2进制文件
@@ -502,6 +506,7 @@ public class Main extends Activity {
                             p1 = r.data[i + 1] << 8;
                         }
                         combination[i1] = p + p1;
+                      //  Log.e("COM",Integer.valueOf(p+p1).toString());
                         i1 = i1 + 1;
                     }
                    fiberManager.decodeData(combination);//每次整合完都把数据送到FiberManager中进行解析，将数据分配到特定的光纤中

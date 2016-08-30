@@ -388,52 +388,94 @@
                     android:text="FPGA控制" />
             </LinearLayout>
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center">
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/editText3"
-                    android:layout_weight="1"
-                    android:hint="光纤长度"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:layout_marginRight="5dp"
-                    android:numeric="integer" />
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/editText22"
-                    android:hint="平均次数"
-                    android:numeric="integer" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="发送数据"
-                    android:id="@+id/button10"
-                    android:layout_weight="1"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
-            </LinearLayout>
+                    android:text="重置AD"
+                    android:id="@+id/button6" />
 
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center">
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="停止AD"
+                    android:id="@+id/button7"
+                    android:layout_below="@+id/button6" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="启动AD"
+                    android:id="@+id/button11"
+                    android:layout_toRightOf="@+id/button7"
+                    android:layout_marginLeft="5dp" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="测试AD"
+                    android:id="@+id/button12"
+                    android:layout_toRightOf="@+id/button7"
+                    android:layout_below="@+id/button6"
+                    android:layout_marginLeft="5dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="发送的16进制数"
+                    android:text="深度设置"
                     android:id="@+id/textView17"
+                    android:layout_toRightOf="@+id/button11" />
+
+                <Spinner
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/spinner6"
+                    android:layout_marginLeft="5dp"
+                    android:entries="@array/depth"
+                    android:layout_below="@+id/textView17"
+                    android:layout_alignLeft="@+id/textView17" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="平均次数"
+                    android:id="@+id/textView19"
+                    android:layout_above="@+id/spinner7"
+                    android:layout_alignLeft="@+id/spinner6" />
+
+                <Spinner
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/spinner7"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_toRightOf="@+id/button12"
+                    android:layout_marginLeft="5dp"
+                    android:entries="@array/averageNum"
+                    android:layout_below="@+id/button12" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|left">
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="设置AD"
+                    android:id="@+id/button10"
                     android:layout_weight="1"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="发送16进制数据："
+                    android:id="@+id/textView23" />
             </LinearLayout>
 
         </LinearLayout>

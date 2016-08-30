@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="year">
-        <item>2011</item>
         <item>2016</item>
         <item>2017</item>
-        <item>2018年</item>
-        <item>2019年</item>
-        <item>2020年</item>
-        <item>2021年</item>
-        <item>2022年</item>
-        <item>2023年</item>
+        <item>2018</item>
+        <item>2019</item>
+        <item>2020</item>
     </string-array>
     <string-array name="month">
         <item>01</item>
@@ -90,5 +86,24 @@
     <string-array name="savestrategy">
         <item>无损存储</item>
         <item>部分存储</item>
+    </string-array>
+    <string-array name="depth">
+        <item>256</item>
+        <item>512</item>
+        <item>1024</item>
+        <item>2048</item>
+        <item>4096</item>
+        <item>8192</item>
+        <item>16384</item>
+    </string-array>
+    <string-array name="averageNum">
+        <item>128</item>
+        <item>256</item>
+        <item>512</item>
+        <item>1024</item>
+        <item>2048</item>
+        <item>4096</item>
+        <item>8192</item>
+        <item>16384</item>
     </string-array>
 </resources>

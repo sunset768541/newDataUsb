@@ -53,17 +53,18 @@ public class FiberManager {
         }
     }
     public void decodeData(int [] data){//解析数据，根据fibeMap里光纤的head14和head16得到各光纤的数据，将得到的数据保存在各自光纤中
-
-
             for (Map.Entry<String,Fiber>item: getFiberMap().entrySet()) {//遍历HashMap获得其中光纤的引用
+                int []unfind=new int[item.getValue().getFiberLength()];
+
                 for(int i=0;i<data.length;i++){
                     if (item.getValue().getOptical1440Head()==data[i]){//获得一个光纤后，取出识别码并且与遍历的数据对比
-                        item.getValue().setOptical1440Data(Arrays.copyOfRange(data,i,i+item.getValue().getFiberLength()));//，找到后就将这个识别码后的光纤长度个数据存入相应的光纤item中
+                        item.getValue().setOptical1440Data(Arrays.copyOfRange(data,i,i+item.getValue().getFiberLength()));//.，找到后就将这个识别码后的光纤长度个数据存入相应的光纤item中
                     }
+                   // else item.getValue().setOptical1440Data(unfind);
                     if (item.getValue().getOptical1663Head()==data[i]){
                         item.getValue().setOptical1663Data(Arrays.copyOfRange(data,i,i+item.getValue().getFiberLength()));
                     }
-
+                   // else item.getValue().setOptical1663Data(unfind);
                 }
 
             }

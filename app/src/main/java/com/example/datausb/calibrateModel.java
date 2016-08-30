@@ -236,7 +236,7 @@ public class CalibrateModel extends android.app.Fragment {
                 try {
                     new Thread(){
                         public void run(){
-                            DataBaseOperation.mDataBaseOperation.updataDataBase(Integer.parseInt(calibrateTempreture),fiber.calculateCalibrate(),fiberName);
+                            DataBaseOperation.mDataBaseOperation.updataDataBase(Integer.parseInt(calibrateTempreture),fiber.calculatePsa(),fiberName);
                             fiber.setCalibrate();
                             Looper.prepare();
                             Toast.makeText(getActivity().getApplicationContext(), fiberName+"标定完成", Toast.LENGTH_SHORT).show();

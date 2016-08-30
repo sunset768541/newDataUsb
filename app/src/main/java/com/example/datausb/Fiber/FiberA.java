@@ -19,8 +19,8 @@ public class FiberA extends Fiber {
             fiberA=new FiberA();
             fiberA.setFiberName("FiberA");
             fiberA.setFiberId('A');
-            fiberA.setOptical1440Head(2);
-            fiberA.setOptical1663Head(8);
+            fiberA.setOptical1440Head(1);
+            fiberA.setOptical1663Head(1);
         }
         return fiberA;
     }

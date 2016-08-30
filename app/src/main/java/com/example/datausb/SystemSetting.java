@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -31,34 +32,29 @@ import java.util.Map;
  * 系统设置Fragment
  */
 public class SystemSetting extends android.app.Fragment {
-    private EditText fiberLength;
-    private EditText averageTimes;
+    private TextView fiberLength;
     private Button sendDataToUsb;
+    private Button startAD;
+    private Button resetAD;
+    private Button stopAD;
+    private Button test;
+    private Spinner depth;
+    private Spinner averageNum;
     private TextView showSendData;
-    private final String STATR_CODE="1111111";
-   // private EditText oplong;
-    private Button setopl;
+    private char average;
+    private char fiberL;
+    private byte dev;
+    private final String STATR_CODE="";
+    private final String sendData="发送16进制数据：";
     private Switch sw;
     private Switch sw2;
     private EditText temalerttube1;
     private EditText temalerttube2;
     private Spinner datasavetrr;
     private Spinner threscence;
-//    private EditText fiberAlength;
-//    private EditText fiberA1450Code;
-//    private EditText fiberA1663Code;
     private ToggleButton fiberAOpen;
-//    private EditText fiberBlength;
-//    private EditText fiberB1450Code;
-//    private EditText fiberB1663Code;
     private ToggleButton fiberBOpen;
-//    private EditText fiberClength;
-//    private EditText fiberC1450Code;
-//    private EditText fiberC1663Code;
     private ToggleButton fiberCOpen;
-//    private EditText fiberDlength;
-//    private EditText fiberD1450Code;
-//    private EditText fiberD1663Code;
     private ToggleButton fiberDOpen;
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.systemseting, container, false);
@@ -67,12 +63,13 @@ public class SystemSetting extends android.app.Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        fiberLength = (EditText) getActivity().findViewById(R.id.editText3);
+        fiberLength = (TextView) getActivity().findViewById(R.id.textView);
         temalerttube1 = (EditText) getActivity().findViewById(R.id.editText4);
         temalerttube1.setEnabled(false);
         temalerttube1.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
+
                 if (hasFocus) {
                         Log.e("聚焦","ok");
                 } else {
@@ -118,7 +115,7 @@ public class SystemSetting extends android.app.Fragment {
 
 
         sendDataToUsb = (Button) getActivity().findViewById(R.id.button10);
-        showSendData = (TextView) getActivity().findViewById(R.id.textView17);
+        //showSendData = (TextView) getActivity().findViewById(R.id.textView17);
         datasavetrr = (Spinner) getActivity().findViewById(R.id.spinner5);
         threscence = (Spinner) getActivity().findViewById(R.id.spinner4);
         sw2 = (Switch) getActivity().findViewById(R.id.switch2);
@@ -126,7 +123,6 @@ public class SystemSetting extends android.app.Fragment {
             sw.setChecked(true);
             temalerttube1.setEnabled(true);
             temalerttube2.setEnabled(true);
-
         }
         sw2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -201,14 +197,73 @@ public class SystemSetting extends android.app.Fragment {
 
 
         });
-        averageTimes=(EditText)getActivity().findViewById(R.id.editText22);
+        //averageTimes=(EditText)getActivity().findViewById(R.id.editText22);
+        averageNum=(Spinner)getActivity().findViewById(R.id.spinner7);
+        averageNum.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                average=(char) Integer.parseInt(averageNum.getSelectedItem().toString());
+                dev=(byte) (Math.log(average)/Math.log(2));
+                Log.e("avernum= ",averageNum.getSelectedItem().toString());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        depth=(Spinner)getActivity().findViewById(R.id.spinner6);
+        depth.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                fiberL=(char)Integer.parseInt(depth.getSelectedItem().toString());
+                    Log.e("n= ",Integer.valueOf(dev).toString());
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        resetAD=(Button)getActivity().findViewById(R.id.button6);
+        startAD=(Button)getActivity().findViewById(R.id.button11);
+        startAD.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                byte [] setPar=new byte[]{charToBytes(average)[0],charToBytes(average)[1],charToBytes(fiberL)[0],charToBytes(fiberL)[1],1,dev};
+                ((Main) getActivity()).UsbSendData(setPar);
+                showSendData.setText(sendData+bytesToHexString(setPar));
+                FiberManager.fiberLength=fiberL;
+            }
+        });
+        stopAD=(Button)getActivity().findViewById(R.id.button7);
+
+        stopAD.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                byte [] setPar=new byte[]{charToBytes(average)[0],charToBytes(average)[1],charToBytes(fiberL)[0],charToBytes(fiberL)[1],0,dev};
+                ((Main) getActivity()).UsbSendData(setPar);
+                showSendData.setText(sendData+bytesToHexString(setPar));
+                FiberManager.fiberLength=fiberL;
+            }
+        });
+        test=(Button)getActivity().findViewById(R.id.button12);
+        test.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                byte [] setPar=new byte[]{charToBytes(average)[0],charToBytes(average)[1],charToBytes(fiberL)[0],charToBytes(fiberL)[1],16,dev};
+                ((Main) getActivity()).UsbSendData(setPar);
+                showSendData.setText(sendData+bytesToHexString(setPar));
+                FiberManager.fiberLength=fiberL;
+            }
+        });
+        showSendData=(TextView)getActivity().findViewById(R.id.textView23);
         sendDataToUsb.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                String length = fiberLength.getText().toString();//String变量
-                String average=averageTimes.getText().toString();
-                byte[] b = (STATR_CODE+length+average).getBytes();//String转换为byte[]
+                //String average=averageTimes.getText().toString();
+                byte[] b = (STATR_CODE).getBytes();//String转换为byte[]
                 String hex = "0";
                 String hh = "";
                 for (int i:b) {
@@ -220,10 +275,10 @@ public class SystemSetting extends android.app.Fragment {
                     hh = hh + hex;
 
                 }
-                showSendData.setText(hh);
+               showSendData.setText(sendData+hh);
                 try {
                    ((Main) getActivity()).UsbSendData(b);
-                    FiberManager.fiberLength=Integer.parseInt(length);
+                    FiberManager.fiberLength=fiberL;
                 } catch (NullPointerException e) {
                     Toast.makeText(getActivity().getApplication(), "USB没有接收数据，请先开始接收数据", Toast.LENGTH_SHORT).show();
                 }
@@ -253,19 +308,13 @@ public class SystemSetting extends android.app.Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked){
-                   if ((fiberLength.getText().toString().length()!=0)){
+
                        FiberA fiberA=FiberA.createFiberA();
-                       fiberA.setFiberLength(Integer.parseInt(fiberLength.getText().toString()));
+                       fiberA.setFiberLength(fiberL);
                        fiberA.setContext(getActivity().getApplicationContext());
                        //将Fiber加入到FiberManager中
                            ((Main)getActivity()).fiberManager.addFiber('A');
                            ((Main) getActivity()).setTunnelAOn();
-
-                   }
-                    else{
-                       Toast.makeText(getActivity().getApplicationContext(), "请输入正确参数", Toast.LENGTH_SHORT).show();
-                       fiberAOpen.setChecked(false);
-                   }
                 }
                 else {
                     ((Main)getActivity()).fiberManager.removeFiber("A");
@@ -279,19 +328,12 @@ public class SystemSetting extends android.app.Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked){
-                    if ((fiberLength.getText().toString().length()!=0)){
                         FiberB fiberB=FiberB.createFiberB();
-                        fiberB.setFiberLength(Integer.parseInt(fiberLength.getText().toString()));
+                        fiberB.setFiberLength(fiberL);
                         fiberB.setContext(getActivity().getApplicationContext());
                         //将Fiber加入到FiberManager中
                         ((Main)getActivity()).fiberManager.addFiber('B');
                         ((Main) getActivity()).setTunnelBOn();
-                    //}
-                    }
-                    else{
-                        Toast.makeText(getActivity().getApplicationContext(), "请输入正确参数", Toast.LENGTH_SHORT).show();
-                        fiberBOpen.setChecked(false);
-                    }
                 }
                 else {
                     ((Main)getActivity()).fiberManager.removeFiber("B");
@@ -305,19 +347,13 @@ public class SystemSetting extends android.app.Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked){
-                    if ((fiberLength.getText().toString().length()!=0)){
                         FiberC fiberC= FiberC.createFiberC();
-                        fiberC.setFiberLength(Integer.parseInt(fiberLength.getText().toString()));
+                        fiberC.setFiberLength(fiberL);
                         fiberC.setContext(getActivity().getApplicationContext());
                         //将Fiber加入到FiberManager中
                         ((Main)getActivity()).fiberManager.addFiber('C');
                         ((Main) getActivity()).setTunnelCOn();
-                    //}
-                    }
-                    else{
-                        Toast.makeText(getActivity().getApplicationContext(), "请输入正确参数", Toast.LENGTH_SHORT).show();
-                        fiberCOpen.setChecked(false);
-                    }
+
                 }
                 else {
                     ((Main)getActivity()).fiberManager.removeFiber("C");
@@ -332,20 +368,14 @@ public class SystemSetting extends android.app.Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked){
-                    if ((fiberLength.getText().toString().length()!=0)){
                         FiberD fiberD=FiberD.createFiberD();
-                        fiberD.setFiberLength(Integer.parseInt(fiberLength.getText().toString()));
+                        fiberD.setFiberLength(fiberL);
                         fiberD.setContext(getActivity().getApplicationContext());
                            //从数据库中读取标定数据
                            //将Fiber加入到FiberManager中
                            ((Main) getActivity()).fiberManager.addFiber('D');
                            ((Main) getActivity()).setTunnelDOn();
-                      // }
-                    }
-                    else{
-                        Toast.makeText(getActivity().getApplicationContext(), "请输入正确参数", Toast.LENGTH_SHORT).show();
-                        fiberDOpen.setChecked(false);
-                    }
+
                 }
                 else {
                     ((Main)getActivity()).fiberManager.removeFiber("D");
@@ -356,5 +386,25 @@ public class SystemSetting extends android.app.Fragment {
             }
         });
     }
-
+    public  String bytesToHexString(byte[] src){
+        StringBuilder stringBuilder = new StringBuilder("");
+        if (src == null || src.length <= 0) {
+            return null;
+        }
+        for (int i = 0; i < src.length; i++) {
+            int v = src[i] & 0xFF;
+            String hv = Integer.toHexString(v);
+            if (hv.length() < 2) {
+                stringBuilder.append(0);
+            }
+            stringBuilder.append(hv);
+        }
+        return stringBuilder.toString();
+    }
+    public  byte[] charToBytes(char c) {
+        byte[] b = new byte[2];
+        b[0] = (byte) ((c & 0xFF00) >> 8);
+        b[1] = (byte) (c & 0xFF);
+        return b;
+    }
 }

@@ -153,15 +153,22 @@ import com.example.datausb.DataUtil.DataBaseOperation;
         calibrate.setColor(fiberColor);
         calibrate.setStrokeWidth(1f);
     }
-    public float[] calculateCalibrate(){
+    public float[] calculatePsa(){
+        Log.e("进入计算PSA","ok");
         float []tem =new float[getFiberLength()];
-        for (int i=0;i<getFiberLength();i++){
-            if (optical1663Data[i]==0)
+        Log.e("psa长度",Integer.valueOf(tem.length).toString());
+        Log.e("1663长度=",Integer.valueOf(optical1663Data[10]).toString());
+        Log.e("1440长度=",Integer.valueOf(optical1440Data[20]).toString());
+        for (int i=0;i<tem.length;i++){
+          //  Log.e("i= ",Integer.valueOf(i).toString());
+            if (optical1663Data[i]==0){
                 tem[i]=0;
-            else
-            tem[i]=(float)optical1440Data[i]/optical1663Data[i];
+                }
+            else {
+                tem[i] = (float) optical1440Data[i] / optical1663Data[i];
+            }
         }
-
+        Log.e("完场计算PSA","ok");
         return tem;
     }
     public float[] showcCalculateCalibrate(){
@@ -175,7 +182,8 @@ import com.example.datausb.DataUtil.DataBaseOperation;
         return tem;
     }
     public float[] calculateTempreture(){
-        float []psa=calculateCalibrate();
+        Log.e("进入计算温度","ok");
+        float []psa= calculatePsa();
         float [] tem=new float[getFiberLength()];
         if (getFiberLength()==caliPSA.length-1){
         for (int i=0;i<getFiberLength();i++){
@@ -184,6 +192,7 @@ import com.example.datausb.DataUtil.DataBaseOperation;
             tem[i]=-1/tt2;
         }
         }
+        Log.e("完场计算温度","ok");
         return tem;
     }
 

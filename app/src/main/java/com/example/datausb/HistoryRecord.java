@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.example.datausb.DataUtil.DataRD;
 import com.example.datausb.DataUtil.DataWR;
+import com.example.datausb.Fiber.FiberManager;
 
 /**
  * Created by sunset on 16/5/5.
@@ -31,7 +32,6 @@ public class HistoryRecord extends android.app.Fragment {
     String mon;
     String da;
     String[] datalist;
-
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.historyrecord, container, false);
     }
@@ -44,14 +44,14 @@ public class HistoryRecord extends android.app.Fragment {
                                             @Override
                                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                                 Log.e("点击了", datalist[position]);
-                                                String ss = DataWR.SDcardPath + yea + "/" + mon + "/" + da + "/" + datalist[position];
-                                                Log.e("D", ss);
+                                                String readFileName = DataWR.SDcardPath + yea + "/" + mon + "/" + da + "/" + datalist[position];
+                                                Log.e("D", readFileName);
                                                 try {
                                                     DataRD.HAVE_READ_FINISEH = true;
                                                     while (DataRD.SHOW_DATA_THREAT_FLAG) {
                                                         Log.e("show线程执行中", "");
                                                     }
-                                                    if (DataRD.iniReadDataFile(ss))
+                                                    if (DataRD.iniReadDataFile(readFileName,getActivity()))
                                                         showdata.threadstart();
                                                     else
                                                         Toast.makeText(getActivity().getApplication(), "读取数据文件损坏", Toast.LENGTH_SHORT).show();

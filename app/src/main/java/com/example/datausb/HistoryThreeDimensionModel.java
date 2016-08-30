@@ -12,6 +12,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.example.datausb.DataUtil.DataRD;
+import com.example.datausb.Fiber.FiberManager;
 import com.example.datausb.ThreeDimUtil.MySurfaceView;
 
 import java.io.IOException;
@@ -88,6 +89,7 @@ public class HistoryThreeDimensionModel extends android.app.Fragment {
                     seeekbar.incrementProgressBy((int) DataRD.dataBuffer.length);
                     showTime.setText(decimalFormat.format((float)msg1.arg2/(float)msg1.arg1*100)+"%");
                 } catch (NullPointerException e) {
+                    Log.e("History",Log.getStackTraceString(e));
                 }
             }
         }
@@ -121,49 +123,25 @@ public class HistoryThreeDimensionModel extends android.app.Fragment {
                     } catch (IOException e) {
                         Log.e("出现IO异常", "histhreeDim"+e.toString());
                     }
-                    DataRD.seperateTunnelData();
-
-                    int[] tuba = DataRD.tunnelAdata;
-                    int[] tuba1 = DataRD.tunnelA1data;
-                    int[] tubeb = DataRD.tunnelBdata;
-                    int[] tubeb1 = DataRD.tunnelB1data;
-                    float[] T1 = new float[tuba.length];
-                    float[] T2 = new float[tuba.length];
-                    float[] PSA1 = new float[tuba.length];
-                    float[] PSA2 = new float[tuba.length];
-                    for (int i = 0; i < tuba.length; i++) {
-                        if (tuba[i] == 0) {
-                            PSA1[i] = 0;
-                        } else PSA1[i] = (float) tuba1[i] / tuba[i];
-                        if (tubeb[i] == 0) {
-                            PSA2[i] = 0;
-                        } else PSA2[i] = (float) tubeb1[i] / tubeb[i];
-                    }
-
-                    /**
-                     * 由公式计算出温度
-                     */
-                    for (int i = 0; i < tuba.length; i++) {
-                        double bb1 = (double) PSA1[i] / DataRD.clabiraA[i];
-                        double bb2 = (double) PSA2[i] / DataRD.clabiraB[i];
-                        float tt1 = (float) (Math.log(bb1) + 1 / DataRD.clabiraA[DataRD.clabiraA.length - 1]);
-                        float tt2 = (float) (Math.log(bb2) + 1 / DataRD.clabiraB[DataRD.clabiraB.length - 1]);
-                        T1[i] = 1 / tt1;
-                        T2[i] = 1 / tt2;
-                    }
-                    float[] TR = screenadapter(T2, mv.mRender.getcont() / 4);//选择T1通道的温度进行显示
+                    DataRD.decodeData();
+                   // Log.e("histRT","解码完城");
+                    float[] TR = screenadapter(DataRD.fiberManager.getFiberMap().get("A").calculateTempreture(), mv.mRender.getcont() / 4);//选择A通道的温度进行显示
+                  //  Log.e("histRT","1");
                     float[] colors = new float[mv.mRender.getcont()];//创建用于给光纤模型颜色渲染的数据
+                    //Log.e("histRT","2");
                     float[] cc = colorprocess(TR);
+                    //Log.e("histRT","3");
                     colors = Arrays.copyOfRange(cc, 0, colors.length);
                     mv.mRender.setcolor(colors);
+                    //Log.e("histRT","4");
                     DataRD.seek = DataRD.seek + DataRD.dataLength;
-                    Log.e("读文件大小",Long.toString(DataRD.fileLength));
-                    Log.e("指针的位置",Long.toString(DataRD.seek));
+                    Log.e("读文件大小",Long.toString(DataRD.pureDataLength));
+                    Log.e("指针的位置",Long.toString(DataRD.seek-DataRD.fileHeadLength));
                     try {
                         DataRD.moveSeek();
                     }
                     catch (IOException e){
-
+                        Log.e("histreoceDIm","moveseek"+"错误"+Log.getStackTraceString(e));
                     }
                     Message msg1 = new Message();
                     msg1.what = COMPLETED;
@@ -185,7 +163,7 @@ public class HistoryThreeDimensionModel extends android.app.Fragment {
                     DataRD.closeReadStream();
                 }
                 catch (IOException e){
-
+                    Log.getStackTraceString(e);
                 }
                 Log.e("文件读取完成","文件已经读取完成了");
                 DataRD.HAVE_READ_FINISEH=false;
@@ -275,6 +253,7 @@ public class HistoryThreeDimensionModel extends android.app.Fragment {
          * @return
          */
         public float[] screenadapter(float[] data, int w) {
+            Log.e("适配进入","ok");
             float[] adptertube = new float[w];//设置屏可以显示在屏幕上的数据长度
             float[] databuf;
             int interval = data.length / w + 1;
@@ -289,7 +268,7 @@ public class HistoryThreeDimensionModel extends android.app.Fragment {
                     kkk = kkk + 1;
                 }
             }
-
+            Log.e("适配完场","ok");
             return adptertube;
         }
     }
