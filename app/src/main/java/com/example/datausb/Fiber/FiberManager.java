@@ -53,18 +53,30 @@ public class FiberManager {
         }
     }
     public void decodeData(int [] data){//解析数据，根据fibeMap里光纤的head14和head16得到各光纤的数据，将得到的数据保存在各自光纤中
+
             for (Map.Entry<String,Fiber>item: getFiberMap().entrySet()) {//遍历HashMap获得其中光纤的引用
-                int []unfind=new int[item.getValue().getFiberLength()];
+        //                int []unfind=new int[item.getValue().getFiberLength()];
 
                 for(int i=0;i<data.length;i++){
+                  //  Log.e("s数据",Integer.valueOf(data[i]).toString());
                     if (item.getValue().getOptical1440Head()==data[i]){//获得一个光纤后，取出识别码并且与遍历的数据对比
-                        item.getValue().setOptical1440Data(Arrays.copyOfRange(data,i,i+item.getValue().getFiberLength()));//.，找到后就将这个识别码后的光纤长度个数据存入相应的光纤item中
+                        int []a=Arrays.copyOfRange(data,i,i+item.getValue().getFiberLength());
+                        a[0]=a[1];
+                        item.getValue().setOptical1440Data(a);//.，找到后就将这个识别码后的光纤长度个数据存入相应的光纤item中
+                        item.getValue().setPre1440Data(a);
+                        Log.e(item.getValue().getFiberName()+"1440第一个数据= ",Integer.valueOf(a[0]).toString());
+                        Log.e(item.getValue().getFiberName()+"1440最后一数据= ",Integer.valueOf(a[a.length-1]).toString());
                     }
-                   // else item.getValue().setOptical1440Data(unfind);
+                   else item.getValue().setOptical1440Data(item.getValue().getPre1440Data());
                     if (item.getValue().getOptical1663Head()==data[i]){
-                        item.getValue().setOptical1663Data(Arrays.copyOfRange(data,i,i+item.getValue().getFiberLength()));
+                       int [] b=Arrays.copyOfRange(data,i,i+item.getValue().getFiberLength());
+                        b[0]=b[1];
+                        item.getValue().setOptical1663Data(b);
+                        item.getValue().setPre1663Data(b);
+                        Log.e(item.getValue().getFiberName()+"1663第一个数据= ",Integer.valueOf(b[0]).toString());
+                        Log.e(item.getValue().getFiberName()+"1663最后一数据= ",Integer.valueOf(b[b.length-1]).toString());
                     }
-                   // else item.getValue().setOptical1663Data(unfind);
+                    else item.getValue().setOptical1663Data(item.getValue().getPre1663Data());
                 }
 
             }

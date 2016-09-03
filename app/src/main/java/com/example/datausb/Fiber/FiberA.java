@@ -19,8 +19,8 @@ public class FiberA extends Fiber {
             fiberA=new FiberA();
             fiberA.setFiberName("FiberA");
             fiberA.setFiberId('A');
-            fiberA.setOptical1440Head(1);
-            fiberA.setOptical1663Head(1);
+            fiberA.setOptical1440Head(43680);//AAA0
+            fiberA.setOptical1663Head(48048);//BBB0
         }
         return fiberA;
     }
@@ -29,6 +29,5 @@ public class FiberA extends Fiber {
     public void setFiberColor() {
         fiberColor=Color.CYAN;
     }
-
 
 }

@@ -226,6 +226,22 @@ public class SystemSetting extends android.app.Fragment {
             }
         });
         resetAD=(Button)getActivity().findViewById(R.id.button6);
+        resetAD.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                byte [] setPar=new byte[]{charToBytes(average)[0],charToBytes(average)[1],charToBytes(fiberL)[0],charToBytes(fiberL)[1],1,dev};
+                ((Main) getActivity()).UsbSendData(setPar);
+                try {
+                    Thread.sleep(100);
+                }
+                catch (Exception e){
+                    Log.getStackTraceString(e);
+                }
+                byte [] setPars=new byte[]{charToBytes(average)[0],charToBytes(average)[1],charToBytes(fiberL)[0],charToBytes(fiberL)[1],0,dev};
+                ((Main) getActivity()).UsbSendData(setPars);
+
+            }
+        });
         startAD=(Button)getActivity().findViewById(R.id.button11);
         startAD.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -311,6 +327,7 @@ public class SystemSetting extends android.app.Fragment {
 
                        FiberA fiberA=FiberA.createFiberA();
                        fiberA.setFiberLength(fiberL);
+                     fiberA.iniPreData();
                        fiberA.setContext(getActivity().getApplicationContext());
                        //将Fiber加入到FiberManager中
                            ((Main)getActivity()).fiberManager.addFiber('A');
@@ -330,6 +347,7 @@ public class SystemSetting extends android.app.Fragment {
                 if (isChecked){
                         FiberB fiberB=FiberB.createFiberB();
                         fiberB.setFiberLength(fiberL);
+                    fiberB.iniPreData();
                         fiberB.setContext(getActivity().getApplicationContext());
                         //将Fiber加入到FiberManager中
                         ((Main)getActivity()).fiberManager.addFiber('B');
@@ -349,6 +367,7 @@ public class SystemSetting extends android.app.Fragment {
                 if (isChecked){
                         FiberC fiberC= FiberC.createFiberC();
                         fiberC.setFiberLength(fiberL);
+                    fiberC.iniPreData();
                         fiberC.setContext(getActivity().getApplicationContext());
                         //将Fiber加入到FiberManager中
                         ((Main)getActivity()).fiberManager.addFiber('C');
@@ -370,6 +389,7 @@ public class SystemSetting extends android.app.Fragment {
                 if (isChecked){
                         FiberD fiberD=FiberD.createFiberD();
                         fiberD.setFiberLength(fiberL);
+                        fiberD.iniPreData();
                         fiberD.setContext(getActivity().getApplicationContext());
                            //从数据库中读取标定数据
                            //将Fiber加入到FiberManager中

@@ -230,7 +230,7 @@ public class DataModel extends android.app.Fragment {
             this.holder = holder;
             sss = ss1;
             isRun = true;
-            dataChart = new DataChart(10240,0,2000,0);
+            dataChart = new DataChart(16384,0,20000,0);
 
         }
         public void run() {
