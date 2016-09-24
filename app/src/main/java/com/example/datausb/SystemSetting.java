@@ -52,6 +52,8 @@ public class SystemSetting extends android.app.Fragment {
     private EditText temalerttube2;
     private Spinner datasavetrr;
     private Spinner threscence;
+    private Spinner plause;
+    private byte pla;
     private ToggleButton fiberAOpen;
     private ToggleButton fiberBOpen;
     private ToggleButton fiberCOpen;
@@ -157,8 +159,6 @@ public class SystemSetting extends android.app.Fragment {
             public void onClick(View v) {
                 File file = new File(DataWR.SDcardPath+"Android");//用来检测是否插入了sd卡，因为只要插入sd卡，系统就会在这个sd卡下建立LOST.DIR文件夹
                // File file = new File(DataWR.SDcardPath+"LOST.DIR");//用来检测是否插入了sd卡，因为只要插入sd卡，系统就会在这个sd卡下建立LOST.DIR文件夹
-                // Log.e("ee",Boolean.valueOf(file.exists()).toString());
-                //Log.e("ee",Boolean.valueOf(sw.isChecked()).toString());
                 int flag = 0;
                 if (file.exists()) {
                     flag = 1;
@@ -174,8 +174,7 @@ public class SystemSetting extends android.app.Fragment {
                             sw.setChecked(false);
                         }
                     }
-//                    DataWR.cla =DataBaseOperation.mDataBaseOperation.getFromDataBase("tube1data");
-//                    DataWR.clb=DataBaseOperation.mDataBaseOperation.getFromDataBase("tube2data");
+
                 } catch (Exception e) {
                     Toast.makeText( getActivity().getApplicationContext(), "标定数据不存在，请先在标定模式下进行标定", Toast.LENGTH_SHORT).show();
 
@@ -212,7 +211,18 @@ public class SystemSetting extends android.app.Fragment {
 
             }
         });
+        plause=(Spinner)getActivity().findViewById(R.id.plause);
+        plause.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                pla=(byte) Integer.parseInt(plause.getSelectedItem().toString());
+            }
 
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
         depth=(Spinner)getActivity().findViewById(R.id.spinner6);
         depth.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -246,7 +256,7 @@ public class SystemSetting extends android.app.Fragment {
         startAD.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                byte [] setPar=new byte[]{charToBytes(average)[0],charToBytes(average)[1],charToBytes(fiberL)[0],charToBytes(fiberL)[1],1,dev};
+                byte [] setPar=new byte[]{charToBytes(average)[0],charToBytes(average)[1],charToBytes(fiberL)[0],charToBytes(fiberL)[1],(byte)(32+pla),dev};
                 ((Main) getActivity()).UsbSendData(setPar);
                 showSendData.setText(sendData+bytesToHexString(setPar));
                 FiberManager.fiberLength=fiberL;
@@ -267,7 +277,7 @@ public class SystemSetting extends android.app.Fragment {
         test.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                byte [] setPar=new byte[]{charToBytes(average)[0],charToBytes(average)[1],charToBytes(fiberL)[0],charToBytes(fiberL)[1],16,dev};
+                byte [] setPar=new byte[]{charToBytes(average)[0],charToBytes(average)[1],charToBytes(fiberL)[0],charToBytes(fiberL)[1],-32,dev};//应该脉冲是3
                 ((Main) getActivity()).UsbSendData(setPar);
                 showSendData.setText(sendData+bytesToHexString(setPar));
                 FiberManager.fiberLength=fiberL;

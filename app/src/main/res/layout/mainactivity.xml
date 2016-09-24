@@ -195,7 +195,10 @@
                 android:background="@drawable/fiber1ring"
                 android:textSize="12sp"
                 android:textOn="A"
-                android:textOff="A" />
+                android:textOff="A"
+                android:clickable="false"
+                android:enabled="false"
+                android:focusable="true" />
 
             <ToggleButton
                 android:layout_width="40dp"
@@ -207,7 +210,10 @@
                 android:layout_toLeftOf="@+id/fiberC"
                 android:textOff="B"
                 android:textOn="B"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                android:clickable="true"
+                android:enabled="false"
+                android:focusable="true" />
 
             <ToggleButton
                 android:layout_width="40dp"
@@ -219,7 +225,10 @@
                 android:background="@drawable/fiber3ring"
                 android:textSize="12sp"
                 android:textOn="C"
-                android:textOff="C" />
+                android:textOff="C"
+                android:clickable="true"
+                android:focusable="false"
+                android:enabled="false" />
 
             <ToggleButton
                 android:layout_width="40dp"
@@ -232,7 +241,10 @@
                 android:layout_marginRight="10dp"
                 android:textOff="D"
                 android:textOn="D"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                android:clickable="true"
+                android:focusable="false"
+                android:enabled="false" />
 
         </RelativeLayout>
 

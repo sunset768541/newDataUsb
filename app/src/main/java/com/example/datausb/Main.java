@@ -414,10 +414,6 @@ public class Main extends Activity {
                         }
                     }
                     byte[] Receivebytes = usbControl.receivceDataFromUsb(4*fiberManager.getFibeNumber()*FiberManager.fiberLength);//接收的数据每个通道2根光纤，每个光纤每米2byte
-
-                    //Log.e("COM",Integer.valueOf(Receivebytes.length).toString());
-                    //Log.e("CM",Integer.valueOf(fiberManager.getFibeNumber()).toString());
-                    //Log.e("CM",Integer.valueOf(FiberManager.fiberLength).toString());
                     if (STOREDATA == 1) {
                         try {
                             DataWR.saveData(Receivebytes,fiberManager);//将接收到的数据直接存储为2进制文件
@@ -566,7 +562,8 @@ public class Main extends Activity {
                     }
                     Message msg1 = new Message();
                     msg1.what = COMPLETED;
-                    msg1.obj = combination[0] + "+" + combination[combination.length-1];
+                    if (combination.length>2)
+                        msg1.obj = combination[2] + "+" + combination[combination.length-1];
                     msg1.arg1 = r.speed;//数据的传输速度
                     handler.sendMessage(msg1);
                     r.flag = false;
@@ -625,7 +622,9 @@ public class Main extends Activity {
     public DataReceiveThread dataReceiveThread = new DataReceiveThread(resourceObj);
     public DataProcess dataProcessThread = new DataProcess(resourceObj, dataObj);
     public void UsbSendData(byte[] bytes){
-        usbControl.sendDataToUsb(bytes);
+        int i=usbControl.sendDataToUsb(bytes);
+        if (i<0)
+            Toast.makeText(getApplication(), "发送指令失败，USB连接错误", Toast.LENGTH_SHORT).show();
     }
 
    abstract class ButtonClickListener implements View.OnClickListener{//模板设计模式

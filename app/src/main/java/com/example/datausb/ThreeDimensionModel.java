@@ -9,6 +9,7 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.example.datausb.Fiber.Fiber;
+import com.example.datausb.Fiber.FiberA;
 import com.example.datausb.Fiber.FiberB;
 import com.example.datausb.ThreeDimUtil.MySurfaceView;
 
@@ -114,7 +115,7 @@ public class ThreeDimensionModel extends android.app.Fragment {
                             ((Main) getActivity()).dataObj.notifyAll();
                         }
 
-                        float[] TR = screenAdapter(FiberB.createFiberB().calculateTempreture(), mv.mRender.getcont() / 4);//选择B通道的温度进行显示
+                        float[] TR = screenAdapter(FiberA.createFiberA().calculateTempreture(), mv.mRender.getcont() / 4);//选择B通道的温度进行显示
                         float[] colors = new float[mv.mRender.getcont()];//创建用于给光纤模型颜色渲染的数据
                         float[] cc = colorProcess(TR);
                         colors = Arrays.copyOfRange(cc, 0, colors.length);

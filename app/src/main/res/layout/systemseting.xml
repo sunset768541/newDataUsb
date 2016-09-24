@@ -405,6 +405,22 @@
                     android:id="@+id/button7"
                     android:layout_below="@+id/button6" />
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="脉冲设置"
+                    android:id="@+id/textView24"
+                    android:layout_below="@+id/button7"
+                    android:layout_toLeftOf="@+id/plause" />
+
+                <Spinner
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/plause"
+                    android:layout_below="@+id/button7"
+                    android:layout_toRightOf="@+id/button6"
+                    android:entries="@array/plause" />
+
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -469,7 +485,10 @@
                     android:text="设置AD"
                     android:id="@+id/button10"
                     android:layout_weight="1"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:clickable="true"
+                    android:enabled="false"
+                    android:focusable="true" />
 
                 <TextView
                     android:layout_width="wrap_content"

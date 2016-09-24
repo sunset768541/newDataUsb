@@ -7,6 +7,7 @@ import android.hardware.usb.UsbEndpoint;
 import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -58,8 +59,14 @@ public class UsbControl{
      * SendDataToUsb为一个用来发送数据的函数
      */
     public int sendDataToUsb(byte[] bytes) {//发送数据的函数
-        myDeviceConnection.claimInterface(myInterface, true);
-        int isSend = myDeviceConnection.bulkTransfer(epOut, bytes, bytes.length, 0); //do in another thread
+
+        int isSend=-1;
+        if (myDeviceConnection!=null){//确定发送数据时USB时可以使用的
+            myDeviceConnection.claimInterface(myInterface, true);
+            isSend = myDeviceConnection.bulkTransfer(epOut, bytes, bytes.length, 0); //do in another thread
+             }
+
+
         return isSend;//flag标记是否发送成功，成功flag>1,不成功-1
     }
     public byte[] receivceDataFromUsb(int receiveDataLength){

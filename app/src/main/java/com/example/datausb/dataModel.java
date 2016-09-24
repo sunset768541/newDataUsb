@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.os.Bundle;
 //import android.atube1.Fragment;
 //import android.sutube1ort.v4.atube1.FragmentActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -15,6 +16,9 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.datausb.Fiber.Fiber;
 
@@ -56,6 +60,12 @@ public class DataModel extends android.app.Fragment {
     }
     DataChart dataChart;
     SurfaceView sur;
+    EditText xmin;
+    EditText xmax;
+    EditText ymin;
+    EditText ymax;
+    Button   setAxis;
+    Button   reSetAxis;
     private GestureDetector mGesture;
     public OnDoubleClickListener onDoubleClickListener;
     interface OnDoubleClickListener{
@@ -77,7 +87,6 @@ public class DataModel extends android.app.Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);//
          sur = (SurfaceView) getActivity().findViewById(R.id.sura);
-
 
         sur.setOnTouchListener(new View.OnTouchListener() {
             int mode = 0;
@@ -168,7 +177,41 @@ public class DataModel extends android.app.Fragment {
          */
         v1.surfaceCreated(holder);
 
-
+        xmax=(EditText)getActivity().findViewById(R.id.editText5);
+        xmin=(EditText)getActivity().findViewById(R.id.editText3);
+        ymin=(EditText)getActivity().findViewById(R.id.editText7);
+        ymax=(EditText)getActivity().findViewById(R.id.editText8);
+        setAxis=(Button)getActivity().findViewById(R.id.button13);
+        setAxis.setClickable(false);
+        setAxis.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String xmn=xmin.getText().toString().trim();
+                String xma=xmax.getText().toString().trim();
+                String ymn=ymin.getText().toString().trim();
+                String yma=ymax.getText().toString().trim();
+                if (TextUtils.isEmpty(xmn)&&TextUtils.isEmpty(xma)&&TextUtils.isEmpty(yma)&&TextUtils.isEmpty(ymn)){
+                    Toast.makeText(getActivity().getApplicationContext(), "输入数据不能为空", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    dataChart.setxMin(Double.parseDouble(xmn));
+                    dataChart.setxMax(Double.parseDouble(xma));
+                    dataChart.setyMin(Double.parseDouble(ymn));
+                    dataChart.setyMax(Double.parseDouble(yma));
+                }
+            }
+        });
+        reSetAxis=(Button)getActivity().findViewById(R.id.button14);
+        reSetAxis.setClickable(false);
+        reSetAxis.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dataChart.setxMin(0);
+                dataChart.setxMax(16384);
+                dataChart.setyMin(0);
+                dataChart.setyMax(16385);
+            }
+        });
     }
 
     class VV extends SurfaceView implements SurfaceHolder.Callback {
@@ -190,6 +233,8 @@ public class DataModel extends android.app.Fragment {
             holder1.addCallback(this);
             myThread = new dataThread(holder1, ss);//创建一个绘图线程
             myThread.start();
+            setAxis.setClickable(true);
+            reSetAxis.setClickable(true);
         }
 
         public void surfaceCreated(SurfaceHolder holder) {
@@ -230,7 +275,7 @@ public class DataModel extends android.app.Fragment {
             this.holder = holder;
             sss = ss1;
             isRun = true;
-            dataChart = new DataChart(16384,0,20000,0);
+            dataChart = new DataChart(16384,0,16385,0);
 
         }
         public void run() {

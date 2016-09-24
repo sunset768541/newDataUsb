@@ -156,11 +156,11 @@ import com.example.datausb.DataUtil.DataBaseOperation;
         calibrate.setStrokeWidth(1f);
     }
     public float[] calculatePsa(){
-        Log.e("进入计算PSA","ok");
+       // Log.e("进入计算PSA","ok");
         float []tem =new float[getFiberLength()];
-        Log.e("psa长度",Integer.valueOf(tem.length).toString());
-        Log.e("1663长度=",Integer.valueOf(optical1663Data[10]).toString());
-        Log.e("1440长度=",Integer.valueOf(optical1440Data[20]).toString());
+        //Log.e("psa长度",Integer.valueOf(tem.length).toString());
+        //Log.e("1663长度=",Integer.valueOf(optical1663Data[10]).toString());
+        //Log.e("1440长度=",Integer.valueOf(optical1440Data[20]).toString());
         for (int i=0;i<tem.length;i++){
           //  Log.e("i= ",Integer.valueOf(i).toString());
             if (optical1663Data[i]==0){
